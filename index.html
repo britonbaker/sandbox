@@ -1,12 +1,90 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enter</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="circle">enter</div>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>WalletMemo</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <header class="header">
+        <div class="brand">WalletMemo</div>
+        <div class="tag">a sticky note for your Wallet</div>
+      </header>
+
+      <section class="grid">
+        <div class="card note">
+          <div class="note-top">
+            <div class="pill">Sticky Note Pass</div>
+            <div class="tiny">Shows up in Apple Wallet as a pass</div>
+          </div>
+
+          <label class="label" for="memo">Your memo</label>
+          <textarea id="memo" class="textarea" rows="6" placeholder="Buy oat milk. Text mom. Don’t forget…" maxlength="140"></textarea>
+
+          <div class="row">
+            <div class="hint"><span id="count">0</span>/140</div>
+            <button id="save" class="btn" type="button">Save</button>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="cta">
+            <div class="cta-title">Apple Wallet test</div>
+            <div class="cta-sub">
+              Step 1 is hosting a sample pass file. Step 2 is generating a custom pass from this memo.
+            </div>
+
+            <a class="btn secondary" href="./sample.pkpass" download>
+              Download sample .pkpass
+            </a>
+            <div class="tiny">
+              On iPhone: open this site in Safari and tap the .pkpass link to “Add to Wallet”.
+            </div>
+          </div>
+        </div>
+
+        <div class="card preview">
+          <div class="preview-title">Preview</div>
+          <div class="preview-note" id="preview">Your memo will appear here.</div>
+          <div class="tiny">
+            This is just a visual preview. The real Wallet version is a PassKit pass (.pkpass).
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <span>Domain: walletmemo.com</span>
+        <span class="dot">•</span>
+        <span>Hosted on GitHub Pages</span>
+      </footer>
+    </main>
+
+    <script>
+      const memo = document.getElementById("memo");
+      const preview = document.getElementById("preview");
+      const count = document.getElementById("count");
+      const save = document.getElementById("save");
+
+      const KEY = "walletmemo_text_v1";
+
+      function render(val) {
+        preview.textContent = val?.trim() ? val : "Your memo will appear here.";
+        count.textContent = String(val?.length ?? 0);
+      }
+
+      memo.addEventListener("input", (e) => render(e.target.value));
+
+      save.addEventListener("click", () => {
+        localStorage.setItem(KEY, memo.value);
+        save.textContent = "Saved";
+        setTimeout(() => (save.textContent = "Save"), 900);
+      });
+
+      const existing = localStorage.getItem(KEY) || "";
+      memo.value = existing;
+      render(existing);
+    </script>
+  </body>
 </html>
