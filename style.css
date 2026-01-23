@@ -95,17 +95,23 @@ body {
   animation: fadeSlideIn 0.6s ease-out 0.5s both;
 }
 
+.note-wrapper {
+  perspective: 800px;
+  perspective-origin: 50% 100%;
+}
+
 .note {
   background: #fff9b1;
   width: 100%;
   padding: 28px 24px 24px;
   border-radius: 4px;
   box-shadow:
-    0 1px 2px rgba(180,160,60,.12),
-    0 6px 16px rgba(180,160,60,.18),
-    0 24px 48px rgba(120,100,30,.22);
+    0 4px 8px rgba(180,160,60,.15),
+    0 12px 24px rgba(120,100,30,.2);
   position: relative;
-  isolation: isolate; /* Creates stacking context for pseudo-elements */
+  isolation: isolate;
+  transform: rotateX(8deg);
+  transform-origin: center bottom;
 }
 
 /* Stack effect - clean stack like real Post-its */
@@ -123,15 +129,47 @@ body {
 }
 
 .note::before {
-  background: #fff9b1;
-  transform: translateY(3px);
-  box-shadow: 0 1px 2px rgba(0,0,0,.08);
+  background: linear-gradient(to bottom, #fff9b1 0%, #f5ef9a 100%);
+  transform: translateY(4px) translateZ(-2px);
+  box-shadow: 0 1px 2px rgba(0,0,0,.1);
 }
 
 .note::after {
-  background: #fff9b1;
-  transform: translateY(6px);
-  box-shadow: 0 2px 4px rgba(0,0,0,.1);
+  background: linear-gradient(to bottom, #f5ef9a 0%, #ebe590 100%);
+  transform: translateY(8px) translateZ(-4px);
+  box-shadow: 0 2px 4px rgba(0,0,0,.12);
+}
+
+/* Curled corner */
+.note .corner-curl {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(
+    315deg,
+    transparent 50%,
+    rgba(0,0,0,.03) 50%,
+    rgba(0,0,0,.05) 60%,
+    #fff9b1 60%
+  );
+  border-radius: 0 0 4px 0;
+  pointer-events: none;
+}
+
+.note .corner-curl::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 25px 25px;
+  border-color: transparent transparent #f0f0f0 transparent;
+  border-radius: 0 0 4px 0;
+  box-shadow: -2px -2px 4px rgba(0,0,0,.08);
 }
 
 .note-title {
