@@ -1,5 +1,15 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+#pen-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: auto;
+}
+
 html, body {
   height: 100%;
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -25,7 +35,7 @@ body {
   transform: translateX(-50%);
   text-align: center;
   pointer-events: none;
-  z-index: 0;
+  z-index: 5;
 }
 
 .hero-title {
@@ -78,7 +88,7 @@ body {
   width: 100%;
   max-width: 340px;
   position: relative;
-  z-index: 1;
+  z-index: 10;
   margin-top: -20px;
 }
 
@@ -118,13 +128,15 @@ body {
 }
 
 .note::before {
+  background: #ffb3ba; /* pink */
   transform: rotate(2deg) translateY(4px);
-  box-shadow: 0 2px 8px rgba(180,160,60,.15);
+  box-shadow: 0 2px 8px rgba(180,100,120,.15);
 }
 
 .note::after {
+  background: #bae1ff; /* light blue */
   transform: rotate(-1.5deg) translateY(8px);
-  box-shadow: 0 2px 8px rgba(180,160,60,.12);
+  box-shadow: 0 2px 8px rgba(100,140,180,.12);
 }
 
 .note-title {
@@ -211,6 +223,40 @@ body {
   box-shadow: none;
 }
 
+.wallet-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.coming-soon-label {
+  position: absolute;
+  top: 36px;
+  right: -80px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  animation: fadeSlideIn 0.8s ease-out 0.7s both;
+}
+
+.coming-soon-text {
+  font-family: 'Caveat', 'Segoe Script', 'Bradley Hand', cursive;
+  font-size: 20px;
+  font-weight: 600;
+  color: #888;
+  transform: rotate(4deg);
+  white-space: nowrap;
+  order: 2;
+}
+
+.arrow-svg {
+  width: 65px;
+  height: 55px;
+  order: 1;
+  margin-bottom: -5px;
+}
+
 /* Mobile adjustments */
 @media (max-width: 480px) {
   body {
@@ -242,5 +288,19 @@ body {
   .textarea {
     font-size: 16px; /* Prevents iOS zoom on focus */
     min-height: 120px;
+  }
+
+  .coming-soon-label {
+    top: 38px;
+    right: -50px;
+  }
+
+  .coming-soon-text {
+    font-size: 17px;
+  }
+
+  .arrow-svg {
+    width: 60px;
+    height: 45px;
   }
 }

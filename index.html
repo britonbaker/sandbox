@@ -4,9 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>WalletMemo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./style.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   </head>
   <body>
+    <canvas id="pen-canvas"></canvas>
     <div class="hero-text">
       <div class="hero-title">WalletMemo</div>
       <div class="hero-tagline">A sticky note for your Apple Wallet</div>
@@ -24,16 +29,29 @@
         <div class="char-count"><span id="count">0</span>/140</div>
       </div>
 
-      <button class="wallet-btn" id="wallet-btn">
-        <svg class="wallet-icon" viewBox="0 0 24 24" fill="none">
-          <rect x="3" y="4" width="18" height="4" rx="1" fill="#5EB5F7"/>
-          <rect x="3" y="7" width="18" height="4" rx="1" fill="#F9D74A"/>
-          <rect x="3" y="10" width="18" height="4" rx="1" fill="#F2A158"/>
-          <path d="M3 13h18v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6z" fill="#F25C54"/>
-          <path d="M3 14c0 0 4 3 9 3s9-3 9-3" stroke="#D94A43" stroke-width="0.5" fill="none"/>
-        </svg>
-        <span id="wallet-text">Add to Apple Wallet</span>
-      </button>
+      <div class="wallet-wrapper">
+        <button class="wallet-btn" id="wallet-btn">
+          <svg class="wallet-icon" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="4" width="18" height="4" rx="1" fill="#5EB5F7"/>
+            <rect x="3" y="7" width="18" height="4" rx="1" fill="#F9D74A"/>
+            <rect x="3" y="10" width="18" height="4" rx="1" fill="#F2A158"/>
+            <path d="M3 13h18v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6z" fill="#F25C54"/>
+            <path d="M3 14c0 0 4 3 9 3s9-3 9-3" stroke="#D94A43" stroke-width="0.5" fill="none"/>
+          </svg>
+          <span id="wallet-text">Add to Apple Wallet</span>
+        </button>
+        <div class="coming-soon-label">
+          <svg class="arrow-svg" viewBox="0 0 80 70" fill="none">
+            <!-- Hand-drawn curved line -->
+            <path d="M68 62 Q50 50, 38 38 Q26 26, 18 14"
+                  stroke="#888" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <!-- Arrow head - two separate strokes for hand-drawn look -->
+            <path d="M8 18 L18 14" stroke="#888" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M14 5 L18 14" stroke="#888" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span class="coming-soon-text">Coming soon!</span>
+        </div>
+      </div>
     </main>
 
     <script>
@@ -58,6 +76,294 @@
           walletText.textContent = "Add to Apple Wallet";
         }, 2000);
       });
+    </script>
+
+    <script>
+      // 3D Pen Scene
+      (function() {
+        const canvas = document.getElementById('pen-canvas');
+        const scene = new THREE.Scene();
+
+        // Camera - top-down view looking at desk surface
+        const camera = new THREE.OrthographicCamera(
+          window.innerWidth / -100,
+          window.innerWidth / 100,
+          window.innerHeight / 100,
+          window.innerHeight / -100,
+          0.1,
+          1000
+        );
+        camera.position.set(0, 20, 0);
+        camera.lookAt(0, 0, 0);
+
+        // Renderer
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+        // Lighting - soft overhead with angled key light for shadows
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight.position.set(3, 15, 3);
+        directionalLight.castShadow = true;
+        directionalLight.shadow.mapSize.width = 2048;
+        directionalLight.shadow.mapSize.height = 2048;
+        directionalLight.shadow.camera.near = 0.5;
+        directionalLight.shadow.camera.far = 50;
+        directionalLight.shadow.camera.left = -15;
+        directionalLight.shadow.camera.right = 15;
+        directionalLight.shadow.camera.top = 15;
+        directionalLight.shadow.camera.bottom = -15;
+        directionalLight.shadow.bias = -0.001;
+        scene.add(directionalLight);
+
+        // Desk surface plane (white, receives shadows)
+        const deskGeo = new THREE.PlaneGeometry(50, 50);
+        const deskMat = new THREE.MeshStandardMaterial({
+          color: 0xf5f5f5,
+          roughness: 0.9,
+          metalness: 0
+        });
+        const desk = new THREE.Mesh(deskGeo, deskMat);
+        desk.rotation.x = -Math.PI / 2;
+        desk.position.y = 0;
+        desk.receiveShadow = true;
+        scene.add(desk);
+
+        // Create pen group
+        const pen = new THREE.Group();
+
+        // Pen body (main cylinder) - RED
+        const bodyGeo = new THREE.CylinderGeometry(0.18, 0.2, 4, 32);
+        const bodyMat = new THREE.MeshStandardMaterial({
+          color: 0xc41e3a,
+          roughness: 0.3,
+          metalness: 0.1
+        });
+        const body = new THREE.Mesh(bodyGeo, bodyMat);
+        body.castShadow = true;
+        pen.add(body);
+
+        // Pen grip section (slightly wider, rubberized look) - darker red
+        const gripGeo = new THREE.CylinderGeometry(0.21, 0.21, 0.8, 32);
+        const gripMat = new THREE.MeshStandardMaterial({
+          color: 0x8b1538,
+          roughness: 0.7,
+          metalness: 0
+        });
+        const grip = new THREE.Mesh(gripGeo, gripMat);
+        grip.position.y = -1.2;
+        grip.castShadow = true;
+        pen.add(grip);
+
+        // Pen tip cone (rotated so point faces down)
+        const tipGeo = new THREE.ConeGeometry(0.15, 0.6, 32);
+        const tipMat = new THREE.MeshStandardMaterial({
+          color: 0x333333,
+          roughness: 0.4,
+          metalness: 0.3
+        });
+        const tip = new THREE.Mesh(tipGeo, tipMat);
+        tip.rotation.x = Math.PI; // Flip so point faces down
+        tip.position.y = -2.3;
+        tip.castShadow = true;
+        pen.add(tip);
+
+        // Ballpoint
+        const ballGeo = new THREE.SphereGeometry(0.04, 16, 16);
+        const ballMat = new THREE.MeshStandardMaterial({
+          color: 0x111111,
+          roughness: 0.2,
+          metalness: 0.8
+        });
+        const ball = new THREE.Mesh(ballGeo, ballMat);
+        ball.position.y = -2.58;
+        pen.add(ball);
+
+        // Click button top - red accent
+        const buttonGeo = new THREE.CylinderGeometry(0.1, 0.12, 0.25, 32);
+        const buttonMat = new THREE.MeshStandardMaterial({
+          color: 0xe63946,
+          roughness: 0.3,
+          metalness: 0.2
+        });
+        const button = new THREE.Mesh(buttonGeo, buttonMat);
+        button.position.y = 2.1;
+        button.castShadow = true;
+        pen.add(button);
+
+        // Metal clip
+        const clipShape = new THREE.Shape();
+        clipShape.moveTo(0, 0);
+        clipShape.lineTo(0.08, 0);
+        clipShape.lineTo(0.08, 2.2);
+        clipShape.lineTo(0.12, 2.4);
+        clipShape.lineTo(0.04, 2.4);
+        clipShape.lineTo(0, 2.2);
+        clipShape.lineTo(0, 0);
+
+        const clipExtrudeSettings = { depth: 0.02, bevelEnabled: false };
+        const clipGeo = new THREE.ExtrudeGeometry(clipShape, clipExtrudeSettings);
+        const clipMat = new THREE.MeshStandardMaterial({
+          color: 0xcccccc,
+          roughness: 0.2,
+          metalness: 0.9
+        });
+        const clip = new THREE.Mesh(clipGeo, clipMat);
+        clip.position.set(0.19, -0.2, -0.01);
+        clip.castShadow = true;
+        pen.add(clip);
+
+        // Position and rotate pen - lying flat on surface
+        pen.rotation.x = Math.PI / 2; // Lay flat
+        pen.rotation.z = Math.PI / 5; // Slight angle
+        pen.position.set(3, 0.2, 3);
+
+        scene.add(pen);
+
+        // Drawing system - ink lines on the desk
+        const inkLines = [];
+        let currentLine = null;
+        let currentLinePoints = [];
+        const inkMaterial = new THREE.LineBasicMaterial({
+          color: 0x1a1a1a,
+          linewidth: 2
+        });
+
+        function getPenTipPosition() {
+          // Get the world position of the pen tip
+          const tipOffset = new THREE.Vector3(0, -2.6, 0);
+          tipOffset.applyQuaternion(pen.quaternion);
+          return pen.position.clone().add(tipOffset);
+        }
+
+        function startNewLine() {
+          currentLinePoints = [];
+          const geometry = new THREE.BufferGeometry();
+          currentLine = new THREE.Line(geometry, inkMaterial);
+          currentLine.frustumCulled = false;
+          scene.add(currentLine);
+          inkLines.push(currentLine);
+        }
+
+        function addPointToLine(x, z) {
+          currentLinePoints.push(new THREE.Vector3(x, 0.01, z));
+
+          if (currentLinePoints.length >= 2) {
+            const positions = [];
+            for (const point of currentLinePoints) {
+              positions.push(point.x, point.y, point.z);
+            }
+            currentLine.geometry.setAttribute(
+              'position',
+              new THREE.Float32BufferAttribute(positions, 3)
+            );
+          }
+        }
+
+        // Drag functionality
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+        const intersection = new THREE.Vector3();
+        let isDragging = false;
+        let dragOffset = new THREE.Vector3();
+        let lastDrawPos = null;
+
+        function onPointerDown(event) {
+          const rect = canvas.getBoundingClientRect();
+          mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+          mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+          raycaster.setFromCamera(mouse, camera);
+          const intersects = raycaster.intersectObject(pen, true);
+
+          if (intersects.length > 0) {
+            isDragging = true;
+            canvas.style.cursor = 'grabbing';
+
+            raycaster.ray.intersectPlane(plane, intersection);
+            dragOffset.copy(intersection).sub(pen.position);
+
+            // Start a new ink line
+            startNewLine();
+            const tipPos = getPenTipPosition();
+            addPointToLine(tipPos.x, tipPos.z);
+            lastDrawPos = { x: tipPos.x, z: tipPos.z };
+          }
+        }
+
+        function onPointerMove(event) {
+          const rect = canvas.getBoundingClientRect();
+          mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+          mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+          raycaster.setFromCamera(mouse, camera);
+
+          if (isDragging) {
+            raycaster.ray.intersectPlane(plane, intersection);
+            pen.position.x = intersection.x - dragOffset.x;
+            pen.position.z = intersection.z - dragOffset.z;
+
+            // Constrain bounds to visible desk area
+            pen.position.x = Math.max(-8, Math.min(8, pen.position.x));
+            pen.position.z = Math.max(-6, Math.min(8, pen.position.z));
+
+            // Draw ink as pen moves
+            const tipPos = getPenTipPosition();
+            const dx = tipPos.x - lastDrawPos.x;
+            const dz = tipPos.z - lastDrawPos.z;
+            const dist = Math.sqrt(dx * dx + dz * dz);
+
+            // Only add point if moved enough (smooths the line)
+            if (dist > 0.05) {
+              addPointToLine(tipPos.x, tipPos.z);
+              lastDrawPos = { x: tipPos.x, z: tipPos.z };
+            }
+          } else {
+            const intersects = raycaster.intersectObject(pen, true);
+            canvas.style.cursor = intersects.length > 0 ? 'grab' : 'default';
+          }
+        }
+
+        function onPointerUp() {
+          if (isDragging && currentLine && currentLinePoints.length < 2) {
+            // Remove lines that are too short (just a click)
+            scene.remove(currentLine);
+            inkLines.pop();
+          }
+          isDragging = false;
+          currentLine = null;
+          lastDrawPos = null;
+          canvas.style.cursor = 'default';
+        }
+
+        canvas.addEventListener('pointerdown', onPointerDown);
+        canvas.addEventListener('pointermove', onPointerMove);
+        canvas.addEventListener('pointerup', onPointerUp);
+        canvas.addEventListener('pointerleave', onPointerUp);
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+          camera.left = window.innerWidth / -100;
+          camera.right = window.innerWidth / 100;
+          camera.top = window.innerHeight / 100;
+          camera.bottom = window.innerHeight / -100;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Animation loop
+        function animate() {
+          requestAnimationFrame(animate);
+          renderer.render(scene, camera);
+        }
+        animate();
+      })();
     </script>
   </body>
 </html>
