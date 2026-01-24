@@ -10,6 +10,30 @@
     <link rel="stylesheet" href="./style.css" />
       </head>
   <body>
+    <!-- Language picker -->
+    <div class="lang-picker" id="lang-picker">
+      <button class="lang-btn" id="lang-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        <span id="current-lang">EN</span>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
+      </button>
+      <div class="lang-dropdown" id="lang-dropdown">
+        <button class="lang-option" data-lang="en">English</button>
+        <button class="lang-option" data-lang="es">Español</button>
+        <button class="lang-option" data-lang="fr">Français</button>
+        <button class="lang-option" data-lang="de">Deutsch</button>
+        <button class="lang-option" data-lang="ja">日本語</button>
+        <button class="lang-option" data-lang="zh">中文</button>
+        <button class="lang-option" data-lang="ko">한국어</button>
+        <button class="lang-option" data-lang="pt">Português</button>
+      </div>
+    </div>
+
     <div class="hero-text">
       <div class="hero-title">Wallet Memo</div>
       <div class="hero-tagline">A sticky note for your Apple Wallet</div>
@@ -140,56 +164,54 @@
     </main>
 
     <script>
-      // Language detection for wallet buttons
+      // Language picker and wallet buttons
       (function() {
         const appleImg = document.getElementById('apple-wallet-img');
         const googleImg = document.getElementById('google-wallet-img');
+        const langPicker = document.getElementById('lang-picker');
+        const langBtn = document.getElementById('lang-btn');
+        const langDropdown = document.getElementById('lang-dropdown');
+        const langOptions = document.querySelectorAll('.lang-option');
+        const currentLangSpan = document.getElementById('current-lang');
 
-        // Map browser language codes to button locale codes
+        // Map language codes to button locale codes
         const appleLocaleMap = {
-          'ar': 'AR', 'az': 'AZ', 'bg': 'BG', 'zh-CN': 'CN', 'zh': 'CN',
-          'cs': 'CZ', 'de': 'DE', 'da': 'DK', 'et': 'EE', 'en': 'EN',
-          'es': 'ES', 'es-MX': 'ESMX', 'fi': 'FI', 'fr': 'FR', 'fr-CA': 'CAFR',
-          'el': 'GR', 'he': 'HB', 'zh-HK': 'HK', 'hr': 'HR', 'hu': 'HU',
-          'id': 'ID', 'hi': 'IN', 'it': 'IT', 'ja': 'JP', 'ko': 'KR',
-          'si': 'LK', 'lt': 'LT', 'mt': 'MT', 'ms': 'MY', 'nl': 'NL',
-          'no': 'NO', 'nb': 'NO', 'fil': 'PH', 'pl': 'PL', 'pt': 'PT',
-          'pt-BR': 'PTBR', 'ro': 'RO', 'ru': 'RU', 'sv': 'SE', 'sl': 'SI',
-          'sk': 'SK', 'th': 'TH', 'tr': 'TR', 'zh-TW': 'TWPC', 'uk': 'UA', 'vi': 'VN',
-          'ca': 'CAES'
+          'en': 'EN', 'es': 'ES', 'fr': 'FR', 'de': 'DE', 'ja': 'JP',
+          'zh': 'CN', 'ko': 'KR', 'pt': 'PT'
         };
 
         const googleLocaleMap = {
-          'ar': 'AR', 'az': 'AZ', 'bg': 'BG', 'bn': 'BN', 'pt-BR': 'BR',
-          'bs': 'BS', 'ca': 'CA', 'cs': 'CZ', 'de': 'DE', 'da': 'DK',
-          'en': 'EN', 'es': 'esES', 'es-US': 'esUS', 'es-MX': 'esUS',
-          'et': 'ET', 'fi': 'FI', 'fr': 'FR', 'el': 'GR', 'he': 'HE',
-          'hr': 'HR', 'hu': 'HU', 'hy': 'AM', 'id': 'ID',
-          'it': 'IT', 'ja': 'JP', 'ka': 'KA', 'kk': 'KK',
-          'ky': 'KY', 'lo': 'LO', 'lt': 'LT', 'lv': 'LV',
-          'mk': 'MK', 'mn': 'MN', 'ms': 'MY', 'nl': 'NL',
-          'no': 'NO', 'nb': 'NO', 'pl': 'PL', 'pt': 'PT', 'ro': 'RO',
-          'ru': 'RU', 'sk': 'SK', 'sl': 'SL', 'sq': 'SQ', 'sr': 'SR',
-          'sv': 'SE', 'sw': 'SW', 'th': 'TH', 'tr': 'TR', 'uk': 'UA',
-          'uz': 'UZ', 'vi': 'VI', 'zh': 'zhHK', 'zh-CN': 'zhHK',
-          'zh-TW': 'zhTW', 'zh-HK': 'zhHK'
+          'en': 'EN', 'es': 'esES', 'fr': 'FR', 'de': 'DE', 'ja': 'JP',
+          'zh': 'zhHK', 'ko': 'KO', 'pt': 'PT'
         };
 
-        function getLocale(langMap, fallback) {
-          const lang = navigator.language || navigator.userLanguage;
-          // Try exact match first (e.g., "pt-BR")
-          if (langMap[lang]) return langMap[lang];
-          // Try base language (e.g., "pt" from "pt-BR")
-          const baseLang = lang.split('-')[0];
-          if (langMap[baseLang]) return langMap[baseLang];
-          return fallback;
+        const langDisplayMap = {
+          'en': 'EN', 'es': 'ES', 'fr': 'FR', 'de': 'DE',
+          'ja': 'JA', 'zh': 'ZH', 'ko': 'KO', 'pt': 'PT'
+        };
+
+        // Get initial language from browser or localStorage
+        let currentLang = localStorage.getItem('walletmemo-lang');
+        if (!currentLang) {
+          const browserLang = (navigator.language || navigator.userLanguage).split('-')[0];
+          currentLang = appleLocaleMap[browserLang] ? browserLang : 'en';
         }
 
-        const appleLocale = getLocale(appleLocaleMap, 'EN');
-        const googleLocale = getLocale(googleLocaleMap, 'EN');
+        function updateWalletButtons(lang) {
+          const appleLocale = appleLocaleMap[lang] || 'EN';
+          const googleLocale = googleLocaleMap[lang] || 'EN';
 
-        appleImg.src = `./assets/wallet-buttons/apple-wallet-buttons/Locale=${appleLocale}.svg`;
-        googleImg.src = `./assets/wallet-buttons/google-wallet-buttons/Locale=${googleLocale}, Type=Primary.svg`;
+          appleImg.src = `./assets/wallet-buttons/apple-wallet-buttons/Locale=${appleLocale}.svg`;
+          googleImg.src = `./assets/wallet-buttons/google-wallet-buttons/Locale=${googleLocale}, Type=Primary.svg`;
+
+          // Update display
+          currentLangSpan.textContent = langDisplayMap[lang] || 'EN';
+
+          // Update active state
+          langOptions.forEach(opt => {
+            opt.classList.toggle('active', opt.dataset.lang === lang);
+          });
+        }
 
         // Fallback to English if locale file doesn't exist
         appleImg.onerror = () => {
@@ -198,6 +220,32 @@
         googleImg.onerror = () => {
           googleImg.src = './assets/wallet-buttons/google-wallet-buttons/Locale=EN, Type=Primary.svg';
         };
+
+        // Initialize
+        updateWalletButtons(currentLang);
+
+        // Toggle dropdown
+        langBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          langPicker.classList.toggle('open');
+        });
+
+        // Close on outside click
+        document.addEventListener('click', () => {
+          langPicker.classList.remove('open');
+        });
+
+        // Language selection
+        langOptions.forEach(opt => {
+          opt.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const lang = opt.dataset.lang;
+            currentLang = lang;
+            localStorage.setItem('walletmemo-lang', lang);
+            updateWalletButtons(lang);
+            langPicker.classList.remove('open');
+          });
+        });
 
         // Coming soon click handler
         const walletMessage = document.getElementById('wallet-message');
