@@ -258,11 +258,11 @@ body {
   order: 2;
 }
 
-.arrow-svg {
-  width: 65px;
-  height: 55px;
+.arrow-lottie {
+  width: 80px;
+  height: 70px;
   order: 1;
-  margin-bottom: -5px;
+  margin-bottom: -10px;
 }
 
 /* Mobile adjustments */
@@ -307,8 +307,8 @@ body {
     font-size: 17px;
   }
 
-  .arrow-svg {
-    width: 60px;
-    height: 45px;
+  .arrow-lottie {
+    width: 70px;
+    height: 60px;
   }
 }

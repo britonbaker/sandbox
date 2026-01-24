@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./style.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   </head>
   <body>
     <canvas id="pen-canvas"></canvas>
@@ -43,14 +44,12 @@
           <span id="wallet-text">Add to Apple Wallet</span>
         </button>
         <div class="coming-soon-label">
-          <svg class="arrow-svg" viewBox="0 0 80 70" fill="none">
-            <!-- Hand-drawn curved line -->
-            <path d="M68 62 Q50 50, 38 38 Q26 26, 18 14"
-                  stroke="#888" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-            <!-- Arrow head - two separate strokes for hand-drawn look -->
-            <path d="M8 18 L18 14" stroke="#888" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M14 5 L18 14" stroke="#888" stroke-width="2.5" stroke-linecap="round"/>
-          </svg>
+          <lottie-player
+            src="./arrow.json"
+            class="arrow-lottie"
+            autoplay
+            loop
+          ></lottie-player>
           <span class="coming-soon-text">Coming soon!</span>
         </div>
       </div>
