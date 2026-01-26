@@ -506,6 +506,11 @@ body {
 .toolbar-btn.clear {
   background: #FF3B30;
   color: #fff;
+  padding: 8px 10px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .toolbar-btn.clear:hover {
