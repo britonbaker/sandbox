@@ -402,19 +402,79 @@ body {
 
 .drawing-toolbar {
   position: absolute;
-  bottom: -60px;
+  bottom: -80px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  gap: 10px;
   background: #fff;
-  padding: 10px 14px;
-  border-radius: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
   box-shadow: 0 4px 20px rgba(0,0,0,.15);
   opacity: 0;
   visibility: hidden;
   transition: opacity .3s ease, visibility .3s ease;
   z-index: 101;
+}
+
+.toolbar-colors,
+.toolbar-sizes {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.color-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform .15s ease, border-color .15s ease;
+}
+
+.color-btn:hover {
+  transform: scale(1.1);
+}
+
+.color-btn.active {
+  border-color: #333;
+  transform: scale(1.15);
+}
+
+.size-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background: #f5f5f5;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .15s ease;
+}
+
+.size-btn span {
+  background: #333;
+  border-radius: 50%;
+  display: block;
+}
+
+.size-btn:hover {
+  background: #eee;
+}
+
+.size-btn.active {
+  border-color: #333;
+  background: #eee;
 }
 
 .note-wrapper.drawing-mode .drawing-toolbar {
