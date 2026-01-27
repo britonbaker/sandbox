@@ -19,7 +19,7 @@ process.on('unhandledRejection', (reason) => {
 });
 
 // Build number for debugging deploys
-const BUILD_NUMBER = 27;
+const BUILD_NUMBER = 28;
 
 // Register Caveat font for handwritten style
 const fontPath = path.join(__dirname, 'fonts', 'Caveat.ttf');
@@ -167,8 +167,9 @@ function getBackgroundColor(color) {
 // For eventTicket: making strip TALL so it dominates the card like Apple's example
 // @3x resolution: 1125 x 1200
 async function generateStripImage(color, drawingDataUrl) {
-  const width = 1125;   // @3x
-  const height = 1200;  // @3x - tall strip to fill most of card
+  // Apple strip dimensions for @3x: 960 × 252
+  const width = 960;
+  const height = 252;
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext('2d');
 
@@ -210,7 +211,7 @@ async function generateStripImage(color, drawingDataUrl) {
   // Add paper noise texture (more visible)
   const noiseIntensity = 0.06;
   ctx.globalAlpha = noiseIntensity;
-  for (let i = 0; i < 60000; i++) {
+  for (let i = 0; i < 10000; i++) {
     const x = Math.random() * width;
     const y = Math.random() * height;
     // Mix of light and dark specks for paper texture
