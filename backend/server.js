@@ -19,7 +19,12 @@ process.on('unhandledRejection', (reason) => {
 });
 
 // Build number for debugging deploys
-const BUILD_NUMBER = 62;
+const BUILD_NUMBER = 63;
+
+// Temporary storage for pending passes (Safari iOS workaround)
+// Tokens expire after 5 minutes
+const pendingPasses = new Map();
+const PASS_TOKEN_TTL = 5 * 60 * 1000; // 5 minutes
 
 // Register Caveat font for handwritten style
 const fontPath = path.join(__dirname, 'fonts', 'Caveat.ttf');
@@ -190,6 +195,129 @@ app.post('/api/generate-pass', async (req, res) => {
 
   } catch (error) {
     console.error('Error generating pass:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Safari iOS workaround: Two-step download flow
+// Step 1: POST data to prepare endpoint, get back a token
+app.post('/api/prepare-pass', (req, res) => {
+  try {
+    const { text, color, drawingDataUrl } = req.body;
+    
+    // Generate a unique token
+    const token = `${Date.now()}-${Math.random().toString(36).substr(2, 12)}`;
+    
+    // Store the pass data temporarily
+    pendingPasses.set(token, {
+      text,
+      color,
+      drawingDataUrl,
+      createdAt: Date.now()
+    });
+    
+    // Clean up old tokens periodically
+    for (const [key, value] of pendingPasses.entries()) {
+      if (Date.now() - value.createdAt > PASS_TOKEN_TTL) {
+        pendingPasses.delete(key);
+      }
+    }
+    
+    console.log('Prepared pass token:', token, '(pending passes:', pendingPasses.size, ')');
+    
+    res.json({ token });
+  } catch (error) {
+    console.error('Error preparing pass:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Step 2: GET the pass with the token (Safari navigates here directly)
+app.get('/api/download-pass/:token', async (req, res) => {
+  try {
+    const { token } = req.params;
+    
+    // Retrieve and delete the pending pass data
+    const passData = pendingPasses.get(token);
+    if (!passData) {
+      return res.status(404).json({ error: 'Pass token expired or invalid. Please try again.' });
+    }
+    pendingPasses.delete(token);
+    
+    const { text, color, drawingDataUrl } = passData;
+    console.log('Generating pass from token:', token);
+    
+    if (!checkCerts()) {
+      return res.status(500).json({ error: 'Server certificates not configured' });
+    }
+
+    const { certPem, keyPem, wwdrPem } = getCertificates();
+    const bgColor = getBackgroundColor(color);
+    
+    // Read and modify the pass.json template
+    const passJsonPath = path.join(TEMPLATE_PATH, 'pass.json');
+    const passJsonContent = JSON.parse(fs.readFileSync(passJsonPath, 'utf8'));
+    passJsonContent.backgroundColor = bgColor;
+    
+    const eventDate = new Date();
+    eventDate.setDate(eventDate.getDate() + 30);
+    const eventDateStr = eventDate.toISOString();
+    passJsonContent.relevantDate = eventDateStr;
+    if (passJsonContent.semantics) {
+      passJsonContent.semantics.eventStartDate = eventDateStr;
+    }
+    fs.writeFileSync(passJsonPath, JSON.stringify(passJsonContent, null, 2));
+    
+    // Create pass from template
+    const pass = await PKPass.from({
+      model: TEMPLATE_PATH,
+      certificates: {
+        wwdr: wwdrPem,
+        signerCert: certPem,
+        signerKey: keyPem,
+      }
+    });
+
+    pass.serialNumber = `memo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    
+    if (pass.backFields && pass.backFields[0]) {
+      pass.backFields[0].value = String(BUILD_NUMBER);
+    }
+    
+    if (text && text.trim()) {
+      if (pass.primaryFields && pass.primaryFields[0]) {
+        pass.primaryFields[0].value = text;
+      } else if (pass.secondaryFields && pass.secondaryFields[0]) {
+        pass.secondaryFields[0].value = text;
+      }
+    }
+
+    // Generate images
+    const stripBuffer = await generateStripImage(color, drawingDataUrl);
+    const iconBuffer = await generateIconImage(color);
+    const bgBuffer = await generateBackgroundImage(color);
+    const posterBuffer = await generatePosterImage(color, drawingDataUrl);
+    const thumbnailBuffer = await generateThumbnailImage(color, drawingDataUrl);
+    
+    pass.addBuffer('background.png', posterBuffer);
+    pass.addBuffer('background@2x.png', posterBuffer);
+    pass.addBuffer('background@3x.png', posterBuffer);
+    pass.addBuffer('thumbnail.png', thumbnailBuffer);
+    pass.addBuffer('thumbnail@2x.png', thumbnailBuffer);
+    pass.addBuffer('thumbnail@3x.png', thumbnailBuffer);
+    pass.addBuffer('icon.png', iconBuffer);
+    pass.addBuffer('icon@2x.png', iconBuffer);
+
+    const passBuffer = pass.getAsBuffer();
+
+    res.set({
+      'Content-Type': 'application/vnd.apple.pkpass',
+      'Content-Disposition': 'attachment; filename=walletmemo.pkpass'
+    });
+    res.send(passBuffer);
+
+  } catch (error) {
+    console.error('Error downloading pass:', error);
     res.status(500).json({ error: error.message });
   }
 });
