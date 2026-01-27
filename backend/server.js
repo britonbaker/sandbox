@@ -100,10 +100,14 @@ app.post('/api/generate-pass', async (req, res) => {
 
     // Update pass fields
     pass.serialNumber = `memo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    pass.backgroundColor = getBackgroundColor(color);
-    pass.foregroundColor = 'rgb(30, 30, 30)';  // Dark text for readability
-    pass.labelColor = 'rgb(60, 60, 60)';       // Dark gray labels
     
+    // Set background color properly using props
+    const bgColor = getBackgroundColor(color);
+    pass.props.backgroundColor = bgColor;
+    pass.props.foregroundColor = 'rgb(30, 30, 30)';
+    pass.props.labelColor = 'rgb(60, 60, 60)';
+    
+    // Update primary field with note text
     if (pass.primaryFields && pass.primaryFields[0]) {
       pass.primaryFields[0].value = text || 'Empty note';
     }
@@ -114,9 +118,14 @@ app.post('/api/generate-pass', async (req, res) => {
     const stripBuffer = await generateStripImage(color, drawingDataUrl);
     const iconBuffer = await generateIconImage(color);
 
+    // Generate background image (fills entire pass body)
+    const bgBuffer = await generateBackgroundImage(color);
+    
     pass.addBuffer('strip.png', stripBuffer);
     pass.addBuffer('strip@2x.png', stripBuffer);
     pass.addBuffer('strip@3x.png', stripBuffer);
+    pass.addBuffer('background.png', bgBuffer);
+    pass.addBuffer('background@2x.png', bgBuffer);
     pass.addBuffer('icon.png', iconBuffer);
     pass.addBuffer('icon@2x.png', iconBuffer);
     // Logo removed per user request
@@ -256,6 +265,33 @@ async function generateLogoImage() {
   ctx.font = `600 24px "${fontFamily}"`;
   ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
   ctx.fillText('Wallet Memo', 5, 34);
+
+  return canvas.toBuffer('image/png');
+}
+
+// Generate background image that fills the pass body
+async function generateBackgroundImage(color) {
+  // Background image for generic pass: 360x440 @2x = 720x880
+  const width = 720;
+  const height = 880;
+  const canvas = createCanvas(width, height);
+  const ctx = canvas.getContext('2d');
+
+  const bgColors = {
+    blue: '#A8D4E8',
+    yellow: '#E2D060',
+    pink: '#E4B8C0'
+  };
+  ctx.fillStyle = bgColors[color] || bgColors.blue;
+  ctx.fillRect(0, 0, width, height);
+
+  // Add subtle paper texture
+  ctx.globalAlpha = 0.03;
+  for (let i = 0; i < 8000; i++) {
+    ctx.fillStyle = Math.random() > 0.5 ? '#000' : '#fff';
+    ctx.fillRect(Math.random() * width, Math.random() * height, 1, 1);
+  }
+  ctx.globalAlpha = 1;
 
   return canvas.toBuffer('image/png');
 }
