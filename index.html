@@ -732,14 +732,8 @@
           // Get note content
           const text = document.getElementById('memo').value;
           
-          // Get drawing data - check entire canvas for any drawn pixels
-          let drawingDataUrl = null;
-          const drawCtx = noteDrawingLayer.getContext('2d');
-          const imageData = drawCtx.getImageData(0, 0, noteDrawingLayer.width, noteDrawingLayer.height);
-          const hasDrawing = imageData.data.some((val, i) => i % 4 === 3 && val > 0); // Check alpha channel
-          if (hasDrawing) {
-            drawingDataUrl = noteDrawingLayer.toDataURL('image/png');
-          }
+          // Get drawing data - always send canvas (backend handles empty gracefully)
+          const drawingDataUrl = noteDrawingLayer.toDataURL('image/png');
           
           // Show loading state
           const originalContent = appleWalletBtn.innerHTML;
