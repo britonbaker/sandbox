@@ -19,7 +19,7 @@ process.on('unhandledRejection', (reason) => {
 });
 
 // Build number for debugging deploys
-const BUILD_NUMBER = 33;
+const BUILD_NUMBER = 34;
 
 // Register Caveat font for handwritten style
 const fontPath = path.join(__dirname, 'fonts', 'Caveat.ttf');
@@ -115,9 +115,9 @@ app.post('/api/generate-pass', async (req, res) => {
     pass.props.foregroundColor = 'rgb(30, 30, 30)';
     pass.props.labelColor = 'rgb(60, 60, 60)';
     
-    // Update primary field with note text
-    if (pass.primaryFields && pass.primaryFields[0]) {
-      pass.primaryFields[0].value = text || 'Empty note';
+    // Set build number in auxiliary field for debugging
+    if (pass.auxiliaryFields && pass.auxiliaryFields[0]) {
+      pass.auxiliaryFields[0].value = String(BUILD_NUMBER);
     }
 
     // Generate and add images
@@ -256,11 +256,6 @@ async function generateStripImage(color, drawingDataUrl) {
       console.error('Could not load drawing:', e.message, e.stack);
     }
   }
-
-  // Add build number in TOP-LEFT corner for debugging (visible even if strip is cropped)
-  ctx.font = '36px sans-serif';
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-  ctx.fillText(`b${BUILD_NUMBER}`, 15, 40);
 
   return canvas.toBuffer('image/png');
 }

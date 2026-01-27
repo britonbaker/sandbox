@@ -9,15 +9,16 @@
   "foregroundColor": "rgb(30, 30, 30)",
   "labelColor": "rgb(60, 60, 60)",
   "eventTicket": {
-    "primaryFields": [
+    "headerFields": [],
+    "primaryFields": [],
+    "secondaryFields": [],
+    "auxiliaryFields": [
       {
-        "key": "note",
-        "label": "MEMO",
-        "value": "Your note here"
+        "key": "build",
+        "label": "Build",
+        "value": "0"
       }
     ],
-    "secondaryFields": [],
-    "auxiliaryFields": [],
     "backFields": []
   }
 }
