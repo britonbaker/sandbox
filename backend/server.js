@@ -19,7 +19,7 @@ process.on('unhandledRejection', (reason) => {
 });
 
 // Build number for debugging deploys
-const BUILD_NUMBER = 61;
+const BUILD_NUMBER = 62;
 
 // Register Caveat font for handwritten style
 const fontPath = path.join(__dirname, 'fonts', 'Caveat.ttf');
@@ -101,10 +101,23 @@ app.post('/api/generate-pass', async (req, res) => {
     const bgColor = getBackgroundColor(color);
     console.log('Creating pass with color:', color, 'bgColor:', bgColor);
     
-    // Read and modify the pass.json template to set the correct color
+    // Read and modify the pass.json template to set the correct color and dates
     const passJsonPath = path.join(TEMPLATE_PATH, 'pass.json');
     const passJsonContent = JSON.parse(fs.readFileSync(passJsonPath, 'utf8'));
     passJsonContent.backgroundColor = bgColor;
+    
+    // Set event date to 30 days from now (posterEventTicket needs event dates)
+    const eventDate = new Date();
+    eventDate.setDate(eventDate.getDate() + 30);
+    const eventDateStr = eventDate.toISOString();
+    
+    // Add relevantDate for lock screen relevance
+    passJsonContent.relevantDate = eventDateStr;
+    
+    // Add eventStartDate to semantics
+    if (passJsonContent.semantics) {
+      passJsonContent.semantics.eventStartDate = eventDateStr;
+    }
     
     // Write modified pass.json temporarily
     fs.writeFileSync(passJsonPath, JSON.stringify(passJsonContent, null, 2));
