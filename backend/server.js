@@ -19,7 +19,7 @@ process.on('unhandledRejection', (reason) => {
 });
 
 // Build number for debugging deploys
-const BUILD_NUMBER = 45;
+const BUILD_NUMBER = 46;
 
 // Register Caveat font for handwritten style
 const fontPath = path.join(__dirname, 'fonts', 'Caveat.ttf');
@@ -171,13 +171,11 @@ function getBackgroundColor(color) {
 }
 
 // Generate the strip image with gradient and paper texture
-// For eventTicket: making strip TALL so it dominates the card like Apple's example
-// @3x resolution: 1125 x 1200
+// Apple crops strip to ~123 points (369px @3x) for eventTicket
+// We'll make it 450px tall and position drawing at TOP so it's visible
 async function generateStripImage(color, drawingDataUrl) {
-  // Try much taller strip - Apple might crop but let's see
-  // @3x resolution, trying 1125 × 900 (300 points tall)
-  const width = 1125;
-  const height = 900;
+  const width = 1125;  // @3x width
+  const height = 450;  // Slightly taller than Apple's crop, drawing at top
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext('2d');
   
@@ -227,19 +225,12 @@ async function generateStripImage(color, drawingDataUrl) {
       
       let drawWidth, drawHeight, drawX, drawY;
       
-      if (srcAspect > dstAspect) {
-        // Source is wider - fit to height, crop sides
-        drawHeight = height;
-        drawWidth = height * srcAspect;
-        drawX = (width - drawWidth) / 2;
-        drawY = 0;
-      } else {
-        // Source is taller - fit to width, crop top/bottom
-        drawWidth = width;
-        drawHeight = width / srcAspect;
-        drawX = 0;
-        drawY = (height - drawHeight) / 2;
-      }
+      // Position drawing at TOP of strip (Apple crops from bottom)
+      // Scale to fit width, position at top
+      drawWidth = width * 0.8;  // Leave some margin
+      drawHeight = drawWidth / srcAspect;
+      drawX = (width - drawWidth) / 2;  // Center horizontally
+      drawY = 20;  // Position near top with small margin
       
       ctx.drawImage(drawingImage, drawX, drawY, drawWidth, drawHeight);
       console.log('Drawing applied successfully');
