@@ -105,16 +105,15 @@ app.post('/api/generate-pass', async (req, res) => {
 
     // Generate and add images
     // For eventTicket passes, background.png shows behind entire card
+    console.log('Drawing data received:', drawingDataUrl ? 'yes (' + drawingDataUrl.length + ' chars)' : 'no');
     const backgroundBuffer = await generateBackgroundImage(color, drawingDataUrl);
     const iconBuffer = await generateIconImage(color);
-    const logoBuffer = await generateLogoImage();
 
     pass.addBuffer('background.png', backgroundBuffer);
     pass.addBuffer('background@2x.png', backgroundBuffer);
     pass.addBuffer('icon.png', iconBuffer);
     pass.addBuffer('icon@2x.png', iconBuffer);
-    pass.addBuffer('logo.png', logoBuffer);
-    pass.addBuffer('logo@2x.png', logoBuffer);
+    // Logo removed per user request
 
     // Generate the .pkpass file
     const passBuffer = pass.getAsBuffer();
