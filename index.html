@@ -732,9 +732,12 @@
           // Get note content
           const text = document.getElementById('memo').value;
           
-          // Get drawing data
+          // Get drawing data - check entire canvas for any drawn pixels
           let drawingDataUrl = null;
-          if (noteDrawingLayer.getContext('2d').getImageData(0, 0, 1, 1).data.some(d => d !== 0)) {
+          const drawCtx = noteDrawingLayer.getContext('2d');
+          const imageData = drawCtx.getImageData(0, 0, noteDrawingLayer.width, noteDrawingLayer.height);
+          const hasDrawing = imageData.data.some((val, i) => i % 4 === 3 && val > 0); // Check alpha channel
+          if (hasDrawing) {
             drawingDataUrl = noteDrawingLayer.toDataURL('image/png');
           }
           
