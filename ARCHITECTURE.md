@@ -30,24 +30,23 @@ Wallet Memo is a web app that lets users create sticky note-style passes for App
 
 | Fact | Evidence |
 |------|----------|
-| Frontend calls `http://localhost:3007` | Line 747 of index.html |
+| Frontend calls Railway backend | Line 747 of index.html |
 | Railway config exists in backend | `/backend/railway.json` |
 | Backend supports env vars for certs | Commit 7e96036 |
 | Certs are NOT in the repo (gitignored) | `/backend/certs/.gitignore` |
 
-### ❓ UNKNOWN (needs verification)
+### ✅ VERIFIED (Jan 27, 2026)
 
-| Question | How to verify |
-|----------|---------------|
-| Is the backend deployed to Railway? | Check Railway dashboard |
-| What's the Railway URL? | Check Railway dashboard |
-| Are the certificates configured in Railway? | Check Railway env vars |
+| Fact | Status |
+|------|--------|
+| Backend deployed to Railway | ✅ Yes |
+| Railway URL | `https://sandbox-production-24e9.up.railway.app` |
+| Certificates configured | ✅ Yes (via env vars) |
+| Free tier auto-sleep | ⚠️ Container stops after inactivity, restarts on request |
 
-### 🔴 PROBLEM
+### ✅ FIXED
 
-**The frontend at walletmemo.com cannot generate passes right now.**
-
-Why: It tries to call `localhost:3007`, which doesn't exist on the user's device.
+**Frontend now points to Railway backend.** Passes can be generated from walletmemo.com.
 
 ---
 
