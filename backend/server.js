@@ -148,28 +148,28 @@ async function generateBackgroundImage(color, drawingDataUrl) {
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext('2d');
 
-  // Gradient colors matching the site's sticky note SVG (bottom to top)
+  // Gradient colors - more dramatic contrast for visible effect
   const gradientColors = {
     blue: [
-      { pos: 0, color: '#7AC0DC' },      // darker at bottom
-      { pos: 0.3, color: '#9DD5EE' },
-      { pos: 0.6, color: '#A8DCF0' },
-      { pos: 0.85, color: '#B8E3F3' },
-      { pos: 1, color: '#D0F0FA' }       // lighter at top
+      { pos: 0, color: '#5BA8C8' },      // noticeably darker at bottom
+      { pos: 0.25, color: '#7BBFDC' },
+      { pos: 0.5, color: '#9DD5EE' },
+      { pos: 0.75, color: '#B8E8F8' },
+      { pos: 1, color: '#E0F5FC' }       // much lighter at top
     ],
     yellow: [
-      { pos: 0, color: '#C4B43A' },      // darker at bottom
-      { pos: 0.3, color: '#D4C44A' },
-      { pos: 0.6, color: '#E2D060' },
-      { pos: 0.85, color: '#EFDE7C' },
-      { pos: 1, color: '#FAF0A0' }       // lighter at top
+      { pos: 0, color: '#B0A030' },      // noticeably darker at bottom
+      { pos: 0.25, color: '#C8B840' },
+      { pos: 0.5, color: '#E0D060' },
+      { pos: 0.75, color: '#F0E480' },
+      { pos: 1, color: '#FDF8C0' }       // much lighter at top
     ],
     pink: [
-      { pos: 0, color: '#C8909A' },      // darker at bottom
-      { pos: 0.3, color: '#D9A8B2' },
-      { pos: 0.6, color: '#E4B8C0' },
-      { pos: 0.85, color: '#EEC8D0' },
-      { pos: 1, color: '#F8E0E8' }       // lighter at top
+      { pos: 0, color: '#B07888' },      // noticeably darker at bottom
+      { pos: 0.25, color: '#C89098' },
+      { pos: 0.5, color: '#E0A8B0' },
+      { pos: 0.75, color: '#F0C0C8' },
+      { pos: 1, color: '#FCE8F0' }       // much lighter at top
     ]
   };
 
@@ -183,23 +183,46 @@ async function generateBackgroundImage(color, drawingDataUrl) {
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, width, height);
 
-  // Add subtle paper noise texture
-  const noiseIntensity = 0.04;
+  // Add paper noise texture (more visible)
+  const noiseIntensity = 0.07;
   ctx.globalAlpha = noiseIntensity;
-  for (let i = 0; i < 8000; i++) {
+  for (let i = 0; i < 15000; i++) {
     const x = Math.random() * width;
     const y = Math.random() * height;
-    const shade = Math.random() > 0.5 ? 255 : 0;
+    // Mix of light and dark specks for paper texture
+    const shade = Math.floor(Math.random() * 256);
     ctx.fillStyle = `rgb(${shade}, ${shade}, ${shade})`;
     ctx.fillRect(x, y, 1, 1);
   }
   ctx.globalAlpha = 1;
 
-  // Overlay any drawing from the user
+  // Overlay any drawing from the user (maintain aspect ratio)
   if (drawingDataUrl) {
     try {
       const drawingImage = await loadImage(Buffer.from(drawingDataUrl.split(',')[1], 'base64'));
-      ctx.drawImage(drawingImage, 0, 0, width, height);
+      
+      // Original canvas is ~688x648 (344x324 * 2), pass is 360x440
+      // Scale to fit while maintaining aspect ratio
+      const srcAspect = drawingImage.width / drawingImage.height;
+      const dstAspect = width / height;
+      
+      let drawWidth, drawHeight, drawX, drawY;
+      
+      if (srcAspect > dstAspect) {
+        // Source is wider - fit to width
+        drawWidth = width;
+        drawHeight = width / srcAspect;
+        drawX = 0;
+        drawY = (height - drawHeight) / 2;
+      } else {
+        // Source is taller - fit to height  
+        drawHeight = height;
+        drawWidth = height * srcAspect;
+        drawX = (width - drawWidth) / 2;
+        drawY = 0;
+      }
+      
+      ctx.drawImage(drawingImage, drawX, drawY, drawWidth, drawHeight);
     } catch (e) {
       console.log('Could not load drawing:', e.message);
     }
