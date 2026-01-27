@@ -19,7 +19,7 @@ process.on('unhandledRejection', (reason) => {
 });
 
 // Build number for debugging deploys
-const BUILD_NUMBER = 40;
+const BUILD_NUMBER = 41;
 
 // Register Caveat font for handwritten style
 const fontPath = path.join(__dirname, 'fonts', 'Caveat.ttf');
@@ -109,12 +109,17 @@ app.post('/api/generate-pass', async (req, res) => {
     // Update pass fields
     pass.serialNumber = `memo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
-    // Set background color properly using props
+    // Set background color - try multiple methods
     const bgColor = getBackgroundColor(color);
     console.log('Setting pass colors - color:', color, 'bgColor:', bgColor);
+    
+    // Try setting directly on pass object
+    pass.backgroundColor = bgColor;
+    pass.foregroundColor = 'rgb(30, 30, 30)';
+    pass.labelColor = 'rgb(60, 60, 60)';
+    
+    // Also try props
     pass.props.backgroundColor = bgColor;
-    pass.props.foregroundColor = 'rgb(30, 30, 30)';
-    pass.props.labelColor = 'rgb(60, 60, 60)';
     
     // Set build number in back field (flip side of pass)
     if (pass.backFields && pass.backFields[0]) {
