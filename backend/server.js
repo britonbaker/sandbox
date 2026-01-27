@@ -19,7 +19,7 @@ process.on('unhandledRejection', (reason) => {
 });
 
 // Build number for debugging deploys
-const BUILD_NUMBER = 49;
+const BUILD_NUMBER = 50;
 
 // Register Caveat font for handwritten style
 const fontPath = path.join(__dirname, 'fonts', 'Caveat.ttf');
@@ -129,7 +129,7 @@ app.post('/api/generate-pass', async (req, res) => {
     // Generate and add images
     // For eventTicket passes, strip.png shows CRISP at top (not blurred like background)
     console.log('Drawing data received:', drawingDataUrl ? 'yes (' + drawingDataUrl.length + ' chars)' : 'no');
-    const stripBuffer = await generateStripImage(color, drawingDataUrl);
+    const stripBuffer = await generateStripImage(color, drawingDataUrl, text);
     const iconBuffer = await generateIconImage(color);
 
     // Generate background image (fills entire pass body)
@@ -170,10 +170,10 @@ function getBackgroundColor(color) {
   return colors[color] || colors.blue;
 }
 
-// Generate the strip image with gradient and paper texture
+// Generate the strip image with gradient, text, and drawing
 // Apple crops strip to ~123 points (369px @3x) for eventTicket
 // We'll make it 450px tall and position drawing at TOP so it's visible
-async function generateStripImage(color, drawingDataUrl) {
+async function generateStripImage(color, drawingDataUrl, text) {
   const width = 1125;  // @3x width
   const height = 450;  // Slightly taller than Apple's crop, drawing at top
   const canvas = createCanvas(width, height);
@@ -210,6 +210,15 @@ async function generateStripImage(color, drawingDataUrl) {
 
   // Skip paper noise for now - causes visible seam with background
   // TODO: Add noise back but fade it out at the bottom edge
+
+  // Render text at top of strip (like the sticky note)
+  if (text && text.trim()) {
+    ctx.fillStyle = '#1E1E1E';  // Dark text
+    ctx.font = 'italic 48px Georgia, serif';  // Match the website style
+    ctx.textBaseline = 'top';
+    ctx.fillText(text, 40, 30);  // Position at top-left with padding
+    console.log('Text rendered:', text);
+  }
 
   // Overlay any drawing from the user (skip if too small - likely empty canvas)
   console.log('Drawing data length:', drawingDataUrl ? drawingDataUrl.length : 0);
