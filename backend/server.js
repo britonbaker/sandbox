@@ -19,7 +19,7 @@ process.on('unhandledRejection', (reason) => {
 });
 
 // Build number for debugging deploys
-const BUILD_NUMBER = 28;
+const BUILD_NUMBER = 29;
 
 // Register Caveat font for handwritten style
 const fontPath = path.join(__dirname, 'fonts', 'Caveat.ttf');
@@ -172,6 +172,10 @@ async function generateStripImage(color, drawingDataUrl) {
   const height = 252;
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext('2d');
+  
+  // DEBUG: Make strip bright red so we can see if it appears at all
+  ctx.fillStyle = '#FF0000';
+  ctx.fillRect(0, 0, width, height);
 
   // Gradient colors - more dramatic contrast for visible effect
   const gradientColors = {
@@ -205,8 +209,9 @@ async function generateStripImage(color, drawingDataUrl) {
     gradient.addColorStop(stop.pos, stop.color);
   });
   
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, width, height);
+  // DEBUG: Skip gradient, keep the red fill to test if strip shows
+  // ctx.fillStyle = gradient;
+  // ctx.fillRect(0, 0, width, height);
 
   // Add paper noise texture (more visible)
   const noiseIntensity = 0.06;
