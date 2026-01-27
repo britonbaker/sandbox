@@ -757,8 +757,31 @@
           try {
             const BACKEND_URL = 'https://sandbox-production-24e9.up.railway.app';
             
-            // Step 1: Prepare the pass data and get a download token
-            const prepareResponse = await fetch(`${BACKEND_URL}/api/prepare-pass`, {
+            // Try two-step flow first (Safari iOS fix), fall back to blob method
+            let useTwoStep = true;
+            
+            // Check if prepare endpoint exists
+            try {
+              const testResponse = await fetch(`${BACKEND_URL}/api/prepare-pass`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, color: currentColor, drawingDataUrl })
+              });
+              
+              if (testResponse.ok) {
+                const { token } = await testResponse.json();
+                // Safari iOS workaround: navigate directly to download URL
+                window.location.href = `${BACKEND_URL}/api/download-pass/${token}`;
+                return; // Exit early, navigation will handle it
+              } else {
+                useTwoStep = false;
+              }
+            } catch (e) {
+              useTwoStep = false;
+            }
+            
+            // Fallback: original blob download method
+            const response = await fetch(`${BACKEND_URL}/api/generate-pass`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -768,16 +791,21 @@
               })
             });
             
-            if (!prepareResponse.ok) {
-              const error = await prepareResponse.json();
-              throw new Error(error.error || 'Failed to prepare pass');
+            if (!response.ok) {
+              const error = await response.json();
+              throw new Error(error.error || 'Failed to generate pass');
             }
             
-            const { token } = await prepareResponse.json();
-            
-            // Step 2: Navigate directly to download URL (Safari iOS workaround)
-            // This lets Safari handle the .pkpass file natively
-            window.location.href = `${BACKEND_URL}/api/download-pass/${token}`;
+            // Download the .pkpass file
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'walletmemo.pkpass';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
             
           } catch (error) {
             console.error('Error:', error);
