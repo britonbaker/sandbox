@@ -19,7 +19,7 @@ process.on('unhandledRejection', (reason) => {
 });
 
 // Build number for debugging deploys
-const BUILD_NUMBER = 44;
+const BUILD_NUMBER = 45;
 
 // Register Caveat font for handwritten style
 const fontPath = path.join(__dirname, 'fonts', 'Caveat.ttf');
@@ -100,7 +100,15 @@ app.post('/api/generate-pass', async (req, res) => {
     const bgColor = getBackgroundColor(color);
     console.log('Creating pass with color:', color, 'bgColor:', bgColor);
     
-    // Create pass from template with color override
+    // Read and modify the pass.json template to set the correct color
+    const passJsonPath = path.join(TEMPLATE_PATH, 'pass.json');
+    const passJsonContent = JSON.parse(fs.readFileSync(passJsonPath, 'utf8'));
+    passJsonContent.backgroundColor = bgColor;
+    
+    // Write modified pass.json temporarily
+    fs.writeFileSync(passJsonPath, JSON.stringify(passJsonContent, null, 2));
+    
+    // Create pass from template
     const pass = await PKPass.from({
       model: TEMPLATE_PATH,
       certificates: {
@@ -108,10 +116,6 @@ app.post('/api/generate-pass', async (req, res) => {
         signerCert: certPem,
         signerKey: keyPem,
       }
-    }, {
-      backgroundColor: bgColor,
-      foregroundColor: 'rgb(30, 30, 30)',
-      labelColor: 'rgb(60, 60, 60)',
     });
 
     // Update pass fields
