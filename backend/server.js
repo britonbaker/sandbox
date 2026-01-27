@@ -10,6 +10,14 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
+// Global error handlers to prevent crashes
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err.message);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled Rejection:', reason);
+});
+
 // Build number for debugging deploys
 const BUILD_NUMBER = 27;
 
@@ -212,10 +220,12 @@ async function generateStripImage(color, drawingDataUrl) {
   }
   ctx.globalAlpha = 1;
 
-  // Overlay any drawing from the user
-  if (drawingDataUrl) {
+  // Overlay any drawing from the user (skip if too small - likely empty canvas)
+  if (drawingDataUrl && drawingDataUrl.length > 5000) {
     try {
+      console.log('Processing drawing...');
       const drawingImage = await loadImage(Buffer.from(drawingDataUrl.split(',')[1], 'base64'));
+      console.log('Drawing loaded:', drawingImage.width, 'x', drawingImage.height);
       
       // Scale to FILL (cover entire canvas) rather than FIT
       // This minimizes scaling down, which preserves line sharpness
@@ -239,8 +249,9 @@ async function generateStripImage(color, drawingDataUrl) {
       }
       
       ctx.drawImage(drawingImage, drawX, drawY, drawWidth, drawHeight);
+      console.log('Drawing applied successfully');
     } catch (e) {
-      console.log('Could not load drawing:', e.message);
+      console.error('Could not load drawing:', e.message, e.stack);
     }
   }
 
@@ -285,14 +296,7 @@ async function generateBackgroundImage(color) {
   ctx.fillStyle = bgColors[color] || bgColors.blue;
   ctx.fillRect(0, 0, width, height);
 
-  // Add subtle paper texture
-  ctx.globalAlpha = 0.03;
-  for (let i = 0; i < 8000; i++) {
-    ctx.fillStyle = Math.random() > 0.5 ? '#000' : '#fff';
-    ctx.fillRect(Math.random() * width, Math.random() * height, 1, 1);
-  }
-  ctx.globalAlpha = 1;
-
+  // Skip paper texture on background to save memory
   return canvas.toBuffer('image/png');
 }
 
