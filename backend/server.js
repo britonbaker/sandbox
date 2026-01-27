@@ -19,7 +19,7 @@ process.on('unhandledRejection', (reason) => {
 });
 
 // Build number for debugging deploys
-const BUILD_NUMBER = 38;
+const BUILD_NUMBER = 39;
 
 // Register Caveat font for handwritten style
 const fontPath = path.join(__dirname, 'fonts', 'Caveat.ttf');
@@ -204,18 +204,8 @@ async function generateStripImage(color, drawingDataUrl) {
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, width, height);
 
-  // Add paper noise texture (more visible)
-  const noiseIntensity = 0.06;
-  ctx.globalAlpha = noiseIntensity;
-  for (let i = 0; i < 10000; i++) {
-    const x = Math.random() * width;
-    const y = Math.random() * height;
-    // Mix of light and dark specks for paper texture
-    const shade = Math.floor(Math.random() * 256);
-    ctx.fillStyle = `rgb(${shade}, ${shade}, ${shade})`;
-    ctx.fillRect(x, y, 1, 1);
-  }
-  ctx.globalAlpha = 1;
+  // Skip paper noise for now - causes visible seam with background
+  // TODO: Add noise back but fade it out at the bottom edge
 
   // Overlay any drawing from the user (skip if too small - likely empty canvas)
   if (drawingDataUrl && drawingDataUrl.length > 5000) {
