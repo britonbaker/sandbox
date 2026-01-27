@@ -3,12 +3,19 @@ const cors = require('cors');
 const { PKPass } = require('passkit-generator');
 const fs = require('fs');
 const path = require('path');
-const { createCanvas, loadImage } = require('@napi-rs/canvas');
+const { createCanvas, loadImage, GlobalFonts } = require('@napi-rs/canvas');
 const forge = require('node-forge');
 
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
+
+// Register Caveat font for handwritten style
+const fontPath = path.join(__dirname, 'fonts', 'Caveat.ttf');
+if (fs.existsSync(fontPath)) {
+  GlobalFonts.registerFromPath(fontPath, 'Caveat');
+  console.log('✅ Caveat font registered');
+}
 
 // Paths
 const CERTS_PATH = path.join(__dirname, 'certs');
@@ -123,45 +130,83 @@ app.post('/api/generate-pass', async (req, res) => {
   }
 });
 
-// Color mapping
+// Color mapping for pass background
 function getBackgroundColor(color) {
   const colors = {
-    blue: 'rgb(168, 212, 232)',
+    blue: 'rgb(157, 213, 238)',    // Match gradient base
     yellow: 'rgb(226, 208, 96)',
     pink: 'rgb(228, 184, 192)'
   };
   return colors[color] || colors.blue;
 }
 
-// Generate the main strip image
+// Generate the main strip image with gradient and paper texture
 async function generateStripImage(text, color, drawingDataUrl) {
   const width = 640;
   const height = 246;
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext('2d');
 
-  const bgColors = {
-    blue: '#A8D4E8',
-    yellow: '#E2D060',
-    pink: '#E4B8C0'
+  // Gradient colors matching the site's sticky note SVG (bottom to top)
+  const gradientColors = {
+    blue: [
+      { pos: 0, color: '#9DD5EE' },      // bottom
+      { pos: 0.26, color: '#98C4DA' },
+      { pos: 0.81, color: '#9BC8E7' },
+      { pos: 0.86, color: '#ACD7E9' },
+      { pos: 0.95, color: '#B8E3F3' },
+      { pos: 1, color: '#C4E9F5' }       // top
+    ],
+    yellow: [
+      { pos: 0, color: '#D4C44A' },
+      { pos: 0.26, color: '#DBCA58' },
+      { pos: 0.81, color: '#E2D060' },
+      { pos: 0.86, color: '#E8D76E' },
+      { pos: 0.95, color: '#EFDE7C' },
+      { pos: 1, color: '#F5E58A' }
+    ],
+    pink: [
+      { pos: 0, color: '#D9A8B2' },
+      { pos: 0.26, color: '#DBAEB8' },
+      { pos: 0.81, color: '#E4B8C0' },
+      { pos: 0.86, color: '#E9C0C8' },
+      { pos: 0.95, color: '#EEC8D0' },
+      { pos: 1, color: '#F3D0D8' }
+    ]
   };
-  ctx.fillStyle = bgColors[color] || bgColors.blue;
+
+  // Create vertical gradient (bottom to top, so we reverse y)
+  const gradient = ctx.createLinearGradient(0, height, 0, 0);
+  const stops = gradientColors[color] || gradientColors.blue;
+  stops.forEach(stop => {
+    gradient.addColorStop(stop.pos, stop.color);
+  });
+  
+  ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, width, height);
 
-  ctx.globalAlpha = 0.03;
-  for (let i = 0; i < 5000; i++) {
-    ctx.fillStyle = Math.random() > 0.5 ? '#000' : '#fff';
-    ctx.fillRect(Math.random() * width, Math.random() * height, 1, 1);
+  // Add subtle paper noise texture
+  const noiseIntensity = 0.04;
+  ctx.globalAlpha = noiseIntensity;
+  for (let i = 0; i < 8000; i++) {
+    const x = Math.random() * width;
+    const y = Math.random() * height;
+    const shade = Math.random() > 0.5 ? 255 : 0;
+    ctx.fillStyle = `rgb(${shade}, ${shade}, ${shade})`;
+    ctx.fillRect(x, y, 1, 1);
   }
   ctx.globalAlpha = 1;
 
+  // Draw text with handwritten font
   if (text) {
-    ctx.font = '600 28px sans-serif';
+    // Try Caveat first, fall back to cursive/sans-serif
+    const fontFamily = GlobalFonts.has('Caveat') ? 'Caveat' : 'sans-serif';
+    ctx.font = `500 32px "${fontFamily}"`;
     ctx.fillStyle = '#1a1a1a';
     
     const lines = text.split('\n');
-    const lineHeight = 36;
-    const startY = 50;
+    const lineHeight = 42;
+    const startY = 55;
     const startX = 40;
 
     lines.forEach((line, i) => {
@@ -171,6 +216,7 @@ async function generateStripImage(text, color, drawingDataUrl) {
     });
   }
 
+  // Overlay any drawing
   if (drawingDataUrl) {
     try {
       const drawingImage = await loadImage(Buffer.from(drawingDataUrl.split(',')[1], 'base64'));
@@ -190,9 +236,12 @@ async function generateLogoImage() {
   const ctx = canvas.getContext('2d');
 
   ctx.clearRect(0, 0, width, height);
-  ctx.font = 'bold 18px sans-serif';
-  ctx.fillStyle = '#333';
-  ctx.fillText('Wallet Memo', 5, 32);
+  
+  // Use Caveat font for logo too if available
+  const fontFamily = GlobalFonts.has('Caveat') ? 'Caveat' : 'sans-serif';
+  ctx.font = `600 24px "${fontFamily}"`;
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+  ctx.fillText('Wallet Memo', 5, 34);
 
   return canvas.toBuffer('image/png');
 }
@@ -202,23 +251,44 @@ async function generateIconImage(color) {
   const canvas = createCanvas(size, size);
   const ctx = canvas.getContext('2d');
 
-  const bgColors = {
-    blue: '#A8D4E8',
-    yellow: '#E2D060',
-    pink: '#E4B8C0'
-  };
+  // Use gradient for icon too
+  const gradient = ctx.createLinearGradient(0, size, 0, 0);
   
-  ctx.fillStyle = bgColors[color] || bgColors.blue;
+  if (color === 'yellow') {
+    gradient.addColorStop(0, '#D4C44A');
+    gradient.addColorStop(1, '#F5E58A');
+  } else if (color === 'pink') {
+    gradient.addColorStop(0, '#D9A8B2');
+    gradient.addColorStop(1, '#F3D0D8');
+  } else {
+    gradient.addColorStop(0, '#9DD5EE');
+    gradient.addColorStop(1, '#C4E9F5');
+  }
+  
+  ctx.fillStyle = gradient;
   ctx.beginPath();
   ctx.roundRect(4, 4, size - 8, size - 8, 16);
   ctx.fill();
 
-  ctx.strokeStyle = '#1a1a1a';
+  // Draw a simple memo line icon
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
   ctx.lineWidth = 3;
   ctx.lineCap = 'round';
+  
+  // Three horizontal lines for "memo" look
   ctx.beginPath();
-  ctx.moveTo(25, 62);
-  ctx.lineTo(62, 25);
+  ctx.moveTo(22, 30);
+  ctx.lineTo(65, 30);
+  ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.moveTo(22, 44);
+  ctx.lineTo(55, 44);
+  ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.moveTo(22, 58);
+  ctx.lineTo(45, 58);
   ctx.stroke();
 
   return canvas.toBuffer('image/png');
@@ -232,7 +302,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 3007;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`\n🎫 Wallet Memo backend running on http://localhost:${PORT}`);
   console.log('\nChecking certificates...');
