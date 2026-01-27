@@ -104,12 +104,13 @@ app.post('/api/generate-pass', async (req, res) => {
     }
 
     // Generate and add images
-    const stripBuffer = await generateStripImage(text, color, drawingDataUrl);
+    // For generic passes, background.png shows behind the entire card
+    const backgroundBuffer = await generateBackgroundImage(color);
     const iconBuffer = await generateIconImage(color);
     const logoBuffer = await generateLogoImage();
 
-    pass.addBuffer('strip.png', stripBuffer);
-    pass.addBuffer('strip@2x.png', stripBuffer);
+    pass.addBuffer('background.png', backgroundBuffer);
+    pass.addBuffer('background@2x.png', backgroundBuffer);
     pass.addBuffer('icon.png', iconBuffer);
     pass.addBuffer('icon@2x.png', iconBuffer);
     pass.addBuffer('logo.png', logoBuffer);
@@ -140,10 +141,11 @@ function getBackgroundColor(color) {
   return colors[color] || colors.blue;
 }
 
-// Generate the main strip image with gradient and paper texture
-async function generateStripImage(text, color, drawingDataUrl) {
-  const width = 640;
-  const height = 246;
+// Generate the background image with gradient and paper texture
+// For generic passes: 180x220 @1x, 360x440 @2x
+async function generateBackgroundImage(color) {
+  const width = 360;
+  const height = 440;
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext('2d');
 
@@ -196,35 +198,6 @@ async function generateStripImage(text, color, drawingDataUrl) {
     ctx.fillRect(x, y, 1, 1);
   }
   ctx.globalAlpha = 1;
-
-  // Draw text with handwritten font
-  if (text) {
-    // Try Caveat first, fall back to cursive/sans-serif
-    const fontFamily = GlobalFonts.has('Caveat') ? 'Caveat' : 'sans-serif';
-    ctx.font = `500 32px "${fontFamily}"`;
-    ctx.fillStyle = '#1a1a1a';
-    
-    const lines = text.split('\n');
-    const lineHeight = 42;
-    const startY = 55;
-    const startX = 40;
-
-    lines.forEach((line, i) => {
-      if (i < 5) {
-        ctx.fillText(line, startX, startY + (i * lineHeight));
-      }
-    });
-  }
-
-  // Overlay any drawing
-  if (drawingDataUrl) {
-    try {
-      const drawingImage = await loadImage(Buffer.from(drawingDataUrl.split(',')[1], 'base64'));
-      ctx.drawImage(drawingImage, 0, 0, width, height);
-    } catch (e) {
-      console.log('Could not load drawing:', e.message);
-    }
-  }
 
   return canvas.toBuffer('image/png');
 }
