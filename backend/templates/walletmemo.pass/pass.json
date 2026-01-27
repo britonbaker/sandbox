@@ -5,6 +5,7 @@
   "organizationName": "Wallet Memo",
   "description": "A sticky note for your wallet",
   "serialNumber": "PLACEHOLDER",
+  "backgroundColor": "rgb(228, 184, 192)",
   "foregroundColor": "rgb(30, 30, 30)",
   "labelColor": "rgb(60, 60, 60)",
   "eventTicket": {
