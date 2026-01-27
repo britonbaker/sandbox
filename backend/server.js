@@ -19,7 +19,7 @@ process.on('unhandledRejection', (reason) => {
 });
 
 // Build number for debugging deploys
-const BUILD_NUMBER = 55;
+const BUILD_NUMBER = 56;
 
 // Register Caveat font for handwritten style
 const fontPath = path.join(__dirname, 'fonts', 'Caveat.ttf');
@@ -147,12 +147,18 @@ app.post('/api/generate-pass', async (req, res) => {
     // Generate background image (fills entire pass body)
     const bgBuffer = await generateBackgroundImage(color);
     
+    // For posterEventTicket, background.png is the main poster image
+    // Strip is used for non-poster fallback on older iOS
     pass.addBuffer('strip.png', stripBuffer);
     pass.addBuffer('strip@2x.png', stripBuffer);
     pass.addBuffer('strip@3x.png', stripBuffer);
-    // Removing background to see if it conflicts with strip
-    // pass.addBuffer('background.png', bgBuffer);
-    // pass.addBuffer('background@2x.png', bgBuffer);
+    
+    // Background image for posterEventTicket (full poster view on iOS 18+)
+    const posterBuffer = await generatePosterImage(color, drawingDataUrl);
+    pass.addBuffer('background.png', posterBuffer);
+    pass.addBuffer('background@2x.png', posterBuffer);
+    pass.addBuffer('background@3x.png', posterBuffer);
+    
     pass.addBuffer('icon.png', iconBuffer);
     pass.addBuffer('icon@2x.png', iconBuffer);
     // Logo removed per user request
@@ -183,11 +189,11 @@ function getBackgroundColor(color) {
 }
 
 // Generate the strip image with gradient, text, and drawing
-// Apple strip dimensions @3x: coupon = 432px, eventTicket = 294px
-// Coupon gives us ~50% more vertical space!
+// For posterEventTicket, we use background.png instead of strip
+// Strip dimensions @3x: eventTicket = 294px (98pt × 3)
 async function generateStripImage(color, drawingDataUrl) {
   const width = 1125;  // @3x width
-  const height = 432;  // Coupon strip height (144pt × 3)
+  const height = 294;  // eventTicket strip height (98pt × 3)
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext('2d');
   
@@ -260,6 +266,77 @@ async function generateStripImage(color, drawingDataUrl) {
       console.log('Drawing applied successfully');
     } catch (e) {
       console.error('Could not load drawing:', e.message, e.stack);
+    }
+  }
+
+  return canvas.toBuffer('image/png');
+}
+
+// Generate poster background for posterEventTicket (iOS 18+)
+// This is the tall poster-style image that fills the pass
+// Recommended size: 180pt × 220pt (@3x = 540 × 660)
+async function generatePosterImage(color, drawingDataUrl) {
+  const width = 540;   // @3x width (180pt)
+  const height = 660;  // @3x height (220pt)
+  const canvas = createCanvas(width, height);
+  const ctx = canvas.getContext('2d');
+  
+  // Gradient colors - full poster gradient
+  const gradientColors = {
+    blue: [
+      { pos: 0, color: '#9DD5EE' },
+      { pos: 0.3, color: '#B8E8F8' },
+      { pos: 0.7, color: '#D0F0FC' },
+      { pos: 1, color: '#E8F8FF' }
+    ],
+    yellow: [
+      { pos: 0, color: '#E2D060' },
+      { pos: 0.3, color: '#F0E480' },
+      { pos: 0.7, color: '#F8F0A0' },
+      { pos: 1, color: '#FFFCE8' }
+    ],
+    pink: [
+      { pos: 0, color: '#E4B8C0' },
+      { pos: 0.3, color: '#F0C8D0' },
+      { pos: 0.7, color: '#F8D8E0' },
+      { pos: 1, color: '#FFF0F5' }
+    ]
+  };
+
+  // Create vertical gradient
+  const gradient = ctx.createLinearGradient(0, height, 0, 0);
+  const stops = gradientColors[color] || gradientColors.blue;
+  stops.forEach(stop => {
+    gradient.addColorStop(stop.pos, stop.color);
+  });
+  
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height);
+
+  // Overlay any drawing from the user
+  if (drawingDataUrl && drawingDataUrl.length > 1000) {
+    try {
+      const drawingImage = await loadImage(Buffer.from(drawingDataUrl.split(',')[1], 'base64'));
+      
+      // Scale drawing to fit within poster
+      const srcAspect = drawingImage.width / drawingImage.height;
+      let drawWidth, drawHeight, drawX, drawY;
+      
+      if (srcAspect > (width / height)) {
+        drawWidth = width * 0.85;
+        drawHeight = drawWidth / srcAspect;
+      } else {
+        drawHeight = height * 0.6;  // Leave room for text at bottom
+        drawWidth = drawHeight * srcAspect;
+      }
+      
+      // Center horizontally, position in upper portion
+      drawX = (width - drawWidth) / 2;
+      drawY = height * 0.1;  // Start 10% from top
+      
+      ctx.drawImage(drawingImage, drawX, drawY, drawWidth, drawHeight);
+    } catch (e) {
+      console.error('Could not load drawing for poster:', e.message);
     }
   }
 

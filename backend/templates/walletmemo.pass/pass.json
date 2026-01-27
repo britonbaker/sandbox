@@ -8,7 +8,8 @@
   "backgroundColor": "rgb(228, 184, 192)",
   "foregroundColor": "rgb(30, 30, 30)",
   "labelColor": "rgb(60, 60, 60)",
-  "coupon": {
+  "preferredStyleSchemes": ["posterEventTicket", "eventTicket"],
+  "eventTicket": {
     "headerFields": [],
     "primaryFields": [
       {
@@ -31,5 +32,9 @@
         "value": "https://walletmemo.com"
       }
     ]
+  },
+  "semantics": {
+    "eventName": "Wallet Memo",
+    "venueName": "Your Digital Sticky Note"
   }
 }
