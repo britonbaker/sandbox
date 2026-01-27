@@ -19,7 +19,7 @@ process.on('unhandledRejection', (reason) => {
 });
 
 // Build number for debugging deploys
-const BUILD_NUMBER = 47;
+const BUILD_NUMBER = 48;
 
 // Register Caveat font for handwritten style
 const fontPath = path.join(__dirname, 'fonts', 'Caveat.ttf');
@@ -212,7 +212,8 @@ async function generateStripImage(color, drawingDataUrl) {
   // TODO: Add noise back but fade it out at the bottom edge
 
   // Overlay any drawing from the user (skip if too small - likely empty canvas)
-  if (drawingDataUrl && drawingDataUrl.length > 5000) {
+  console.log('Drawing data length:', drawingDataUrl ? drawingDataUrl.length : 0);
+  if (drawingDataUrl && drawingDataUrl.length > 1000) {
     try {
       console.log('Processing drawing...');
       const drawingImage = await loadImage(Buffer.from(drawingDataUrl.split(',')[1], 'base64'));
