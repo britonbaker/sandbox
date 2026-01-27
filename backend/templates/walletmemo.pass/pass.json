@@ -6,9 +6,9 @@
   "description": "A sticky note for your wallet",
   "serialNumber": "PLACEHOLDER",
   "foregroundColor": "rgb(0, 0, 0)",
-  "backgroundColor": "rgb(168, 212, 232)",
+  "backgroundColor": "rgb(157, 213, 238)",
   "labelColor": "rgb(80, 80, 80)",
-  "generic": {
+  "storeCard": {
     "primaryFields": [
       {
         "key": "note",
