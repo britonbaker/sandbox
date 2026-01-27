@@ -144,11 +144,11 @@ function getBackgroundColor(color) {
 }
 
 // Generate the strip image with gradient and paper texture
-// For eventTicket strips: 375x123 @1x, 750x246 @2x, 1125x369 @3x
-// Strip stays CRISP (unlike background which gets blurred)
+// For eventTicket: making strip TALL so it dominates the card like Apple's example
+// @3x resolution: 1125 x 1200
 async function generateStripImage(color, drawingDataUrl) {
   const width = 1125;   // @3x
-  const height = 369;   // @3x
+  const height = 1200;  // @3x - tall strip to fill most of card
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext('2d');
 
@@ -190,7 +190,7 @@ async function generateStripImage(color, drawingDataUrl) {
   // Add paper noise texture (more visible)
   const noiseIntensity = 0.06;
   ctx.globalAlpha = noiseIntensity;
-  for (let i = 0; i < 30000; i++) {
+  for (let i = 0; i < 60000; i++) {
     const x = Math.random() * width;
     const y = Math.random() * height;
     // Mix of light and dark specks for paper texture
