@@ -19,7 +19,7 @@ process.on('unhandledRejection', (reason) => {
 });
 
 // Build number for debugging deploys
-const BUILD_NUMBER = 52;
+const BUILD_NUMBER = 53;
 
 // Register Caveat font for handwritten style
 const fontPath = path.join(__dirname, 'fonts', 'Caveat.ttf');
@@ -126,11 +126,21 @@ app.post('/api/generate-pass', async (req, res) => {
     if (pass.backFields && pass.backFields[0]) {
       pass.backFields[0].value = String(BUILD_NUMBER);
     }
+    
+    // Add memo text to primary field (guaranteed visible by Apple)
+    if (text && text.trim()) {
+      pass.primaryFields.push({
+        key: "memo",
+        label: "",  // No label, just the note content
+        value: text
+      });
+      console.log('Added memo to primaryFields:', text);
+    }
 
     // Generate and add images
     // For eventTicket passes, strip.png shows CRISP at top (not blurred like background)
     console.log('Drawing data received:', drawingDataUrl ? 'yes (' + drawingDataUrl.length + ' chars)' : 'no');
-    const stripBuffer = await generateStripImage(color, drawingDataUrl, text);
+    const stripBuffer = await generateStripImage(color, drawingDataUrl);
     const iconBuffer = await generateIconImage(color);
 
     // Generate background image (fills entire pass body)
@@ -174,7 +184,7 @@ function getBackgroundColor(color) {
 // Generate the strip image with gradient, text, and drawing
 // Apple crops strip to ~123 points (369px @3x) for eventTicket
 // We'll make it 450px tall and position drawing at TOP so it's visible
-async function generateStripImage(color, drawingDataUrl, text) {
+async function generateStripImage(color, drawingDataUrl) {
   const width = 1125;  // @3x width
   const height = 450;  // Slightly taller than Apple's crop, drawing at top
   const canvas = createCanvas(width, height);
@@ -212,14 +222,8 @@ async function generateStripImage(color, drawingDataUrl, text) {
   // Skip paper noise for now - causes visible seam with background
   // TODO: Add noise back but fade it out at the bottom edge
 
-  // Render text at top of strip (like the sticky note)
-  if (text && text.trim()) {
-    ctx.fillStyle = '#1E1E1E';  // Dark text
-    ctx.font = 'italic 72px "Caveat", cursive';  // Bigger, use Caveat
-    ctx.textBaseline = 'top';
-    ctx.fillText(text, 50, 40);  // Position at top-left with padding
-    console.log('Text rendered:', text);
-  }
+  // Text now rendered via pass fields (primaryFields) for guaranteed visibility
+  // Strip is just for the drawing/visual
 
   // Overlay any drawing from the user (skip if too small - likely empty canvas)
   console.log('Drawing data length:', drawingDataUrl ? drawingDataUrl.length : 0);
