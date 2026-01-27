@@ -104,13 +104,13 @@ app.post('/api/generate-pass', async (req, res) => {
     }
 
     // Generate and add images
-    // For storeCard passes, strip.png shows prominently at top
-    const stripBuffer = await generateStripImage(color);
+    // For eventTicket passes, background.png shows behind entire card
+    const backgroundBuffer = await generateBackgroundImage(color);
     const iconBuffer = await generateIconImage(color);
     const logoBuffer = await generateLogoImage();
 
-    pass.addBuffer('strip.png', stripBuffer);
-    pass.addBuffer('strip@2x.png', stripBuffer);
+    pass.addBuffer('background.png', backgroundBuffer);
+    pass.addBuffer('background@2x.png', backgroundBuffer);
     pass.addBuffer('icon.png', iconBuffer);
     pass.addBuffer('icon@2x.png', iconBuffer);
     pass.addBuffer('logo.png', logoBuffer);
@@ -141,11 +141,11 @@ function getBackgroundColor(color) {
   return colors[color] || colors.blue;
 }
 
-// Generate the strip image with gradient and paper texture
-// For storeCard passes: 375x98 @1x, 750x196 @2x
-async function generateStripImage(color) {
-  const width = 750;
-  const height = 196;
+// Generate the background image with gradient and paper texture
+// For eventTicket passes: 180x220 @1x, 360x440 @2x
+async function generateBackgroundImage(color) {
+  const width = 360;
+  const height = 440;
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext('2d');
 
