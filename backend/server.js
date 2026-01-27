@@ -127,14 +127,19 @@ app.post('/api/generate-pass', async (req, res) => {
       pass.backFields[0].value = String(BUILD_NUMBER);
     }
     
-    // Add memo text to secondary field (smaller, less dominant)
-    if (text && text.trim() && pass.secondaryFields && pass.secondaryFields[0]) {
-      pass.secondaryFields[0].value = text;
-      console.log('Set memo in secondaryFields:', text);
+    // Add memo text - support both coupon (primaryFields) and eventTicket (secondaryFields)
+    if (text && text.trim()) {
+      if (pass.primaryFields && pass.primaryFields[0]) {
+        pass.primaryFields[0].value = text;
+        console.log('Set memo in primaryFields:', text);
+      } else if (pass.secondaryFields && pass.secondaryFields[0]) {
+        pass.secondaryFields[0].value = text;
+        console.log('Set memo in secondaryFields:', text);
+      }
     }
 
     // Generate and add images
-    // For eventTicket passes, strip.png shows CRISP at top (not blurred like background)
+    // For coupon/eventTicket passes, strip.png shows CRISP at top (not blurred)
     console.log('Drawing data received:', drawingDataUrl ? 'yes (' + drawingDataUrl.length + ' chars)' : 'no');
     const stripBuffer = await generateStripImage(color, drawingDataUrl);
     const iconBuffer = await generateIconImage(color);
@@ -178,11 +183,11 @@ function getBackgroundColor(color) {
 }
 
 // Generate the strip image with gradient, text, and drawing
-// Apple crops strip to ~123 points (369px @3x) for eventTicket
-// We'll make it 450px tall and position drawing at TOP so it's visible
+// Apple strip dimensions @3x: coupon = 432px, eventTicket = 294px
+// Coupon gives us ~50% more vertical space!
 async function generateStripImage(color, drawingDataUrl) {
   const width = 1125;  // @3x width
-  const height = 450;  // Slightly taller than Apple's crop, drawing at top
+  const height = 432;  // Coupon strip height (144pt × 3)
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext('2d');
   

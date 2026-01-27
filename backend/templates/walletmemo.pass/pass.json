@@ -8,16 +8,16 @@
   "backgroundColor": "rgb(228, 184, 192)",
   "foregroundColor": "rgb(30, 30, 30)",
   "labelColor": "rgb(60, 60, 60)",
-  "eventTicket": {
+  "coupon": {
     "headerFields": [],
-    "primaryFields": [],
-    "secondaryFields": [
+    "primaryFields": [
       {
         "key": "memo",
-        "label": "Note",
+        "label": "",
         "value": ""
       }
     ],
+    "secondaryFields": [],
     "auxiliaryFields": [],
     "backFields": [
       {
