@@ -147,7 +147,7 @@
             placeholder="Buy oat milk&#10;Text mom&#10;Don't forget…"
             maxlength="140"
           ></textarea>
-          <div class="note-version">Build 90</div>
+          <div class="note-version">Build 91</div>
         </div>
         <!-- Drawing toolbar -->
         <div class="drawing-toolbar" id="drawing-toolbar">
@@ -537,7 +537,7 @@
           if (e.target.closest('.note-menu-btn') || e.target.closest('.note-dropdown') || e.target.closest('.drawing-toolbar')) return;
           if (noteWrapper.classList.contains('drawing-mode')) return;
           e.preventDefault();
-          textarea.focus();
+          textarea.focus({ preventScroll: true });
         });
 
         // Focus/blur on textarea triggers the flat/curled animation
