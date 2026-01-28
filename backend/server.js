@@ -19,7 +19,7 @@ process.on('unhandledRejection', (reason) => {
 });
 
 // Build number for debugging deploys
-const BUILD_NUMBER = 77;
+const BUILD_NUMBER = 78;
 
 // Temporary storage for pending passes (Safari iOS workaround)
 const pendingPasses = new Map();
@@ -94,47 +94,23 @@ function getBackgroundColor(color) {
 // Core pass generation logic (shared between endpoints)
 async function createPass({ text, color, drawingDataUrl }) {
   const { certPem, keyPem, wwdrPem } = getCertificates();
-  const bgColor = getBackgroundColor(color);
   
-  // Read and modify the pass.json template
+  // Read the pass.json template - keep it mostly as-is for poster mode
   const passJsonPath = path.join(TEMPLATE_PATH, 'pass.json');
   const passJsonContent = JSON.parse(fs.readFileSync(passJsonPath, 'utf8'));
-  passJsonContent.backgroundColor = bgColor;
+  
+  // Only change serial number and event name
   passJsonContent.serialNumber = `memo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   
-  // Set event date to 10 years from now (prevents auto-archive)
-  const eventDate = new Date();
-  eventDate.setFullYear(eventDate.getFullYear() + 10);
-  const eventDateStr = eventDate.toISOString();
-  
-  // Use relevantDates array for poster mode (not relevantDate string)
-  const endDate = new Date(eventDate);
-  endDate.setHours(endDate.getHours() + 4);
-  passJsonContent.relevantDates = [
-    {
-      startDate: eventDateStr,
-      endDate: endDate.toISOString()
-    }
-  ];
-  // Remove old relevantDate if present
-  delete passJsonContent.relevantDate;
-  
-  // Update semantics for poster event ticket
-  if (passJsonContent.semantics) {
-    // Use updatedEventStartDate/EndDate for poster mode
-    passJsonContent.semantics.updatedEventStartDate = eventDateStr;
-    const endDate = new Date(eventDate);
-    endDate.setHours(endDate.getHours() + 2);
-    passJsonContent.semantics.updatedEventEndDate = endDate.toISOString();
-    
-    // Use the memo text as the event name for poster display
-    if (text && text.trim()) {
-      passJsonContent.semantics.eventName = text;
-    }
+  // Use the memo text as the event name for poster display
+  if (text && text.trim() && passJsonContent.semantics) {
+    passJsonContent.semantics.eventName = text;
   }
   
   // Write modified pass.json temporarily
   fs.writeFileSync(passJsonPath, JSON.stringify(passJsonContent, null, 2));
+  
+  console.log('Pass JSON for poster mode:', JSON.stringify(passJsonContent, null, 2));
   
   // Create pass from template
   const pass = await PKPass.from({
