@@ -14,6 +14,7 @@
             async src="//gc.zgo.at/count.js"></script>
   </head>
   <body>
+    <div class="focus-overlay" id="focus-overlay"></div>
     <!-- Language picker -->
     <div class="lang-picker" id="lang-picker">
       <button class="lang-btn" id="lang-btn">
@@ -146,7 +147,7 @@
             placeholder="Buy oat milk&#10;Text mom&#10;Don't forget…"
             maxlength="140"
           ></textarea>
-          <div class="note-version">Build 87</div>
+          <div class="note-version">Build 88</div>
         </div>
         <!-- Drawing toolbar -->
         <div class="drawing-toolbar" id="drawing-toolbar">
@@ -537,6 +538,7 @@
         });
 
         // Focus/blur on textarea triggers the flat/curled animation
+        const focusOverlay = document.getElementById('focus-overlay');
         textarea.addEventListener('focus', () => {
           if (!isFlat) {
             isFlat = true;
@@ -544,6 +546,7 @@
             animateGradient(true);
             noteShadow.src = './assets/paper-stuff/shadow-layer-two.svg';
             noteWrapper.classList.add('flat');
+            focusOverlay.classList.add('active');
           }
         });
 
@@ -554,6 +557,7 @@
             animateGradient(false);
             noteShadow.src = './assets/paper-stuff/shadow-layer.svg';
             noteWrapper.classList.remove('flat');
+            focusOverlay.classList.remove('active');
           }
         });
 
