@@ -212,7 +212,7 @@ body {
 
 @media (max-width: 600px) {
   .note-wrapper.flat {
-    transform: scale(1.8);
+    transform: scale(var(--mobile-note-scale, 1.03));
   }
 }
 
@@ -758,7 +758,7 @@ body {
   /* Scale up bigger on mobile when clicked/focused - almost edge to edge */
   .note-wrapper.flat,
   .note-wrapper.flat:hover {
-    transform: scale(1.8);
+    transform: scale(var(--mobile-note-scale, 1.03));
   }
 
   .note-paper {

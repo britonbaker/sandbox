@@ -519,6 +519,16 @@
           textarea.focus();
         });
 
+        // Calculate mobile scale so note fills screen width with padding
+        function updateMobileScale() {
+          const padding = 32; // 16px each side
+          const noteWidth = noteWrapper.offsetWidth || 344;
+          const scale = (window.innerWidth - padding) / noteWidth;
+          document.documentElement.style.setProperty('--mobile-note-scale', Math.min(scale, 1.5).toFixed(3));
+        }
+        updateMobileScale();
+        window.addEventListener('resize', updateMobileScale);
+
         // Mobile: touchend for immediate focus without double-tap
         noteWrapper.addEventListener('touchend', (e) => {
           if (e.target.closest('.note-menu-btn') || e.target.closest('.note-dropdown') || e.target.closest('.drawing-toolbar')) return;
