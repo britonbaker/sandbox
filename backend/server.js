@@ -19,7 +19,7 @@ process.on('unhandledRejection', (reason) => {
 });
 
 // Build number for debugging deploys
-const BUILD_NUMBER = 65;
+const BUILD_NUMBER = 66;
 
 // Temporary storage for pending passes (Safari iOS workaround)
 // Tokens expire after 5 minutes
@@ -110,6 +110,9 @@ app.post('/api/generate-pass', async (req, res) => {
     const passJsonPath = path.join(TEMPLATE_PATH, 'pass.json');
     const passJsonContent = JSON.parse(fs.readFileSync(passJsonPath, 'utf8'));
     passJsonContent.backgroundColor = bgColor;
+    
+    // Generate unique serial number (required by Apple)
+    passJsonContent.serialNumber = `memo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
     // Set event date to 10 years from now (prevents auto-archive)
     const eventDate = new Date();
@@ -258,6 +261,9 @@ app.get('/api/download-pass/:token', async (req, res) => {
     const passJsonPath = path.join(TEMPLATE_PATH, 'pass.json');
     const passJsonContent = JSON.parse(fs.readFileSync(passJsonPath, 'utf8'));
     passJsonContent.backgroundColor = bgColor;
+    
+    // Generate unique serial number (required by Apple)
+    passJsonContent.serialNumber = `memo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
     const eventDate = new Date();
     eventDate.setFullYear(eventDate.getFullYear() + 10);
