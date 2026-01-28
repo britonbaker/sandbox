@@ -679,10 +679,13 @@ body {
   animation: fadeSlideIn 0.6s ease-out 0.6s both;
 }
 
-.contact-btn:hover,
+.contact-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
 .contact-btn:active {
-  transform: none;
-  filter: none;
+  transform: translateY(0);
 }
 
 .wallet-wrapper {
