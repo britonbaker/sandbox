@@ -19,7 +19,7 @@ process.on('unhandledRejection', (reason) => {
 });
 
 // Build number for debugging deploys
-const BUILD_NUMBER = 71;
+const BUILD_NUMBER = 72;
 
 // Temporary storage for pending passes (Safari iOS workaround)
 const pendingPasses = new Map();
@@ -111,6 +111,10 @@ async function createPass({ text, color, drawingDataUrl }) {
   // Update semantics for poster event ticket
   if (passJsonContent.semantics) {
     passJsonContent.semantics.eventStartDate = eventDateStr;
+    // Use the memo text as the event name for poster display
+    if (text && text.trim()) {
+      passJsonContent.semantics.eventName = text;
+    }
   }
   
   // Write modified pass.json temporarily
