@@ -146,7 +146,7 @@
             placeholder="Buy oat milk&#10;Text mom&#10;Don't forget…"
             maxlength="140"
           ></textarea>
-          <div class="note-version">Build 85</div>
+          <div class="note-version">Build 86</div>
         </div>
         <!-- Drawing toolbar -->
         <div class="drawing-toolbar" id="drawing-toolbar">
@@ -521,9 +521,8 @@
 
         // Calculate mobile scale so note fills screen width with padding
         function updateMobileScale() {
-          const padding = 8; // 4px each side
           const noteWidth = noteWrapper.offsetWidth || 344;
-          const scale = (window.innerWidth - padding) / noteWidth;
+          const scale = window.innerWidth / noteWidth;
           document.documentElement.style.setProperty('--mobile-note-scale', scale.toFixed(3));
         }
         updateMobileScale();
