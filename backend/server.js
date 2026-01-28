@@ -25,11 +25,16 @@ const BUILD_NUMBER = 83;
 const pendingPasses = new Map();
 const PASS_TOKEN_TTL = 5 * 60 * 1000; // 5 minutes
 
-// Register Caveat font for handwritten style
-const fontPath = path.join(__dirname, 'fonts', 'Caveat.ttf');
-if (fs.existsSync(fontPath)) {
-  GlobalFonts.registerFromPath(fontPath, 'Caveat');
+// Register fonts
+const caveatPath = path.join(__dirname, 'fonts', 'Caveat.ttf');
+if (fs.existsSync(caveatPath)) {
+  GlobalFonts.registerFromPath(caveatPath, 'Caveat');
   console.log('✅ Caveat font registered');
+}
+const patrickHandPath = path.join(__dirname, 'fonts', 'PatrickHand.ttf');
+if (fs.existsSync(patrickHandPath)) {
+  GlobalFonts.registerFromPath(patrickHandPath, 'Patrick Hand');
+  console.log('✅ Patrick Hand font registered');
 }
 
 // Paths
@@ -332,7 +337,7 @@ async function generateStripImage(color, drawingDataUrl, text) {
   // Render user text onto the strip
   if (text && text.trim()) {
     ctx.save();
-    ctx.font = '48px Caveat';
+    ctx.font = '48px "Patrick Hand"';
     ctx.fillStyle = '#1a1a1a';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
