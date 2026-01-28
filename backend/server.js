@@ -19,7 +19,7 @@ process.on('unhandledRejection', (reason) => {
 });
 
 // Build number for debugging deploys
-const BUILD_NUMBER = 76;
+const BUILD_NUMBER = 77;
 
 // Temporary storage for pending passes (Safari iOS workaround)
 const pendingPasses = new Map();
@@ -156,25 +156,10 @@ async function createPass({ text, color, drawingDataUrl }) {
   // For poster mode, memo text is set via semantics.eventName (already done above)
   // primaryFields are empty for poster layout
 
-  // Generate images for poster event ticket
-  // For poster layout: use background.png (full-bleed artwork)
-  // Apple applies blur/scrim automatically behind text
-  const backgroundBuffer = await generateBackgroundImage(color, drawingDataUrl);
-  const iconBuffer = await generateIconImage(color);
-  const logoBuffer = await generateLogoImage(color);
-
-  // Add background image (poster uses this for full-bleed artwork)
-  pass.addBuffer('background.png', backgroundBuffer);
-  pass.addBuffer('background@2x.png', backgroundBuffer);
-  pass.addBuffer('background@3x.png', backgroundBuffer);
-  
-  // Icon is required
-  pass.addBuffer('icon.png', iconBuffer);
-  pass.addBuffer('icon@2x.png', iconBuffer);
-  
-  // Logo for poster tickets
-  pass.addBuffer('logo.png', logoBuffer);
-  pass.addBuffer('logo@2x.png', logoBuffer);
+  // For poster layout: use all template images (from working passkit-generator example)
+  // Template contains: background.png, logo.png, icon.png
+  // No image overrides - use exactly what's in the template
+  console.log('Using template images for poster mode (background, logo, icon)');
 
   // Log semantics for debugging
   console.log('Pass semantics:', JSON.stringify(passJsonContent.semantics, null, 2));
