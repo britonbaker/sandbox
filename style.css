@@ -233,7 +233,7 @@ body {
 
 @media (max-width: 600px) {
   .note-wrapper.flat {
-    transform: scale(var(--mobile-note-scale, 1.03)) translateY(var(--mobile-note-offset, 0px));
+    transform: scale(var(--mobile-note-scale, 1.03)) translateY(-80px);
   }
 }
 
@@ -771,7 +771,7 @@ body {
   /* Scale up bigger on mobile when clicked/focused - almost edge to edge */
   .note-wrapper.flat,
   .note-wrapper.flat:hover {
-    transform: scale(var(--mobile-note-scale, 1.03)) translateY(var(--mobile-note-offset, 0px));
+    transform: scale(var(--mobile-note-scale, 1.03)) translateY(-80px);
   }
 
   .note-paper {
@@ -867,7 +867,7 @@ body {
 /* Hidden build number - shows on hover over bottom-left corner */
 .build-hover-area {
   width: 344px;
-  margin: -48px auto 0;
+  margin: 4px auto 0;
   text-align: right;
   padding-right: 8px;
 }

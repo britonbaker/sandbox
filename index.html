@@ -188,7 +188,7 @@
       </div>
     </main>
     
-    <div class="build-hover-area"><span class="build-number">Build 98</span></div>
+    <div class="build-hover-area"><span class="build-number">Build 99</span></div>
     </div>
 
     <script>
@@ -522,21 +522,11 @@
           textarea.focus();
         });
 
-        // Calculate mobile scale and offset so note fills width and top-aligns
+        // Calculate mobile scale so note fills width
         function updateMobileLayout() {
           const noteWidth = noteWrapper.offsetWidth || 344;
           const scale = (window.innerWidth / noteWidth) * 1.1;
           document.documentElement.style.setProperty('--mobile-note-scale', scale.toFixed(3));
-
-          // Calculate offset to move note's top edge to top of viewport
-          const rect = noteWrapper.getBoundingClientRect();
-          const scrollY = window.scrollY || window.pageYOffset;
-          const noteTop = rect.top + scrollY;
-          // After scaling, the note expands from center, so top shifts up by half the growth
-          const scaledHeight = noteWrapper.offsetHeight * scale;
-          const growthY = (scaledHeight - noteWrapper.offsetHeight) / 2;
-          const offset = -(noteTop - growthY - 16); // 16px padding from top
-          document.documentElement.style.setProperty('--mobile-note-offset', offset.toFixed(0) + 'px');
         }
         updateMobileLayout();
         window.addEventListener('resize', updateMobileLayout);
