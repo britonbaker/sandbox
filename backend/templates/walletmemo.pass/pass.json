@@ -10,7 +10,6 @@
   "backgroundColor": "rgb(228, 184, 192)",
   "groupingIdentifier": "pass.com.walletmemo.note",
   "preferredStyleSchemes": [
-    "posterEventTicket",
     "eventTicket"
   ],
   "eventTicket": {
