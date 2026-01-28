@@ -668,8 +668,8 @@ body {
   justify-content: center;
   height: 40px;
   padding: 0 24px;
-  background: #ccc;
-  color: #fff;
+  background: #e8e8e8;
+  color: #1a1a1a;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
@@ -679,13 +679,10 @@ body {
   animation: fadeSlideIn 0.6s ease-out 0.6s both;
 }
 
-.contact-btn:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.2);
-}
-
+.contact-btn:hover,
 .contact-btn:active {
-  transform: translateY(0);
+  transform: none;
+  filter: none;
 }
 
 .wallet-wrapper {
