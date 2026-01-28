@@ -147,7 +147,7 @@
             placeholder="Buy oat milk&#10;Text mom&#10;Don't forget…"
             maxlength="140"
           ></textarea>
-          <div class="note-version">Build 93</div>
+          <div class="note-version">Build 94</div>
         </div>
         <!-- Drawing toolbar -->
         <div class="drawing-toolbar" id="drawing-toolbar">
@@ -542,6 +542,7 @@
 
         // Focus/blur on textarea triggers the flat/curled animation
         const focusOverlay = document.getElementById('focus-overlay');
+        const langPicker2 = document.getElementById('lang-picker');
         textarea.addEventListener('focus', () => {
           if (!isFlat) {
             isFlat = true;
@@ -550,6 +551,7 @@
             noteShadow.src = './assets/paper-stuff/shadow-layer-two.svg';
             noteWrapper.classList.add('flat');
             focusOverlay.classList.add('active');
+            langPicker2.classList.add('hidden');
           }
         });
 
@@ -561,6 +563,7 @@
             noteShadow.src = './assets/paper-stuff/shadow-layer.svg';
             noteWrapper.classList.remove('flat');
             focusOverlay.classList.remove('active');
+            langPicker2.classList.remove('hidden');
           }
         });
 
