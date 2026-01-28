@@ -136,7 +136,7 @@ async function createPass({ text, color, drawingDataUrl }) {
   }
 
   // Generate color-matched images
-  const stripBuffer = await generateStripImage(color, drawingDataUrl);
+  const stripBuffer = await generateStripImage(color, drawingDataUrl, text);
   const iconBuffer = await generateIconImage(color);
 
   // Add strip image (shows at top of eventTicket)
@@ -267,7 +267,7 @@ app.get('/test-pass', async (req, res) => {
 
 // Generate strip image for coupon (banner at top)
 // Strip dimensions @3x: 1125 x 432 (375pt x 144pt) - taller than eventTicket!
-async function generateStripImage(color, drawingDataUrl) {
+async function generateStripImage(color, drawingDataUrl, text) {
   const width = 1125;
   const height = 432;
   const canvas = createCanvas(width, height);
@@ -327,6 +327,50 @@ async function generateStripImage(color, drawingDataUrl) {
     } catch (e) {
       console.error('Could not load drawing for strip:', e.message);
     }
+  }
+
+  // Render user text onto the strip
+  if (text && text.trim()) {
+    ctx.save();
+    ctx.font = '48px Caveat';
+    ctx.fillStyle = '#1a1a1a';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+
+    const maxWidth = width * 0.8;
+    const lineHeight = 60;
+    const words = text.split('\n');
+    const lines = [];
+
+    // Split by newlines first, then wrap long lines
+    for (const paragraph of words) {
+      const paraWords = paragraph.split(' ');
+      let currentLine = '';
+      for (const word of paraWords) {
+        const testLine = currentLine ? `${currentLine} ${word}` : word;
+        if (ctx.measureText(testLine).width > maxWidth && currentLine) {
+          lines.push(currentLine);
+          currentLine = word;
+        } else {
+          currentLine = testLine;
+        }
+      }
+      if (currentLine) lines.push(currentLine);
+    }
+
+    // Position text: if there's a drawing, put text at top; otherwise center vertically
+    const totalTextHeight = lines.length * lineHeight;
+    let startY;
+    if (drawingDataUrl && drawingDataUrl.length > 1000) {
+      startY = 24; // Top of strip when drawing present
+    } else {
+      startY = (height - totalTextHeight) / 2;
+    }
+
+    for (let i = 0; i < lines.length; i++) {
+      ctx.fillText(lines[i], width / 2, startY + i * lineHeight);
+    }
+    ctx.restore();
   }
 
   return canvas.toBuffer('image/png');
