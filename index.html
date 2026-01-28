@@ -172,7 +172,7 @@
           <a href="#" class="wallet-btn-link" id="apple-wallet-btn">
             <img id="apple-wallet-img" src="./assets/wallet-buttons/apple-wallet-buttons/Locale=EN.svg" alt="Add to Apple Wallet">
           </a>
-          <a href="#" class="wallet-btn-link" id="google-wallet-btn">
+          <a href="#" class="wallet-btn-link" id="google-wallet-btn" style="display:none;">
             <img id="google-wallet-img" src="./assets/wallet-buttons/google-wallet-buttons/Locale=EN, Type=Primary.svg" alt="Add to Google Wallet">
           </a>
         </div>
@@ -265,13 +265,52 @@
           });
         });
 
-        // Coming soon click handler
+        // Apple Wallet button handler
         const walletMessage = document.getElementById('wallet-message');
-        document.querySelectorAll('.wallet-btn-link').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.preventDefault();
+        const appleWalletBtn = document.getElementById('apple-wallet-btn');
+        const BACKEND_URL = 'https://sandbox-staging.up.railway.app';
+
+        appleWalletBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          const memo = document.getElementById('memo');
+          const text = memo ? memo.value.trim() : '';
+          if (!text) {
+            walletMessage.textContent = 'Write something on your note first!';
             walletMessage.classList.add('visible');
-          });
+            setTimeout(() => walletMessage.classList.remove('visible'), 2000);
+            return;
+          }
+
+          // Get current note color
+          const noteShape = document.getElementById('note-shape');
+          const currentColor = noteShape ? noteShape.getAttribute('fill') : null;
+
+          // Get drawing data
+          const drawingCanvas = document.getElementById('note-drawing-layer');
+          const drawingDataUrl = drawingCanvas && drawingCanvas.getContext('2d').getImageData(0, 0, 1, 1).data[3] > 0
+            ? drawingCanvas.toDataURL('image/png') : null;
+
+          walletMessage.textContent = 'Creating your pass...';
+          walletMessage.classList.add('visible');
+
+          try {
+            // Use two-step flow for iOS Safari
+            const prepRes = await fetch(`${BACKEND_URL}/api/prepare-pass`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text, color: currentColor, drawingDataUrl })
+            });
+            const { token, error } = await prepRes.json();
+            if (error) throw new Error(error);
+
+            // Redirect to download URL (triggers iOS wallet prompt)
+            window.location.href = `${BACKEND_URL}/api/download-pass/${token}`;
+            walletMessage.classList.remove('visible');
+          } catch (err) {
+            walletMessage.textContent = 'Something went wrong. Try again!';
+            setTimeout(() => walletMessage.classList.remove('visible'), 2500);
+            console.error('Pass generation error:', err);
+          }
         });
       })();
 
