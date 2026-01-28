@@ -19,7 +19,7 @@ process.on('unhandledRejection', (reason) => {
 });
 
 // Build number for debugging deploys
-const BUILD_NUMBER = 82;
+const BUILD_NUMBER = 83;
 
 // Temporary storage for pending passes (Safari iOS workaround)
 const pendingPasses = new Map();
@@ -124,11 +124,15 @@ async function createPass({ text, color, drawingDataUrl }) {
     pass.backFields[0].value = String(BUILD_NUMBER);
   }
   
-  // Set memo text in primaryFields
+  // Set memo text in secondaryFields (smaller, below strip)
   if (text && text.trim()) {
-    if (pass.primaryFields && pass.primaryFields[0]) {
-      pass.primaryFields[0].value = text;
-    }
+    pass.secondaryFields = [
+      {
+        key: "memo",
+        label: "Note",
+        value: text
+      }
+    ];
   }
 
   // Generate color-matched images

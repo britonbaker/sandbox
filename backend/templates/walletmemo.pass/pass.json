@@ -11,13 +11,7 @@
   "logoText": "Wallet Memo",
   "coupon": {
     "headerFields": [],
-    "primaryFields": [
-      {
-        "key": "memo",
-        "label": "",
-        "value": ""
-      }
-    ],
+    "primaryFields": [],
     "secondaryFields": [],
     "auxiliaryFields": [],
     "backFields": [
