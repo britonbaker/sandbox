@@ -289,15 +289,7 @@ body {
   z-index: 2;
 }
 
-.note-version {
-  position: absolute;
-  bottom: 48px;
-  right: 44px;
-  font-size: 11px;
-  color: rgba(0,0,0,0.3);
-  font-family: inherit;
-  pointer-events: none;
-}
+/* note-version removed - using build-hover-area instead */
 
 /* Ellipsis menu button */
 .note-menu-btn {
@@ -874,25 +866,14 @@ body {
 
 /* Hidden build number - shows on hover over bottom-left corner */
 .build-hover-area {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 60px;
-  height: 60px;
-  z-index: 9999;
+  width: 344px;
+  margin: -48px auto 0;
+  text-align: right;
+  padding-right: 8px;
 }
 
 .build-number {
-  position: absolute;
-  bottom: 8px;
-  left: 8px;
-  font-size: 10px;
-  color: #888;
-  opacity: 0;
-  transition: opacity 0.2s;
+  font-size: 11px;
+  color: rgba(0,0,0,0.3);
   user-select: none;
-}
-
-.build-hover-area:hover .build-number {
-  opacity: 0.5;
 }
