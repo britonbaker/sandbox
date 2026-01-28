@@ -189,7 +189,7 @@ body {
 .focus-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.6);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -227,7 +227,7 @@ body {
 
 @media (max-width: 600px) {
   .note-wrapper.flat {
-    transform: scale(var(--mobile-note-scale, 1.03)) translateY(-120px);
+    transform: scale(var(--mobile-note-scale, 1.03)) translateY(-140px);
   }
 }
 
@@ -773,7 +773,7 @@ body {
   /* Scale up bigger on mobile when clicked/focused - almost edge to edge */
   .note-wrapper.flat,
   .note-wrapper.flat:hover {
-    transform: scale(var(--mobile-note-scale, 1.03)) translateY(-120px);
+    transform: scale(var(--mobile-note-scale, 1.03)) translateY(-140px);
   }
 
   .note-paper {
