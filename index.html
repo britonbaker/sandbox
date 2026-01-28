@@ -147,7 +147,7 @@
             placeholder="Buy oat milk&#10;Text mom&#10;Don't forget…"
             maxlength="140"
           ></textarea>
-          <div class="note-version">Build 96</div>
+          <div class="note-version">Build 97</div>
         </div>
         <!-- Drawing toolbar -->
         <div class="drawing-toolbar" id="drawing-toolbar">
@@ -523,14 +523,24 @@
           textarea.focus();
         });
 
-        // Calculate mobile scale so note fills screen width with padding
-        function updateMobileScale() {
+        // Calculate mobile scale and offset so note fills width and top-aligns
+        function updateMobileLayout() {
           const noteWidth = noteWrapper.offsetWidth || 344;
           const scale = (window.innerWidth / noteWidth) * 1.1;
           document.documentElement.style.setProperty('--mobile-note-scale', scale.toFixed(3));
+
+          // Calculate offset to move note's top edge to top of viewport
+          const rect = noteWrapper.getBoundingClientRect();
+          const scrollY = window.scrollY || window.pageYOffset;
+          const noteTop = rect.top + scrollY;
+          // After scaling, the note expands from center, so top shifts up by half the growth
+          const scaledHeight = noteWrapper.offsetHeight * scale;
+          const growthY = (scaledHeight - noteWrapper.offsetHeight) / 2;
+          const offset = -(noteTop - growthY - 16); // 16px padding from top
+          document.documentElement.style.setProperty('--mobile-note-offset', offset.toFixed(0) + 'px');
         }
-        updateMobileScale();
-        window.addEventListener('resize', updateMobileScale);
+        updateMobileLayout();
+        window.addEventListener('resize', updateMobileLayout);
 
         // Mobile: touchend for immediate focus without double-tap
         noteWrapper.addEventListener('touchend', (e) => {
