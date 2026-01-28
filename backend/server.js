@@ -19,7 +19,7 @@ process.on('unhandledRejection', (reason) => {
 });
 
 // Build number for debugging deploys
-const BUILD_NUMBER = 74;
+const BUILD_NUMBER = 75;
 
 // Temporary storage for pending passes (Safari iOS workaround)
 const pendingPasses = new Map();
@@ -106,7 +106,18 @@ async function createPass({ text, color, drawingDataUrl }) {
   const eventDate = new Date();
   eventDate.setFullYear(eventDate.getFullYear() + 10);
   const eventDateStr = eventDate.toISOString();
-  passJsonContent.relevantDate = eventDateStr;
+  
+  // Use relevantDates array for poster mode (not relevantDate string)
+  const endDate = new Date(eventDate);
+  endDate.setHours(endDate.getHours() + 4);
+  passJsonContent.relevantDates = [
+    {
+      startDate: eventDateStr,
+      endDate: endDate.toISOString()
+    }
+  ];
+  // Remove old relevantDate if present
+  delete passJsonContent.relevantDate;
   
   // Update semantics for poster event ticket
   if (passJsonContent.semantics) {
