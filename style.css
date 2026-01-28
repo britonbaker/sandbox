@@ -385,6 +385,18 @@ body {
   flex-shrink: 0;
 }
 
+.dropdown-item:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.coming-soon-tag {
+  font-size: 10px;
+  color: rgba(0,0,0,0.4);
+  margin-left: auto;
+  font-weight: 400;
+}
+
 .color-icon {
   width: 18px;
   height: 18px;
