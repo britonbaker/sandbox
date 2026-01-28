@@ -6,7 +6,7 @@
     <title>Wallet Memo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css">
     <link rel="stylesheet" href="./style.css" />
           <!-- GoatCounter analytics -->
@@ -511,6 +511,13 @@
 
         // Get textarea element
         const textarea = document.getElementById('memo');
+
+        // Tap anywhere on the note to focus textarea (fixes mobile double-tap)
+        noteWrapper.addEventListener('click', (e) => {
+          // Don't steal clicks from menu, dropdown, or drawing layer
+          if (e.target.closest('.note-menu-btn') || e.target.closest('.note-dropdown') || e.target.closest('.drawing-toolbar')) return;
+          textarea.focus();
+        });
 
         // Focus/blur on textarea triggers the flat/curled animation
         textarea.addEventListener('focus', () => {

@@ -199,8 +199,10 @@ body {
   cursor: pointer;
 }
 
-.note-wrapper:hover {
-  transform: translateY(-2px);
+@media (hover: hover) {
+  .note-wrapper:hover {
+    transform: translateY(-2px);
+  }
 }
 
 /* Focused state - note lifts and grows slightly */
@@ -577,12 +579,13 @@ body {
   flex: 1;
   border: none;
   background: transparent;
-  font-family: 'Caveat', cursive;
-  font-size: 24px;
-  line-height: 1.4;
+  font-family: 'Indie Flower', cursive;
+  font-size: 20px;
+  line-height: 1.5;
   color: #1a1a1a;
   resize: none;
   outline: none;
+  text-align: center;
   position: relative;
   z-index: 1;
   transform: skewX(-3deg) skewY(1deg);
@@ -764,7 +767,7 @@ body {
   }
 
   .textarea {
-    font-size: 18px;
+    font-size: 17px;
   }
 
   .note-menu-btn {
