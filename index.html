@@ -197,7 +197,7 @@
       </div>
     </main>
     
-    <div class="build-hover-area"><span class="build-number">Build 100</span></div>
+    <div class="build-hover-area"><span class="build-number">Build 101</span></div>
     </div>
 
     <script>
@@ -576,13 +576,15 @@
         });
 
         // Menu toggle
-        // Prevent menu button from stealing focus from textarea
+        // Prevent menu/dropdown from stealing focus from textarea
         menuBtn.addEventListener('mousedown', (e) => e.preventDefault());
-        menuBtn.addEventListener('touchstart', (e) => e.preventDefault());
+        dropdown.addEventListener('mousedown', (e) => e.preventDefault());
         menuBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           menuBtn.classList.toggle('active');
           dropdown.classList.toggle('open');
+          // Re-focus textarea so note stays in focused state
+          if (isFlat) textarea.focus({ preventScroll: true });
         });
 
         // Close menu when clicking outside
