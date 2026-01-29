@@ -617,6 +617,7 @@ body {
   height: 54px;
   overflow: visible;
   flex-shrink: 0;
+  z-index: 50;
 }
 
 .wallet-message {
