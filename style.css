@@ -906,8 +906,9 @@ body {
 }
 
 .add-note-btn i {
-  font-size: 36px;
-  color: rgba(0,0,0,0.2);
+  font-size: 48px;
+  color: rgba(0,0,0,0.35);
+  font-weight: bold;
   transition: color 0.3s ease;
 }
 
