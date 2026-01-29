@@ -27,8 +27,13 @@
   </head>
   <body>
     <style>
-      html { background: linear-gradient(to bottom, #fafafa, #e5e5e5); background-attachment: fixed; min-height: 100vh; }
+      html { background: linear-gradient(to bottom, #fafafa, #e5e5e5); background-attachment: fixed; min-height: 100vh; overflow-y: overlay; }
       html, body { overflow-x: hidden; }
+      html::-webkit-scrollbar { width: 8px; }
+      html::-webkit-scrollbar-track { background: transparent; }
+      html::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 4px; }
+      html::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,.3); }
+      @supports (scrollbar-width: thin) { html { scrollbar-width: thin; scrollbar-color: rgba(0,0,0,.15) transparent; } }
       html.page-slide-out-left .page-content { animation: slideOutLeft 0.35s ease-in forwards; }
       html.page-slide-in-left .page-content { animation: slideInFromLeft 0.4s ease-out forwards; }
       @keyframes slideOutLeft {
@@ -1962,7 +1967,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v31';
+      if (tv) tv.textContent = ' · test v32';
 
       // Add changelog link to footer (test → test changelog)
       const footerArea = document.querySelector('.build-hover-area');
