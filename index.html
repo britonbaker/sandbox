@@ -587,6 +587,7 @@
           }
 
           wrapper.addEventListener('note:lift', () => {
+            console.log('note:lift fired', noteId, 'noteIsFlat:', noteIsFlat, 'shape:', !!shape, 'stops:', stops.length);
             if (!noteIsFlat) {
               noteIsFlat = true;
               animateNotePath(statePoints.curled, statePoints.flat);
@@ -596,6 +597,7 @@
           });
 
           wrapper.addEventListener('note:stick', () => {
+            console.log('note:stick fired', noteId, 'noteIsFlat:', noteIsFlat);
             if (noteIsFlat) {
               noteIsFlat = false;
               animateNotePath(statePoints.flat, statePoints.curled);
@@ -1205,6 +1207,6 @@
         });
       })();
     </script>
-    <div class="build-hover-area"><span class="build-number">Build 130</span></div>
+    <div class="build-hover-area"><span class="build-number">Build 131</span></div>
   </body>
 </html>
