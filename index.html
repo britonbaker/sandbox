@@ -201,6 +201,10 @@
 
       <!-- Drawing toolbar: shared across all notes, positioned via JS -->
       <div class="drawing-toolbar" id="drawing-toolbar">
+        <button class="toolbar-btn cancel" id="cancel-drawing"><i class="hgi-stroke hgi-cancel-01"></i></button>
+        <div class="toolbar-divider"></div>
+        <button class="toolbar-btn clear" id="clear-drawing"><i class="hgi-stroke hgi-delete-02"></i></button>
+        <div class="toolbar-divider"></div>
         <div class="pen-colors">
           <button class="pen-color active" data-color="26,26,26" style="background:#1a1a1a"></button>
           <button class="pen-color" data-color="229,57,53" style="background:#e53935"></button>
@@ -208,17 +212,15 @@
           <button class="pen-color" data-color="67,160,71" style="background:#43a047"></button>
           <button class="pen-color" data-color="142,36,170" style="background:#8e24aa"></button>
         </div>
+        <div class="toolbar-divider"></div>
         <div class="pen-sizes">
           <button class="pen-size" data-size="1"><span style="width:4px;height:4px"></span></button>
           <button class="pen-size active" data-size="2"><span style="width:6px;height:6px"></span></button>
           <button class="pen-size" data-size="4"><span style="width:10px;height:10px"></span></button>
           <button class="pen-size" data-size="6"><span style="width:14px;height:14px"></span></button>
         </div>
-        <div class="pen-actions">
-          <button class="toolbar-btn clear" id="clear-drawing"><i class="hgi-stroke hgi-delete-02"></i></button>
-          <button class="toolbar-btn cancel" id="cancel-drawing">Cancel</button>
-          <button class="toolbar-btn done" id="done-drawing">Done</button>
-        </div>
+        <div class="toolbar-divider"></div>
+        <button class="toolbar-btn done" id="done-drawing"><i class="hgi-stroke hgi-checkmark-02"></i></button>
       </div>
 
       <div class="wallet-wrapper">
@@ -1967,7 +1969,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v34';
+      if (tv) tv.textContent = ' · test v35';
 
       // Add changelog link to footer (test → test changelog)
       const footerArea = document.querySelector('.build-hover-area');
