@@ -1933,7 +1933,21 @@
       const tv = document.getElementById('test-version');
       if (tv) tv.textContent = ' · test v12';
 
-      // Add changelog link to footer
+      // Add changelog link to footer (test → test changelog)
+      const footerArea = document.querySelector('.build-hover-area');
+      if (footerArea) {
+        const clLink = document.createElement('a');
+        clLink.href = 'changelog-test.html';
+        clLink.className = 'footer-link changelog-footer-link';
+        clLink.textContent = 'Changelog';
+        const dot = document.createTextNode(' · ');
+        footerArea.insertBefore(dot, footerArea.firstChild);
+        footerArea.insertBefore(clLink, footerArea.firstChild);
+      }
+    }
+
+    // Production changelog link (always visible)
+    if (!location.hostname.includes('clawdbrit')) {
       const footerArea = document.querySelector('.build-hover-area');
       if (footerArea) {
         const clLink = document.createElement('a');

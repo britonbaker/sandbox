@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Changelog (Test) — Wallet Memo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Cormorant+Garamond:wght@300&display=swap" rel="stylesheet">
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: 'Inter', sans-serif;
+        font-weight: 300;
+        color: #1a1a1a;
+        background: #f5f5f5;
+        padding: 40px 20px 60px;
+        max-width: 640px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+      .back-link {
+        display: inline-block;
+        margin-bottom: 32px;
+        font-size: 14px;
+        color: #666;
+        text-decoration: none;
+        letter-spacing: 0.02em;
+      }
+      .back-link:hover { color: #1a1a1a; }
+      .back-link::before { content: '← '; }
+      h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 300;
+        font-size: 36px;
+        margin-bottom: 8px;
+      }
+      .subtitle {
+        font-size: 13px;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 40px;
+      }
+      .test-badge {
+        display: inline-block;
+        font-size: 11px;
+        color: #e65100;
+        border: 1px solid #ffcc80;
+        background: #fff3e0;
+        border-radius: 4px;
+        padding: 2px 8px;
+        margin-left: 8px;
+        vertical-align: middle;
+      }
+      .version-tag {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 400;
+        color: #888;
+        background: #eee;
+        border-radius: 4px;
+        padding: 1px 6px;
+        margin-left: 8px;
+        vertical-align: middle;
+      }
+      .date-group { margin-bottom: 32px; }
+      .date-group h2 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 400;
+        font-size: 15px;
+        color: #333;
+        margin-bottom: 12px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid #e0e0e0;
+      }
+      .date-group ul { list-style: none; }
+      .date-group li {
+        font-size: 14px;
+        padding: 4px 0;
+        color: #444;
+      }
+      .cl-tag {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 400;
+        padding: 1px 6px;
+        border-radius: 3px;
+        margin-right: 4px;
+      }
+      .cl-new { background: #e8f5e9; color: #2e7d32; }
+      .cl-fix { background: #fff3e0; color: #e65100; }
+      .cl-improve { background: #e3f2fd; color: #1565c0; }
+      .cl-design { background: #fce4ec; color: #c62828; }
+    </style>
+  </head>
+  <body>
+    <a href="./" class="back-link">Wallet Memo</a>
+    <h1>Changelog <span class="test-badge">TEST</span></h1>
+    <p class="subtitle">All changes — test builds</p>
+
+    <div class="date-group">
+      <h2>January 29, 2026 <span class="version-tag">v12</span></h2>
+      <ul>
+        <li><span class="cl-tag cl-new">✨ New</span> Note registry — each note gets unique ID, QR/download targets active note</li>
+        <li><span class="cl-tag cl-new">✨ New</span> Active/last-active note tracking for per-note downloads</li>
+      </ul>
+    </div>
+
+    <div class="date-group">
+      <h2>January 29, 2026 <span class="version-tag">v11</span></h2>
+      <ul>
+        <li><span class="cl-tag cl-new">✨ New</span> Changelog moved to separate page</li>
+        <li><span class="cl-tag cl-new">✨ New</span> Footer changelog link (test site only)</li>
+      </ul>
+    </div>
+
+    <div class="date-group">
+      <h2>January 29, 2026 <span class="version-tag">v10</span></h2>
+      <ul>
+        <li><span class="cl-tag cl-new">✨ New</span> Changelog section added</li>
+      </ul>
+    </div>
+
+    <div class="date-group">
+      <h2>January 29, 2026 <span class="version-tag">v9</span></h2>
+      <ul>
+        <li><span class="cl-tag cl-fix">🔧 Fix</span> Drawing toolbar moved outside note wrapper — shared across all notes</li>
+        <li><span class="cl-tag cl-fix">🔧 Fix</span> Done/Cancel properly hide toolbar for spawned notes</li>
+        <li><span class="cl-tag cl-fix">🔧 Fix</span> Suppressed hover flickering in drawing mode</li>
+      </ul>
+    </div>
+
+    <div class="date-group">
+      <h2>January 29, 2026 <span class="version-tag">v8</span></h2>
+      <ul>
+        <li><span class="cl-tag cl-fix">🔧 Fix</span> Exposed isDrawingMode globally so spawned notes can draw</li>
+        <li><span class="cl-tag cl-fix">🔧 Fix</span> Show drawing toolbar when spawned notes enter draw mode</li>
+      </ul>
+    </div>
+
+    <div class="date-group">
+      <h2>January 29, 2026 <span class="version-tag">v7</span></h2>
+      <ul>
+        <li><span class="cl-tag cl-new">✨ New</span> Full drawing mode on all spawned sticky notes (shared toolbar)</li>
+        <li><span class="cl-tag cl-new">✨ New</span> Menu button (⋮) with color change + draw on all notes</li>
+        <li><span class="cl-tag cl-new">✨ New</span> Tilt direction based on grab position (left/right)</li>
+      </ul>
+    </div>
+
+    <div class="date-group">
+      <h2>January 29, 2026 <span class="version-tag">v6</span></h2>
+      <ul>
+        <li><span class="cl-tag cl-fix">🔧 Fix</span> Grab cursor now works on desktop (CSS class approach)</li>
+        <li><span class="cl-tag cl-improve">⚡ Improvement</span> Increased drag zone height from 48px to 80px</li>
+        <li><span class="cl-tag cl-new">✨ New</span> Footer test version number</li>
+      </ul>
+    </div>
+
+    <div class="date-group">
+      <h2>January 29, 2026 <span class="version-tag">v5</span></h2>
+      <ul>
+        <li><span class="cl-tag cl-new">✨ New</span> QR code pass-redirect endpoint for mobile scanning</li>
+        <li><span class="cl-tag cl-fix">🔧 Fix</span> Matched strip/background colors in Apple Wallet pass (removed lighter ribbon)</li>
+        <li><span class="cl-tag cl-design">🎨 Design</span> Tinted logoText color in Apple Wallet pass</li>
+        <li><span class="cl-tag cl-design">🎨 Design</span> Removed text from strip image (text in coupon fields only)</li>
+      </ul>
+    </div>
+
+    <div class="date-group">
+      <h2>January 29, 2026 <span class="version-tag">v4</span></h2>
+      <ul>
+        <li><span class="cl-tag cl-design">🎨 Design</span> Switched title font to Cormorant Garamond 300</li>
+        <li><span class="cl-tag cl-design">🎨 Design</span> Uppercase Inter 300 tagline with softer opacity</li>
+        <li><span class="cl-tag cl-improve">⚡ Improvement</span> Grabbed note always floats on top (z-index fix)</li>
+      </ul>
+    </div>
+
+    <div class="date-group">
+      <h2>January 28, 2026 <span class="version-tag">v1</span></h2>
+      <ul>
+        <li><span class="cl-tag cl-new">✨ New</span> Multi-note system with drag-to-move</li>
+        <li><span class="cl-tag cl-new">✨ New</span> Drawing mode with pen colors, sizes, undo</li>
+        <li><span class="cl-tag cl-new">✨ New</span> Color changing (blue, yellow, pink)</li>
+        <li><span class="cl-tag cl-new">✨ New</span> Apple Wallet pass generation</li>
+        <li><span class="cl-tag cl-design">🎨 Design</span> Paper texture SVG with realistic shadows</li>
+        <li><span class="cl-tag cl-new">✨ New</span> i18n support (EN, ES, FR, DE, JP, KR, ZH)</li>
+      </ul>
+    </div>
+  </body>
+</html>

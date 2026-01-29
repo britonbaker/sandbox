@@ -42,16 +42,6 @@
         letter-spacing: 0.08em;
         margin-bottom: 40px;
       }
-      .test-badge {
-        display: inline-block;
-        font-size: 11px;
-        color: #999;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 2px 6px;
-        margin-left: 8px;
-        vertical-align: middle;
-      }
       .date-group { margin-bottom: 32px; }
       .date-group h2 {
         font-family: 'Inter', sans-serif;
@@ -61,6 +51,17 @@
         margin-bottom: 12px;
         padding-bottom: 6px;
         border-bottom: 1px solid #e0e0e0;
+      }
+      .version-tag {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 400;
+        color: #888;
+        background: #eee;
+        border-radius: 4px;
+        padding: 1px 6px;
+        margin-left: 8px;
+        vertical-align: middle;
       }
       .date-group ul { list-style: none; }
       .date-group li {
@@ -84,42 +85,30 @@
   </head>
   <body>
     <a href="./" class="back-link">Wallet Memo</a>
-    <h1>Changelog <span class="test-badge" id="test-badge"></span></h1>
+    <h1>Changelog</h1>
     <p class="subtitle">What's new in Wallet Memo</p>
 
     <div class="date-group">
-      <h2>January 29, 2026</h2>
+      <h2>January 29, 2026 <span class="version-tag">v1.1</span></h2>
       <ul>
-        <li><span class="cl-tag cl-new">✨ New</span> Full drawing mode on all spawned sticky notes (shared toolbar)</li>
-        <li><span class="cl-tag cl-new">✨ New</span> Menu button (⋮) with color change + draw on all notes</li>
-        <li><span class="cl-tag cl-new">✨ New</span> Tilt direction based on grab position (left/right)</li>
-        <li><span class="cl-tag cl-fix">🔧 Fix</span> Fixed grab cursor not showing on desktop</li>
-        <li><span class="cl-tag cl-fix">🔧 Fix</span> Fixed GitHub Pages deploy pipeline</li>
-        <li><span class="cl-tag cl-improve">⚡ Improvement</span> Increased drag zone height for easier grabbing</li>
-        <li><span class="cl-tag cl-design">🎨 Design</span> Switched title font to Cormorant Garamond 300</li>
-        <li><span class="cl-tag cl-design">🎨 Design</span> Uppercase Inter tagline with softer opacity</li>
-        <li><span class="cl-tag cl-new">✨ New</span> QR code pass-redirect endpoint for mobile scanning</li>
-        <li><span class="cl-tag cl-fix">🔧 Fix</span> Matched strip/background colors in Apple Wallet pass</li>
-        <li><span class="cl-tag cl-design">🎨 Design</span> Tinted logoText color in Apple Wallet pass</li>
+        <li><span class="cl-tag cl-new">✨ New</span> Draw on any sticky note — full pen, colors, sizes, undo</li>
+        <li><span class="cl-tag cl-new">✨ New</span> Multiple sticky notes with drag-to-move</li>
+        <li><span class="cl-tag cl-new">✨ New</span> Menu button on every note (color change + draw)</li>
+        <li><span class="cl-tag cl-new">✨ New</span> QR code scanning now includes your drawing</li>
+        <li><span class="cl-tag cl-design">🎨 Design</span> New title font (Cormorant Garamond) + refined tagline</li>
+        <li><span class="cl-tag cl-design">🎨 Design</span> Improved Apple Wallet pass colors and styling</li>
       </ul>
     </div>
 
     <div class="date-group">
-      <h2>January 28, 2026</h2>
+      <h2>January 28, 2026 <span class="version-tag">v1.0</span></h2>
       <ul>
-        <li><span class="cl-tag cl-new">✨ New</span> Multi-note system with drag-to-move</li>
-        <li><span class="cl-tag cl-new">✨ New</span> Drawing mode with pen colors, sizes, undo</li>
-        <li><span class="cl-tag cl-new">✨ New</span> Color changing (blue, yellow, pink)</li>
+        <li><span class="cl-tag cl-new">✨ New</span> Wallet Memo launches — sticky notes for Apple Wallet</li>
+        <li><span class="cl-tag cl-new">✨ New</span> Drawing mode with pen colors and sizes</li>
+        <li><span class="cl-tag cl-new">✨ New</span> Color themes: blue, yellow, pink</li>
         <li><span class="cl-tag cl-new">✨ New</span> Apple Wallet pass generation</li>
-        <li><span class="cl-tag cl-design">🎨 Design</span> Paper texture SVG with realistic shadows</li>
-        <li><span class="cl-tag cl-new">✨ New</span> i18n support (EN, ES, FR, DE, JP, KR, ZH)</li>
+        <li><span class="cl-tag cl-new">✨ New</span> Multi-language support (EN, ES, FR, DE, JP, KR, ZH)</li>
       </ul>
     </div>
-
-    <script>
-      if (location.hostname.includes('clawdbrit')) {
-        document.getElementById('test-badge').textContent = 'test v11';
-      }
-    </script>
   </body>
 </html>
