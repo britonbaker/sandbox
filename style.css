@@ -851,25 +851,40 @@ body {
 }
 
 /* QR Code inside wallet button */
-.wallet-btn-link {
+.wallet-btn-link#apple-wallet-btn {
   flex-direction: column;
   overflow: hidden;
   border-radius: 12px;
   background: #000;
   box-shadow: 0 0 0 1px rgba(0,0,0,1);
+  max-height: 44px;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 20;
+}
+
+.wallet-btn-link#apple-wallet-btn.qr-open {
+  max-height: 300px;
 }
 
 .wallet-btn-link img {
   height: 40px;
   width: auto;
   display: block;
+  flex-shrink: 0;
 }
 
 .wallet-qr {
-  display: none;
+  display: flex;
   justify-content: center;
   align-items: center;
-  padding: 10px 10px 14px;
+  padding: 6px 10px 14px;
+  opacity: 0;
+  transition: opacity 0.3s ease 0.1s;
+}
+
+.wallet-btn-link#apple-wallet-btn.qr-open .wallet-qr {
+  opacity: 1;
 }
 
 .wallet-qr svg {

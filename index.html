@@ -989,8 +989,8 @@
           if (!isMobile()) {
             // Desktop: toggle QR code inside the button
             if (qrVisible) {
-              walletQr.innerHTML = '';
-              walletQr.style.display = 'none';
+              appleWalletBtn.classList.remove('qr-open');
+              setTimeout(() => { walletQr.innerHTML = ''; }, 400);
               qrVisible = false;
               return;
             }
@@ -1023,7 +1023,7 @@
                 ecl: 'M'
               });
               walletQr.innerHTML = qr.svg();
-              walletQr.style.display = 'flex';
+              appleWalletBtn.classList.add('qr-open');
               qrVisible = true;
             } catch (err) {
               console.error('QR generation failed:', err);
@@ -1312,6 +1312,6 @@
         });
       })();
     </script>
-    <div class="build-hover-area"><a href="mailto:ram@agentmail.to" class="footer-link"><i class="hgi-stroke hgi-mail-02" style="margin-right: 4px; font-size: 10px;"></i>Email Us</a> · <span class="build-number">Build 146</span></div>
+    <div class="build-hover-area"><a href="mailto:ram@agentmail.to" class="footer-link"><i class="hgi-stroke hgi-mail-02" style="margin-right: 4px; font-size: 10px;"></i>Email Us</a> · <span class="build-number">Build 147</span></div>
   </body>
 </html>
