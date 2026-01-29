@@ -232,12 +232,12 @@ body {
 
 /* Focused state - note lifts and grows slightly */
 .note-wrapper.flat {
-  transform: scale(1.08);
+  transform: scale(1.1);
 }
 
 @media (max-width: 600px) {
   .note-wrapper.flat {
-    transform: scale(var(--mobile-note-scale, 1.03)) translateY(-78px);
+    transform: scale(var(--mobile-note-scale, 1.1)) translateY(-78px);
   }
 }
 
@@ -867,10 +867,6 @@ body {
 
 /* QR Code inside wallet button — DESKTOP ONLY */
 @media (min-width: 601px) {
-  .wallet-buttons {
-    height: 44px;
-    overflow: visible;
-  }
   .wallet-btn-link#apple-wallet-btn {
     display: flex;
     flex-direction: column;
@@ -881,7 +877,6 @@ body {
     box-shadow: 0 0 0 1px rgba(0,0,0,1);
     max-height: 44px;
     transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
     z-index: 20;
   }
   .wallet-btn-link#apple-wallet-btn.qr-open {
