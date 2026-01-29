@@ -197,7 +197,7 @@
       </div>
     </main>
     
-    <div class="build-hover-area"><span class="build-number">Build 106</span></div>
+    <div class="build-hover-area"><span class="build-number">Build 107</span></div>
     </div>
 
     <script>
@@ -876,68 +876,137 @@
         });
       })();
 
-      // Desktop drag-to-move sticky note
+      // Desktop drag-to-move sticky note + "add new" pad
       (function() {
         if ('ontouchstart' in window) return; // Skip on mobile
 
+        const mainArea = document.querySelector('main') || document.querySelector('.content-wrapper');
         const wrapper = document.getElementById('note-wrapper');
-        const note = document.getElementById('sticky-note');
-        const menuBtn = document.getElementById('menu-btn');
-        const dragZoneHeight = 48; // Top area of the note acts as drag handle
-        let isDragging = false;
-        let startX, startY, origX, origY;
-        let offsetX = 0, offsetY = 0;
+        const dragZoneHeight = 48;
+        let noteCounter = 0;
+        let hasMoved = false;
 
-        // Show grab cursor in the top drag zone
-        wrapper.addEventListener('mousemove', (e) => {
-          if (isDragging) return;
-          const rect = wrapper.getBoundingClientRect();
-          const relY = e.clientY - rect.top;
-          const relX = e.clientX - rect.left;
-          // Check if in top zone and not over menu button
-          if (relY < dragZoneHeight && !e.target.closest('.note-menu-btn') && !e.target.closest('.note-dropdown')) {
-            wrapper.style.cursor = 'grab';
-          } else {
-            wrapper.style.cursor = '';
-          }
-        });
+        // Create the "add new note" button that sits behind the note
+        const addBtn = document.createElement('div');
+        addBtn.className = 'add-note-btn';
+        addBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+        addBtn.style.display = 'none';
+        wrapper.parentElement.insertBefore(addBtn, wrapper);
 
-        wrapper.addEventListener('mousedown', (e) => {
-          const rect = wrapper.getBoundingClientRect();
-          const relY = e.clientY - rect.top;
-          if (relY >= dragZoneHeight) return;
-          if (e.target.closest('.note-menu-btn') || e.target.closest('.note-dropdown')) return;
+        function makeDraggable(el) {
+          let isDragging = false;
+          let startX, startY, origX = 0, origY = 0;
+          let offsetX = 0, offsetY = 0;
 
-          e.preventDefault();
-          isDragging = true;
-          startX = e.clientX;
-          startY = e.clientY;
-          origX = offsetX;
-          origY = offsetY;
-          wrapper.style.cursor = 'grabbing';
-          wrapper.style.transition = 'none';
-          wrapper.style.zIndex = '100';
-          // Lift effect
-          wrapper.style.filter = 'drop-shadow(0 8px 24px rgba(0,0,0,0.2))';
-        });
+          el.addEventListener('mousemove', (e) => {
+            if (isDragging) return;
+            const rect = el.getBoundingClientRect();
+            const relY = e.clientY - rect.top;
+            if (relY < dragZoneHeight && !e.target.closest('.note-menu-btn') && !e.target.closest('.note-dropdown')) {
+              el.style.cursor = 'grab';
+            } else {
+              el.style.cursor = '';
+            }
+          });
 
-        document.addEventListener('mousemove', (e) => {
-          if (!isDragging) return;
-          const dx = e.clientX - startX;
-          const dy = e.clientY - startY;
-          offsetX = origX + dx;
-          offsetY = origY + dy;
-          wrapper.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-        });
+          el.addEventListener('mousedown', (e) => {
+            const rect = el.getBoundingClientRect();
+            const relY = e.clientY - rect.top;
+            if (relY >= dragZoneHeight) return;
+            if (e.target.closest('.note-menu-btn') || e.target.closest('.note-dropdown')) return;
 
-        document.addEventListener('mouseup', () => {
-          if (!isDragging) return;
-          isDragging = false;
-          wrapper.style.cursor = 'grab';
-          wrapper.style.transition = '';
-          wrapper.style.filter = '';
-          // Keep the position
-          wrapper.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+            e.preventDefault();
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            origX = offsetX;
+            origY = offsetY;
+            el.style.cursor = 'grabbing';
+            el.style.transition = 'none';
+            el.style.zIndex = String(50 + noteCounter);
+            el.style.filter = 'drop-shadow(0 8px 24px rgba(0,0,0,0.2))';
+          });
+
+          document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            offsetX = origX + dx;
+            offsetY = origY + dy;
+            el.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+
+            // Show add button once dragged enough
+            if (Math.abs(offsetX) > 30 || Math.abs(offsetY) > 30) {
+              if (!hasMoved) {
+                hasMoved = true;
+                addBtn.style.display = 'flex';
+              }
+            }
+          });
+
+          document.addEventListener('mouseup', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            el.style.cursor = 'grab';
+            el.style.transition = '';
+            el.style.filter = '';
+            el.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+          });
+        }
+
+        makeDraggable(wrapper);
+
+        // Add new note button
+        addBtn.addEventListener('click', () => {
+          noteCounter++;
+          const colors = ['blue', 'yellow', 'pink'];
+          const color = colors[noteCounter % 3];
+
+          // Color configs
+          const colorMap = {
+            blue: { gradient: ['#87C5DB', '#9DD5EE', '#B8E8F8', '#C4E9F5', '#C4E9F5'], shape: '#B4DCE8' },
+            yellow: { gradient: ['#D4C44A', '#E2D060', '#F0E480', '#F5EDA0', '#F5EDA0'], shape: '#EAD264' },
+            pink: { gradient: ['#D8A0B0', '#E4B8C0', '#F0C8D0', '#F5D8E0', '#F5D8E0'], shape: '#ECBDC5' }
+          };
+          const cfg = colorMap[color];
+
+          const newWrapper = document.createElement('div');
+          newWrapper.className = 'note-wrapper dragged-note';
+          newWrapper.style.position = 'absolute';
+          newWrapper.style.top = wrapper.offsetTop + 'px';
+          newWrapper.style.left = wrapper.offsetLeft + 'px';
+          newWrapper.style.width = '344px';
+          newWrapper.style.height = '324px';
+          newWrapper.style.zIndex = String(10 + noteCounter);
+
+          newWrapper.innerHTML = `
+            <svg class="note-paper" width="287" height="270" viewBox="0 0 287 270" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g filter="url(#nf${noteCounter})">
+                <path d="M34.6016 19.2695L250.102 18.5996C250.102 18.5996 249.602 49.0996 257.602 228.6L28.6016 231.1C36.6029 66.5996 34.6016 19.2695 34.6016 19.2695Z" fill="${cfg.shape}"/>
+              </g>
+              <defs>
+                <filter id="nf${noteCounter}" x="0" y="0" width="286.2" height="269.7" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                  <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                  <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                  <feOffset dy="10"/>
+                  <feGaussianBlur stdDeviation="14"/>
+                  <feComposite in2="hardAlpha" operator="out"/>
+                  <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0"/>
+                  <feBlend mode="normal" in2="BackgroundImageFix" result="shadow"/>
+                  <feBlend mode="normal" in="SourceGraphic" in2="shadow" result="shape"/>
+                </filter>
+              </defs>
+            </svg>
+            <div class="note" style="width:344px;height:324px;padding:48px 57px;position:absolute;top:0;left:0;z-index:2;">
+              <textarea class="textarea" placeholder="New note..." maxlength="140" style="font-family:'Patrick Hand',cursive;font-size:20px;line-height:1.5;color:#1a1a1a;border:none;background:transparent;resize:none;outline:none;text-align:center;width:100%;height:100%;transform:skewX(-3deg) skewY(1deg);"></textarea>
+            </div>`;
+
+          wrapper.parentElement.insertBefore(newWrapper, addBtn);
+          makeDraggable(newWrapper);
+
+          // Hide add button until this new one is dragged
+          hasMoved = false;
+          addBtn.style.display = 'none';
         });
       })();
     </script>
