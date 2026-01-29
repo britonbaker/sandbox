@@ -311,6 +311,7 @@ body {
 }
 
 .note:hover .note-menu-btn,
+.note-wrapper:hover .note-menu-btn,
 .note-menu-btn.active,
 .note-wrapper.flat .note-menu-btn {
   opacity: 1;
