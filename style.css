@@ -229,7 +229,7 @@ body {
 
 /* Focused state - note lifts and grows slightly */
 .note-wrapper.flat {
-  transform: scale(1.03);
+  transform: scale(1.08);
 }
 
 @media (max-width: 600px) {
@@ -239,7 +239,7 @@ body {
 }
 
 .note-wrapper.flat:hover {
-  transform: scale(1.03) translateY(-2px);
+  transform: scale(1.08) translateY(-2px);
 }
 
 /* Shadow layer - positioned behind and offset */
