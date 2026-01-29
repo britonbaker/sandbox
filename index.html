@@ -1124,8 +1124,8 @@
           newWrapper.style.height = '340px';
           newWrapper.style.zIndex = String(10 + noteCounter);
 
-          newWrapper.innerHTML = `
-            <svg class="note-paper" width="287" height="270" viewBox="0 0 287 270" fill="none" xmlns="http://www.w3.org/2000/svg">
+          // Use DOMParser to create proper SVG namespace elements
+          const svgMarkup = `<svg class="note-paper" width="287" height="270" viewBox="0 0 287 270" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g filter="url(#nf${noteCounter})">
                 <path d="M34.6016 19.2695L250.102 18.5996C250.102 18.5996 249.602 49.0996 257.602 228.6L28.6016 231.1C36.6029 66.5996 34.6016 19.2695 34.6016 19.2695Z" fill="url(#ng${noteCounter})"/>
               </g>
@@ -1174,18 +1174,29 @@
                   <feBlend mode="normal" in="effect4_noise" in2="effect3_dropShadow" result="effect4_noise"/>
                 </filter>
               </defs>
-            </svg>
-            <div class="note" style="width:360px;height:340px;padding:48px 57px;position:absolute;top:0;left:0;z-index:2;display:flex;flex-direction:column;justify-content:center;">
-              <textarea class="textarea" maxlength="140" style="font-family:'Patrick Hand',cursive;font-size:20px;line-height:1.5;color:#1a1a1a;border:none;background:transparent;resize:none;outline:none;text-align:center;width:100%;overflow:hidden;"></textarea>
-            </div>`;
+            </svg>`;
+          const parser = new DOMParser();
+          const svgDoc = parser.parseFromString(svgMarkup, 'image/svg+xml');
+          const svgNode = document.adoptNode(svgDoc.documentElement);
+          
+          const noteDiv = document.createElement('div');
+          noteDiv.className = 'note';
+          noteDiv.style.cssText = 'width:360px;height:340px;padding:48px 57px;position:absolute;top:0;left:0;z-index:2;display:flex;flex-direction:column;justify-content:center;';
+          const ta = document.createElement('textarea');
+          ta.className = 'textarea';
+          ta.maxLength = 140;
+          ta.style.cssText = "font-family:'Patrick Hand',cursive;font-size:20px;line-height:1.5;color:#1a1a1a;border:none;background:transparent;resize:none;outline:none;text-align:center;width:100%;overflow:hidden;";
+          noteDiv.appendChild(ta);
+          
+          newWrapper.appendChild(svgNode);
+          newWrapper.appendChild(noteDiv);
 
           wrapper.parentElement.insertBefore(newWrapper, addBtn);
           // Set random placeholder
-          const ta = newWrapper.querySelector('textarea');
           if (ta) ta.placeholder = placeholders[Math.floor(Math.random() * placeholders.length)];
           makeDraggable(newWrapper);
-          // Query stops AFTER insertion into DOM so SVG namespace is resolved
-          const noteStops = newWrapper.getElementsByTagName('stop');
+          // Get stops from the properly-namespaced SVG
+          const noteStops = svgNode.querySelectorAll('stop');
           initNoteAnimations(newWrapper, color, noteCounter, noteStops);
 
           // Hide add button until this new one is dragged
@@ -1194,6 +1205,6 @@
         });
       })();
     </script>
-    <div class="build-hover-area"><span class="build-number">Build 129</span></div>
+    <div class="build-hover-area"><span class="build-number">Build 130</span></div>
   </body>
 </html>
