@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-svg@1.1.0/lib/qrcode.min.js"></script>
     <link rel="stylesheet" href="./style.css" />
           <!-- GoatCounter analytics -->
     <script data-goatcounter="https://walletmemo.goatcounter.com/count"
@@ -1004,15 +1005,6 @@
             const passUrl = `${BACKEND_URL}/api/pass-redirect?${params.toString()}`;
             
             try {
-              if (!window.QRCode) {
-                const script = document.createElement('script');
-                script.src = 'https://cdn.jsdelivr.net/npm/qrcode-svg@1.1.0/lib/qrcode.min.js';
-                document.head.appendChild(script);
-                await new Promise((resolve, reject) => {
-                  script.onload = resolve;
-                  script.onerror = reject;
-                });
-              }
               const qr = new QRCode({
                 content: passUrl,
                 width: 140,
@@ -1312,6 +1304,6 @@
         });
       })();
     </script>
-    <div class="build-hover-area"><a href="mailto:ram@agentmail.to" class="footer-link"><i class="hgi-stroke hgi-mail-02" style="margin-right: 4px; font-size: 10px;"></i>Email Us</a> · <span class="build-number">Build 147</span></div>
+    <div class="build-hover-area"><a href="mailto:ram@agentmail.to" class="footer-link"><i class="hgi-stroke hgi-mail-02" style="margin-right: 4px; font-size: 10px;"></i>Email Us</a> · <span class="build-number">Build 148</span></div>
   </body>
 </html>
