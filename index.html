@@ -197,7 +197,7 @@
       </div>
     </main>
     
-    <div class="build-hover-area"><span class="build-number">Build 109</span></div>
+    <div class="build-hover-area"><span class="build-number">Build 110</span></div>
     </div>
 
     <script>
@@ -924,7 +924,7 @@
             el.style.cursor = 'grabbing';
             el.style.transition = 'none';
             el.style.zIndex = String(50 + noteCounter);
-            el.style.filter = 'drop-shadow(0 8px 24px rgba(0,0,0,0.2))';
+            // no shadow on drag
             // Lift off the wall - go flat
             el.classList.add('flat');
             el.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(1.03)`;
@@ -952,7 +952,7 @@
             isDragging = false;
             el.style.cursor = 'grab';
             el.style.transition = '';
-            el.style.filter = '';
+            // reset filter
             // Stick back to wall - remove flat, go back to curled
             el.classList.remove('flat');
             el.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
