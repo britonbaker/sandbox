@@ -1025,6 +1025,15 @@ body {
   transition: color .15s ease;
 }
 
+.footer-link i {
+  position: relative;
+  top: 1px;
+}
+
 .footer-link:hover {
   color: rgba(0,0,0,0.7);
+}
+
+.footer-link:hover i {
+  -webkit-text-stroke: 1px currentColor;
 }
