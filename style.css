@@ -146,8 +146,8 @@ body {
 .hero-title {
   font-family: 'Fraunces', 'Noto Serif JP', 'Noto Serif KR', 'Noto Serif SC', serif;
   font-size: clamp(72px, 15vw, 140px);
-  font-weight: 900;
-  letter-spacing: -2px;
+  font-weight: 300;
+  letter-spacing: -1px;
   line-height: 1;
   background: linear-gradient(
     90deg,
