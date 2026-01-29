@@ -219,17 +219,18 @@ body {
   cursor: default;
   z-index: 10;
   margin-top: 8px;
+  transform: perspective(800px) rotateX(3deg);
 }
 
 @media (hover: hover) {
   .note-wrapper:hover {
-    transform: translateY(-2px);
+    transform: perspective(800px) rotateX(3deg) translateY(-2px);
   }
 }
 
 /* Focused state - note lifts and grows slightly */
 .note-wrapper.flat {
-  transform: scale(1.08);
+  transform: scale(1.08) rotateX(0deg);
 }
 
 @media (max-width: 600px) {
@@ -239,7 +240,7 @@ body {
 }
 
 .note-wrapper.flat:hover {
-  transform: scale(1.08) translateY(-2px);
+  transform: scale(1.08) rotateX(0deg) translateY(-2px);
 }
 
 /* Shadow layer - positioned behind and offset */

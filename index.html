@@ -543,7 +543,10 @@
         // Initialize lift/stick animations on any note wrapper
         function initNoteAnimations(wrapper, colorKey, noteId) {
           const shape = wrapper.querySelector('.note-paper path');
-          const stops = wrapper.querySelectorAll('.note-paper linearGradient stop');
+          // Query stops by gradient ID for reliability (SVG namespace/casing)
+          const gradientId = `ng${noteId}`;
+          const gradEl = document.getElementById(gradientId);
+          const stops = gradEl ? gradEl.querySelectorAll('stop') : wrapper.querySelectorAll('stop');
           let noteIsFlat = false;
           let noteAnimId = null;
           let noteGradAnimId = null;
@@ -1054,7 +1057,7 @@
             // Stick back to wall - remove flat, go back to curled
             el.classList.remove('flat');
             el.dispatchEvent(new Event('note:stick'));
-            el.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+            el.style.transform = `perspective(800px) rotateX(3deg) translate(${offsetX}px, ${offsetY}px)`;
             const ta = el.querySelector('textarea');
             if (ta) ta.blur();
             // Suppress the click event that fires after mouseup
@@ -1191,6 +1194,6 @@
         });
       })();
     </script>
-    <div class="build-hover-area"><span class="build-number">Build 126</span></div>
+    <div class="build-hover-area"><span class="build-number">Build 127</span></div>
   </body>
 </html>
