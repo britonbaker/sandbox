@@ -27,22 +27,22 @@
   </head>
   <body>
     <style>
-      body { overflow-x: hidden; }
-      body.slide-out-left { animation: slideOutLeft 0.35s ease-in forwards; }
-      body.slide-in-from-left { animation: slideInFromLeft 0.35s ease-out forwards; }
+      html, body { overflow-x: hidden; }
+      html.page-slide-out-left body { animation: slideOutLeft 0.35s ease-in forwards; }
+      html.page-slide-in-left body { animation: slideInFromLeft 0.4s ease-out forwards; }
       @keyframes slideOutLeft {
         from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(-100%); opacity: 0; }
+        to { transform: translateX(-100vw); opacity: 0; }
       }
       @keyframes slideInFromLeft {
-        from { transform: translateX(-100%); opacity: 0; }
+        from { transform: translateX(-100vw); opacity: 0; }
         to { transform: translateX(0); opacity: 1; }
       }
     </style>
     <script>
       // If returning from changelog, slide in from left
       if (sessionStorage.getItem('page-transition') === 'back') {
-        document.body.classList.add('slide-in-from-left');
+        document.documentElement.classList.add('page-slide-in-left');
         sessionStorage.removeItem('page-transition');
       }
     </script>
@@ -1960,7 +1960,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v21';
+      if (tv) tv.textContent = ' · test v22';
 
       // Add changelog link to footer (test → test changelog)
       const footerArea = document.querySelector('.build-hover-area');
@@ -2004,7 +2004,7 @@
       e.preventDefault();
       const href = link.href;
       sessionStorage.setItem('page-transition', 'forward');
-      document.body.classList.add('slide-out-left');
+      document.documentElement.classList.add('page-slide-out-left');
       setTimeout(() => { window.location.href = href; }, 300);
     });
     </script>
