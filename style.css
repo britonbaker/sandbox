@@ -411,9 +411,53 @@ body {
   align-items: center;
 }
 
+.pen-color-picker {
+  position: relative;
+}
+
+.pen-color-current {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.4);
+  cursor: pointer;
+  transition: transform .15s ease, border-color .15s ease;
+}
+
+.pen-color-current:hover {
+  border-color: #fff;
+  transform: scale(1.1);
+}
+
+.pen-color-popup {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  display: flex;
+  gap: 6px;
+  background: rgba(0,0,0,.85);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  padding: 10px 12px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.3);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .2s ease, visibility .2s ease, transform .2s ease;
+  pointer-events: none;
+}
+
+.pen-color-popup.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) scale(1);
+  pointer-events: auto;
+}
+
 .pen-color {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   border: 2px solid transparent;
   cursor: pointer;
