@@ -551,6 +551,25 @@
         // Focus/blur on textarea triggers the flat/curled animation
         const focusOverlay = document.getElementById('focus-overlay');
         const langPicker2 = document.getElementById('lang-picker');
+        // Custom events for external code (e.g., drag) to trigger flat/curl
+        noteWrapper.addEventListener('note:lift', () => {
+          if (!isFlat) {
+            isFlat = true;
+            animatePath(statePoints.curled, statePoints.flat);
+            animateGradient(true);
+            noteWrapper.classList.add('flat');
+          }
+        });
+
+        noteWrapper.addEventListener('note:stick', () => {
+          if (isFlat) {
+            isFlat = false;
+            animatePath(statePoints.flat, statePoints.curled);
+            animateGradient(false);
+            noteWrapper.classList.remove('flat');
+          }
+        });
+
         textarea.addEventListener('focus', () => {
           if (!isFlat) {
             isFlat = true;
@@ -926,6 +945,7 @@
             el.style.zIndex = String(50 + noteCounter);
             // Lift off the wall - go flat
             el.classList.add('flat');
+            el.dispatchEvent(new Event('note:lift'));
             el.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(1.03)`;
             // Show add button immediately on grab
             if (!hasMoved) {
@@ -950,6 +970,7 @@
             el.style.transition = '';
             // Stick back to wall - remove flat, go back to curled
             el.classList.remove('flat');
+            el.dispatchEvent(new Event('note:stick'));
             el.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
             const ta = el.querySelector('textarea');
             if (ta) ta.blur();
@@ -1035,6 +1056,6 @@
         });
       })();
     </script>
-    <div class="build-hover-area"><span class="build-number">Build 118</span></div>
+    <div class="build-hover-area"><span class="build-number">Build 119</span></div>
   </body>
 </html>
