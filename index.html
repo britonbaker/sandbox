@@ -1024,13 +1024,31 @@
           const colors = ['blue', 'yellow', 'pink'];
           const color = colors[noteCounter % 3];
 
-          // Color configs
+          // Color configs (gradient + shadow colors per theme)
           const colorMap = {
             blue: ['#9DD5EE', '#98C4DA', '#9BC8E7', '#ACD7E9', '#B8E3F3', '#C4E9F5'],
             yellow: ['#D8C453', '#D4B94C', '#DEC75E', '#E8D46E', '#F0DF85', '#F7EA9C'],
             pink: ['#DCABB5', '#D7A0AA', '#E2B4BD', '#ECC4CC', '#F2D1D8', '#F8DEE3']
           };
+          const shadowMap = {
+            blue: {
+              s1: '0 0 0 0 0.101961 0 0 0 0 0.55098 0 0 0 0 1 0 0 0 0 0',
+              s2: '0 0 0 0 0 0 0 0 0 0.334596 0 0 0 0 0.608357 0 0 0 0 0',
+              s3: '0 0 0 0 0.425615 0 0 0 0 0.695906 0 0 0 0 0.842314 0 0 0 1 0'
+            },
+            yellow: {
+              s1: '0 0 0 0 0.85 0 0 0 0 0.75 0 0 0 0 0.25 0 0 0 0 0',
+              s2: '0 0 0 0 0.55 0 0 0 0 0.48 0 0 0 0 0.15 0 0 0 0 0',
+              s3: '0 0 0 0 0.82 0 0 0 0 0.78 0 0 0 0 0.42 0 0 0 1 0'
+            },
+            pink: {
+              s1: '0 0 0 0 0.9 0 0 0 0 0.55 0 0 0 0 0.65 0 0 0 0 0',
+              s2: '0 0 0 0 0.6 0 0 0 0 0.35 0 0 0 0 0.45 0 0 0 0 0',
+              s3: '0 0 0 0 0.88 0 0 0 0 0.72 0 0 0 0 0.78 0 0 0 1 0'
+            }
+          };
           const g = colorMap[color];
+          const s = shadowMap[color];
 
           const newWrapper = document.createElement('div');
           newWrapper.className = 'note-wrapper dragged-note';
@@ -1055,15 +1073,40 @@
                   <stop offset="0.954264" stop-color="${g[4]}"/>
                   <stop offset="1" stop-color="${g[5]}"/>
                 </linearGradient>
-                <filter id="nf${noteCounter}" x="0" y="0" width="286.2" height="269.7" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                <filter id="nf${noteCounter}" x="0.00156212" y="-0.000391006" width="286.2" height="269.7" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
                   <feFlood flood-opacity="0" result="BackgroundImageFix"/>
                   <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                  <feOffset/>
+                  <feGaussianBlur stdDeviation="5.14583"/>
+                  <feColorMatrix type="matrix" values="${s.s1}"/>
+                  <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+                  <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
                   <feOffset dy="10"/>
-                  <feGaussianBlur stdDeviation="14"/>
+                  <feGaussianBlur stdDeviation="14.3"/>
+                  <feColorMatrix type="matrix" values="${s.s2}"/>
+                  <feBlend mode="normal" in2="effect1_dropShadow" result="effect2_dropShadow"/>
+                  <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                  <feOffset dy="0.2"/>
                   <feComposite in2="hardAlpha" operator="out"/>
-                  <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
-                  <feBlend mode="normal" in2="BackgroundImageFix" result="shadow"/>
-                  <feBlend mode="normal" in="SourceGraphic" in2="shadow" result="shape"/>
+                  <feColorMatrix type="matrix" values="${s.s3}"/>
+                  <feBlend mode="normal" in2="effect2_dropShadow" result="effect3_dropShadow"/>
+                  <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+                  <feTurbulence type="fractalNoise" baseFrequency="1.6666666269302368 1.6666666269302368" stitchTiles="stitch" numOctaves="3" result="noise" seed="${6167 + noteCounter}"/>
+                  <feComponentTransfer in="noise" result="coloredNoise1">
+                    <feFuncR type="linear" slope="2" intercept="-0.5"/>
+                    <feFuncG type="linear" slope="2" intercept="-0.5"/>
+                    <feFuncB type="linear" slope="2" intercept="-0.5"/>
+                    <feFuncA type="discrete" tableValues="1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+                  </feComponentTransfer>
+                  <feComposite operator="in" in2="shape" in="coloredNoise1" result="noise1Clipped"/>
+                  <feComponentTransfer in="noise1Clipped" result="color1">
+                    <feFuncA type="table" tableValues="0 0.06"/>
+                  </feComponentTransfer>
+                  <feMerge result="effect4_noise">
+                    <feMergeNode in="shape"/>
+                    <feMergeNode in="color1"/>
+                  </feMerge>
+                  <feBlend mode="normal" in="effect4_noise" in2="effect3_dropShadow" result="effect4_noise"/>
                 </filter>
               </defs>
             </svg>
