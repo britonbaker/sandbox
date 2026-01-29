@@ -350,7 +350,47 @@ async function generateStripImage(color, drawingDataUrl, text) {
     }
   }
 
-  // Text is now shown in coupon secondaryFields only, not on strip image
+  // Render user text onto the strip
+  if (text && text.trim()) {
+    ctx.save();
+    ctx.font = '48px "Patrick Hand"';
+    ctx.fillStyle = '#1a1a1a';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+
+    const maxWidth = width * 0.8;
+    const lineHeight = 60;
+    const words = text.split('\n');
+    const lines = [];
+
+    for (const paragraph of words) {
+      const paraWords = paragraph.split(' ');
+      let currentLine = '';
+      for (const word of paraWords) {
+        const testLine = currentLine ? `${currentLine} ${word}` : word;
+        if (ctx.measureText(testLine).width > maxWidth && currentLine) {
+          lines.push(currentLine);
+          currentLine = word;
+        } else {
+          currentLine = testLine;
+        }
+      }
+      if (currentLine) lines.push(currentLine);
+    }
+
+    const totalTextHeight = lines.length * lineHeight;
+    let startY;
+    if (drawingDataUrl && drawingDataUrl.length > 1000) {
+      startY = 24;
+    } else {
+      startY = (height - totalTextHeight) / 2;
+    }
+
+    for (let i = 0; i < lines.length; i++) {
+      ctx.fillText(lines[i], width / 2, startY + i * lineHeight);
+    }
+    ctx.restore();
+  }
 
   return canvas.toBuffer('image/png');
 }
