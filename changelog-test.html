@@ -14,12 +14,14 @@
         font-family: 'Inter', sans-serif;
         font-weight: 300;
         color: #1a1a1a;
-        background: linear-gradient(to bottom, #fafafa, #e5e5e5);
         min-height: 100vh;
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+      .page-content {
         padding: 40px 20px 60px;
         max-width: 640px;
         margin: 0 auto;
-        line-height: 1.6;
       }
       .back-link {
         display: inline-block;
@@ -101,7 +103,7 @@
   </head>
   <body>
     <style>
-      html { background: linear-gradient(to bottom, #fafafa, #e5e5e5); min-height: 100vh; }
+      html { background: linear-gradient(to bottom, #fafafa, #e5e5e5); background-attachment: fixed; min-height: 100vh; }
       html, body { overflow-x: hidden; }
       html.page-slide-in-right .page-content { animation: slideInFromRight 0.4s ease-out forwards; }
       html.page-slide-out-right .page-content { animation: slideOutRight 0.35s ease-in forwards; }
