@@ -6,7 +6,7 @@
     <title>Changelog (Test) — Wallet Memo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Cormorant+Garamond:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Cormorant+Garamond:wght@300&display=swap" rel="stylesheet">
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
       body {
@@ -74,118 +74,361 @@
         padding-bottom: 6px;
         border-bottom: 1px solid #e0e0e0;
       }
-      .date-group ul { list-style: none; }
+      .category-heading {
+        font-size: 13px;
+        font-weight: 600;
+        color: #555;
+        margin: 10px 0 4px;
+        padding-left: 2px;
+      }
+      .category-heading:first-of-type { margin-top: 0; }
+      .date-group ul { list-style: none; margin-bottom: 8px; }
       .date-group li {
         font-size: 14px;
-        padding: 4px 0;
+        padding: 3px 0 3px 16px;
         color: #444;
+        position: relative;
       }
-      .cl-tag {
-        display: inline-block;
-        font-size: 11px;
+      .date-group li::before {
+        content: '•';
+        position: absolute;
+        left: 2px;
+        color: #999;
+      }
+      /* Language picker */
+      .lang-picker {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        z-index: 100;
+        font-family: 'Inter', sans-serif;
+      }
+      .lang-btn {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background: rgba(255,255,255,0.9);
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 12px;
         font-weight: 400;
-        padding: 1px 6px;
-        border-radius: 3px;
-        margin-right: 4px;
+        color: #555;
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
       }
-      .cl-new { background: #e8f5e9; color: #2e7d32; }
-      .cl-fix { background: #fff3e0; color: #e65100; }
-      .cl-improve { background: #e3f2fd; color: #1565c0; }
-      .cl-design { background: #fce4ec; color: #c62828; }
+      .lang-btn:hover { border-color: #bbb; color: #333; }
+      .lang-btn svg { width: 16px; height: 16px; }
+      .lang-btn .chevron { width: 12px; height: 12px; transition: transform 0.2s; }
+      .lang-picker.open .chevron { transform: rotate(180deg); }
+      .lang-dropdown {
+        display: none;
+        position: absolute;
+        top: calc(100% + 4px);
+        right: 0;
+        background: rgba(255,255,255,0.95);
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 4px;
+        min-width: 120px;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      }
+      .lang-picker.open .lang-dropdown { display: block; }
+      .lang-option {
+        display: block;
+        width: 100%;
+        text-align: left;
+        border: none;
+        background: none;
+        padding: 6px 10px;
+        font-size: 13px;
+        color: #555;
+        cursor: pointer;
+        border-radius: 4px;
+        font-family: inherit;
+      }
+      .lang-option:hover { background: #f0f0f0; color: #1a1a1a; }
+      .lang-option.active { color: #1a1a1a; font-weight: 400; }
     </style>
   </head>
   <body>
-    <a href="./" class="back-link">Wallet Memo</a>
-    <h1>Changelog <span class="test-badge">TEST</span></h1>
-    <p class="subtitle">All changes — test builds</p>
-
-    <div class="date-group">
-      <h2>January 29, 2026 <span class="version-tag">v12</span></h2>
-      <ul>
-        <li><span class="cl-tag cl-new">✨ New</span> Note registry — each note gets unique ID, QR/download targets active note</li>
-        <li><span class="cl-tag cl-new">✨ New</span> Active/last-active note tracking for per-note downloads</li>
-      </ul>
+    <!-- Language picker -->
+    <div class="lang-picker" id="lang-picker">
+      <button class="lang-btn" id="lang-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        <span id="current-lang">EN</span>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
+      </button>
+      <div class="lang-dropdown" id="lang-dropdown">
+        <button class="lang-option" data-lang="en">English</button>
+        <button class="lang-option" data-lang="es">Español</button>
+        <button class="lang-option" data-lang="fr">Français</button>
+        <button class="lang-option" data-lang="de">Deutsch</button>
+        <button class="lang-option" data-lang="ja">日本語</button>
+        <button class="lang-option" data-lang="zh">中文</button>
+        <button class="lang-option" data-lang="ko">한국어</button>
+        <button class="lang-option" data-lang="pt">Português</button>
+      </div>
     </div>
 
-    <div class="date-group">
-      <h2>January 29, 2026 <span class="version-tag">v11</span></h2>
-      <ul>
-        <li><span class="cl-tag cl-new">✨ New</span> Changelog moved to separate page</li>
-        <li><span class="cl-tag cl-new">✨ New</span> Footer changelog link (test site only)</li>
-      </ul>
-    </div>
+    <a href="./" class="back-link" id="back-link">Wallet Memo</a>
+    <h1 id="page-title">Changelog <span class="test-badge">TEST</span></h1>
+    <p class="subtitle" id="page-subtitle">All changes — test builds</p>
 
-    <div class="date-group">
-      <h2>January 29, 2026 <span class="version-tag">v10</span></h2>
-      <ul>
-        <li><span class="cl-tag cl-new">✨ New</span> Changelog section added</li>
-      </ul>
-    </div>
+    <div id="changelog-entries"></div>
 
-    <div class="date-group">
-      <h2>January 29, 2026 <span class="version-tag">v9</span></h2>
-      <ul>
-        <li><span class="cl-tag cl-fix">🔧 Fix</span> Drawing toolbar moved outside note wrapper — shared across all notes</li>
-        <li><span class="cl-tag cl-fix">🔧 Fix</span> Done/Cancel properly hide toolbar for spawned notes</li>
-        <li><span class="cl-tag cl-fix">🔧 Fix</span> Suppressed hover flickering in drawing mode</li>
-      </ul>
-    </div>
+    <script>
+    // ==========================================
+    // i18n - Static UI translations
+    // ==========================================
+    const uiStrings = {
+      en: { back: "Wallet Memo", title: "Changelog", subtitle: "All changes — test builds" },
+      es: { back: "Nota de Cartera", title: "Registro de cambios", subtitle: "Todos los cambios — versiones de prueba" },
+      fr: { back: "Mémo Portefeuille", title: "Journal des modifications", subtitle: "Tous les changements — versions test" },
+      de: { back: "Wallet-Notiz", title: "Änderungsprotokoll", subtitle: "Alle Änderungen — Testversionen" },
+      ja: { back: "ウォレットメモ", title: "変更履歴", subtitle: "すべての変更 — テストビルド" },
+      zh: { back: "钱包备忘录", title: "更新日志", subtitle: "所有更改 — 测试版本" },
+      ko: { back: "지갑 메모", title: "변경 이력", subtitle: "모든 변경 사항 — 테스트 빌드" },
+      pt: { back: "Memo Carteira", title: "Registro de alterações", subtitle: "Todas as alterações — versões de teste" },
+    };
 
-    <div class="date-group">
-      <h2>January 29, 2026 <span class="version-tag">v8</span></h2>
-      <ul>
-        <li><span class="cl-tag cl-fix">🔧 Fix</span> Exposed isDrawingMode globally so spawned notes can draw</li>
-        <li><span class="cl-tag cl-fix">🔧 Fix</span> Show drawing toolbar when spawned notes enter draw mode</li>
-      </ul>
-    </div>
+    // ==========================================
+    // Changelog Entries Data
+    // ==========================================
+    // To add a new changelog entry:
+    // 1. Add English text
+    // 2. Run: RAM will auto-translate when pushing (or use the translate script)
+    // Translations are stored inline for simplicity
 
-    <div class="date-group">
-      <h2>January 29, 2026 <span class="version-tag">v7</span></h2>
-      <ul>
-        <li><span class="cl-tag cl-new">✨ New</span> Full drawing mode on all spawned sticky notes (shared toolbar)</li>
-        <li><span class="cl-tag cl-new">✨ New</span> Menu button (⋮) with color change + draw on all notes</li>
-        <li><span class="cl-tag cl-new">✨ New</span> Tilt direction based on grab position (left/right)</li>
-      </ul>
-    </div>
+    const categoryMeta = {
+      new:     { emoji: "✨", label: { en: "New", es: "Nuevo", fr: "Nouveau", de: "Neu", ja: "新機能", zh: "新增", ko: "새 기능", pt: "Novo" } },
+      fix:     { emoji: "🔧", label: { en: "Fixes", es: "Correcciones", fr: "Corrections", de: "Fehlerbehebungen", ja: "修正", zh: "修复", ko: "수정", pt: "Correções" } },
+      design:  { emoji: "🎨", label: { en: "Design", es: "Diseño", fr: "Design", de: "Design", ja: "デザイン", zh: "设计", ko: "디자인", pt: "Design" } },
+      improve: { emoji: "⚡", label: { en: "Improvements", es: "Mejoras", fr: "Améliorations", de: "Verbesserungen", ja: "改善", zh: "改进", ko: "개선", pt: "Melhorias" } },
+    };
 
-    <div class="date-group">
-      <h2>January 29, 2026 <span class="version-tag">v6</span></h2>
-      <ul>
-        <li><span class="cl-tag cl-fix">🔧 Fix</span> Grab cursor now works on desktop (CSS class approach)</li>
-        <li><span class="cl-tag cl-improve">⚡ Improvement</span> Increased drag zone height from 48px to 80px</li>
-        <li><span class="cl-tag cl-new">✨ New</span> Footer test version number</li>
-      </ul>
-    </div>
+    const entries = [
+      {
+        date: { en: "January 29, 2026", es: "29 de enero de 2026", fr: "29 janvier 2026", de: "29. Januar 2026", ja: "2026年1月29日", zh: "2026年1月29日", ko: "2026년 1월 29일", pt: "29 de janeiro de 2026" },
+        version: "v12",
+        categories: {
+          new: [
+            { en: "Note registry — each note gets unique ID, QR/download targets active note", es: "Registro de notas — cada nota recibe un ID único, QR/descarga apunta a nota activa", fr: "Registre de notes — chaque note reçoit un ID unique, QR/téléchargement cible la note active", de: "Notizregister — jede Notiz erhält eine eindeutige ID, QR/Download zielt auf aktive Notiz", ja: "ノート登録 — 各ノートに固有IDを付与、QR/ダウンロードはアクティブノートを対象", zh: "笔记注册 — 每个笔记获得唯一ID，QR/下载指向活动笔记", ko: "노트 등록 — 각 노트에 고유 ID 부여, QR/다운로드가 활성 노트를 대상으로 함", pt: "Registro de notas — cada nota recebe ID único, QR/download aponta para nota ativa" },
+            { en: "Active/last-active note tracking for per-note downloads", es: "Seguimiento de nota activa/última activa para descargas por nota", fr: "Suivi de la note active/dernière active pour les téléchargements par note", de: "Aktive/zuletzt aktive Notizverfolgung für Einzeldownloads", ja: "ノートごとのダウンロードのためのアクティブ/最終アクティブノート追跡", zh: "活动/最后活动笔记跟踪，用于按笔记下载", ko: "노트별 다운로드를 위한 활성/마지막 활성 노트 추적", pt: "Rastreamento de nota ativa/última ativa para downloads por nota" },
+          ]
+        }
+      },
+      {
+        date: { en: "January 29, 2026", es: "29 de enero de 2026", fr: "29 janvier 2026", de: "29. Januar 2026", ja: "2026年1月29日", zh: "2026年1月29日", ko: "2026년 1월 29일", pt: "29 de janeiro de 2026" },
+        version: "v11",
+        categories: {
+          new: [
+            { en: "Changelog moved to separate page", es: "Registro de cambios movido a página separada", fr: "Journal des modifications déplacé sur une page séparée", de: "Änderungsprotokoll auf separate Seite verschoben", ja: "変更履歴を別ページに移動", zh: "更新日志移至单独页面", ko: "변경 이력을 별도 페이지로 이동", pt: "Registro de alterações movido para página separada" },
+            { en: "Footer changelog link (test site only)", es: "Enlace al registro de cambios en el pie de página (solo sitio de prueba)", fr: "Lien du journal des modifications en pied de page (site test uniquement)", de: "Footer-Link zum Änderungsprotokoll (nur Testseite)", ja: "フッターの変更履歴リンク（テストサイトのみ）", zh: "页脚更新日志链接（仅测试站点）", ko: "푸터 변경 이력 링크 (테스트 사이트만)", pt: "Link do registro de alterações no rodapé (apenas site de teste)" },
+          ]
+        }
+      },
+      {
+        date: { en: "January 29, 2026", es: "29 de enero de 2026", fr: "29 janvier 2026", de: "29. Januar 2026", ja: "2026年1月29日", zh: "2026年1月29日", ko: "2026년 1월 29일", pt: "29 de janeiro de 2026" },
+        version: "v10",
+        categories: {
+          new: [
+            { en: "Changelog section added", es: "Sección de registro de cambios añadida", fr: "Section journal des modifications ajoutée", de: "Änderungsprotokoll-Bereich hinzugefügt", ja: "変更履歴セクションを追加", zh: "添加更新日志部分", ko: "변경 이력 섹션 추가", pt: "Seção de registro de alterações adicionada" },
+          ]
+        }
+      },
+      {
+        date: { en: "January 29, 2026", es: "29 de enero de 2026", fr: "29 janvier 2026", de: "29. Januar 2026", ja: "2026年1月29日", zh: "2026年1月29日", ko: "2026년 1월 29일", pt: "29 de janeiro de 2026" },
+        version: "v9",
+        categories: {
+          fix: [
+            { en: "Drawing toolbar moved outside note wrapper — shared across all notes", es: "Barra de herramientas de dibujo movida fuera del contenedor de notas — compartida entre todas las notas", fr: "Barre d'outils de dessin déplacée hors du conteneur de notes — partagée entre toutes les notes", de: "Zeichenleiste außerhalb des Notiz-Containers verschoben — gemeinsam für alle Notizen", ja: "描画ツールバーをノートラッパーの外に移動 — すべてのノートで共有", zh: "绘图工具栏移出笔记容器 — 所有笔记共享", ko: "그리기 도구 모음을 노트 래퍼 외부로 이동 — 모든 노트에서 공유", pt: "Barra de ferramentas de desenho movida para fora do container — compartilhada entre todas as notas" },
+            { en: "Done/Cancel properly hide toolbar for spawned notes", es: "Listo/Cancelar ocultan correctamente la barra de herramientas para notas generadas", fr: "Terminé/Annuler masquent correctement la barre d'outils pour les notes générées", de: "Fertig/Abbrechen verbergen Toolbar korrekt bei erzeugten Notizen", ja: "完了/キャンセルが生成ノートのツールバーを正しく非表示にする", zh: "完成/取消正确隐藏生成笔记的工具栏", ko: "완료/취소가 생성된 노트의 도구 모음을 올바르게 숨김", pt: "Concluir/Cancelar ocultam corretamente a barra para notas geradas" },
+            { en: "Suppressed hover flickering in drawing mode", es: "Suprimido el parpadeo de hover en modo dibujo", fr: "Suppression du scintillement au survol en mode dessin", de: "Hover-Flackern im Zeichenmodus unterdrückt", ja: "描画モードでのホバーちらつきを抑制", zh: "抑制绘图模式下的悬停闪烁", ko: "그리기 모드에서 호버 깜빡임 억제", pt: "Suprimida tremulação de hover no modo desenho" },
+          ]
+        }
+      },
+      {
+        date: { en: "January 29, 2026", es: "29 de enero de 2026", fr: "29 janvier 2026", de: "29. Januar 2026", ja: "2026年1月29日", zh: "2026年1月29日", ko: "2026년 1월 29일", pt: "29 de janeiro de 2026" },
+        version: "v8",
+        categories: {
+          fix: [
+            { en: "Exposed isDrawingMode globally so spawned notes can draw", es: "isDrawingMode expuesto globalmente para que las notas generadas puedan dibujar", fr: "isDrawingMode exposé globalement pour que les notes générées puissent dessiner", de: "isDrawingMode global verfügbar gemacht, damit erzeugte Notizen zeichnen können", ja: "isDrawingModeをグローバルに公開し、生成ノートで描画可能に", zh: "全局公开isDrawingMode，使生成的笔记可以绘图", ko: "isDrawingMode를 전역으로 노출하여 생성된 노트에서 그리기 가능", pt: "isDrawingMode exposto globalmente para que notas geradas possam desenhar" },
+            { en: "Show drawing toolbar when spawned notes enter draw mode", es: "Mostrar barra de herramientas de dibujo cuando las notas generadas entran en modo dibujo", fr: "Afficher la barre d'outils de dessin quand les notes générées passent en mode dessin", de: "Zeichenleiste anzeigen wenn erzeugte Notizen den Zeichenmodus betreten", ja: "生成ノートが描画モードに入った時にツールバーを表示", zh: "生成的笔记进入绘图模式时显示绘图工具栏", ko: "생성된 노트가 그리기 모드에 들어갈 때 도구 모음 표시", pt: "Mostrar barra de ferramentas de desenho quando notas geradas entram no modo desenho" },
+          ]
+        }
+      },
+      {
+        date: { en: "January 29, 2026", es: "29 de enero de 2026", fr: "29 janvier 2026", de: "29. Januar 2026", ja: "2026年1月29日", zh: "2026年1月29日", ko: "2026년 1월 29일", pt: "29 de janeiro de 2026" },
+        version: "v7",
+        categories: {
+          new: [
+            { en: "Full drawing mode on all spawned sticky notes (shared toolbar)", es: "Modo de dibujo completo en todas las notas adhesivas generadas (barra compartida)", fr: "Mode dessin complet sur toutes les notes générées (barre d'outils partagée)", de: "Vollständiger Zeichenmodus auf allen erzeugten Notizen (gemeinsame Toolbar)", ja: "すべての生成ノートで完全な描画モード（共有ツールバー）", zh: "所有生成的便签上的完整绘图模式（共享工具栏）", ko: "모든 생성된 스티커 노트에서 전체 그리기 모드 (공유 도구 모음)", pt: "Modo de desenho completo em todas as notas geradas (barra compartilhada)" },
+            { en: "Menu button (⋮) with color change + draw on all notes", es: "Botón de menú (⋮) con cambio de color + dibujar en todas las notas", fr: "Bouton menu (⋮) avec changement de couleur + dessin sur toutes les notes", de: "Menü-Button (⋮) mit Farbwechsel + Zeichnen auf allen Notizen", ja: "メニューボタン（⋮）で色変更+すべてのノートに描画", zh: "菜单按钮（⋮）支持更改颜色+在所有笔记上绘图", ko: "메뉴 버튼(⋮)으로 색상 변경 + 모든 노트에 그리기", pt: "Botão de menu (⋮) com mudança de cor + desenho em todas as notas" },
+            { en: "Tilt direction based on grab position (left/right)", es: "Dirección de inclinación basada en la posición de agarre (izquierda/derecha)", fr: "Direction d'inclinaison basée sur la position de saisie (gauche/droite)", de: "Neigungsrichtung basierend auf Greifposition (links/rechts)", ja: "つかむ位置に基づく傾き方向（左/右）", zh: "基于抓取位置的倾斜方向（左/右）", ko: "잡기 위치에 따른 기울기 방향 (왼쪽/오른쪽)", pt: "Direção de inclinação baseada na posição de agarre (esquerda/direita)" },
+          ]
+        }
+      },
+      {
+        date: { en: "January 29, 2026", es: "29 de enero de 2026", fr: "29 janvier 2026", de: "29. Januar 2026", ja: "2026年1月29日", zh: "2026年1月29日", ko: "2026년 1월 29일", pt: "29 de janeiro de 2026" },
+        version: "v6",
+        categories: {
+          fix: [
+            { en: "Grab cursor now works on desktop (CSS class approach)", es: "Cursor de agarre ahora funciona en escritorio (enfoque de clase CSS)", fr: "Curseur de saisie fonctionne maintenant sur bureau (approche classe CSS)", de: "Greif-Cursor funktioniert jetzt auf Desktop (CSS-Klassen-Ansatz)", ja: "デスクトップでグラブカーソルが動作するように（CSSクラスアプローチ）", zh: "抓取光标现在在桌面上工作（CSS类方法）", ko: "데스크톱에서 잡기 커서가 작동함 (CSS 클래스 방식)", pt: "Cursor de agarrar agora funciona no desktop (abordagem de classe CSS)" },
+          ],
+          improve: [
+            { en: "Increased drag zone height from 48px to 80px", es: "Aumentada la altura de la zona de arrastre de 48px a 80px", fr: "Hauteur de la zone de glissement augmentée de 48px à 80px", de: "Drag-Zone-Höhe von 48px auf 80px erhöht", ja: "ドラッグゾーンの高さを48pxから80pxに増加", zh: "拖动区域高度从48px增加到80px", ko: "드래그 영역 높이를 48px에서 80px로 증가", pt: "Altura da zona de arrasto aumentada de 48px para 80px" },
+          ],
+          new: [
+            { en: "Footer test version number", es: "Número de versión de prueba en el pie de página", fr: "Numéro de version test en pied de page", de: "Test-Versionsnummer im Footer", ja: "フッターのテストバージョン番号", zh: "页脚测试版本号", ko: "푸터 테스트 버전 번호", pt: "Número da versão de teste no rodapé" },
+          ]
+        }
+      },
+      {
+        date: { en: "January 29, 2026", es: "29 de enero de 2026", fr: "29 janvier 2026", de: "29. Januar 2026", ja: "2026年1月29日", zh: "2026年1月29日", ko: "2026년 1월 29일", pt: "29 de janeiro de 2026" },
+        version: "v5",
+        categories: {
+          new: [
+            { en: "QR code pass-redirect endpoint for mobile scanning", es: "Endpoint de redirección de pase QR para escaneo móvil", fr: "Point de redirection QR pour scan mobile", de: "QR-Code Pass-Redirect-Endpunkt für mobiles Scannen", ja: "モバイルスキャン用QRコードパスリダイレクトエンドポイント", zh: "用于移动扫描的QR码通行证重定向端点", ko: "모바일 스캔을 위한 QR 코드 패스 리디렉션 엔드포인트", pt: "Endpoint de redirecionamento de passe QR para escaneamento móvel" },
+          ],
+          fix: [
+            { en: "Matched strip/background colors in Apple Wallet pass (removed lighter ribbon)", es: "Colores de franja/fondo coincidentes en el pase de Apple Wallet (eliminada cinta más clara)", fr: "Couleurs de bande/fond assorties dans le pass Apple Wallet (ruban clair supprimé)", de: "Strip/Hintergrundfarben im Apple Wallet Pass abgestimmt (helleres Band entfernt)", ja: "Apple Walletパスのストリップ/背景色を一致（明るいリボンを削除）", zh: "Apple Wallet通行证中匹配条带/背景颜色（移除较浅的色带）", ko: "Apple Wallet 패스에서 스트립/배경색 일치 (밝은 리본 제거)", pt: "Cores de faixa/fundo combinadas no passe Apple Wallet (fita mais clara removida)" },
+          ],
+          design: [
+            { en: "Tinted logoText color in Apple Wallet pass", es: "Color de logoText tintado en el pase de Apple Wallet", fr: "Couleur logoText teintée dans le pass Apple Wallet", de: "Getönte logoText-Farbe im Apple Wallet Pass", ja: "Apple WalletパスのlogoTextの色をティント", zh: "Apple Wallet通行证中的logoText颜色着色", ko: "Apple Wallet 패스에서 logoText 색상 틴트", pt: "Cor do logoText tintada no passe Apple Wallet" },
+            { en: "Removed text from strip image (text in coupon fields only)", es: "Texto eliminado de la imagen de franja (texto solo en campos de cupón)", fr: "Texte supprimé de l'image de bande (texte dans les champs coupon uniquement)", de: "Text aus Streifenbild entfernt (Text nur in Couponfeldern)", ja: "ストリップ画像からテキストを削除（クーポンフィールドのみ）", zh: "从条带图像中移除文本（仅在优惠券字段中保留文本）", ko: "스트립 이미지에서 텍스트 제거 (쿠폰 필드에만 텍스트)", pt: "Texto removido da imagem de faixa (texto apenas nos campos de cupom)" },
+          ]
+        }
+      },
+      {
+        date: { en: "January 29, 2026", es: "29 de enero de 2026", fr: "29 janvier 2026", de: "29. Januar 2026", ja: "2026年1月29日", zh: "2026年1月29日", ko: "2026년 1월 29일", pt: "29 de janeiro de 2026" },
+        version: "v4",
+        categories: {
+          design: [
+            { en: "Switched title font to Cormorant Garamond 300", es: "Fuente del título cambiada a Cormorant Garamond 300", fr: "Police du titre changée en Cormorant Garamond 300", de: "Titelschrift auf Cormorant Garamond 300 gewechselt", ja: "タイトルフォントをCormorant Garamond 300に変更", zh: "标题字体切换为Cormorant Garamond 300", ko: "제목 글꼴을 Cormorant Garamond 300으로 변경", pt: "Fonte do título alterada para Cormorant Garamond 300" },
+            { en: "Uppercase Inter 300 tagline with softer opacity", es: "Eslogan en mayúsculas Inter 300 con opacidad más suave", fr: "Slogan en majuscules Inter 300 avec opacité plus douce", de: "Großbuchstaben Inter 300 Tagline mit weicherer Deckkraft", ja: "大文字Inter 300タグラインとソフトな透明度", zh: "大写Inter 300标语，更柔和的透明度", ko: "대문자 Inter 300 태그라인과 부드러운 불투명도", pt: "Tagline em maiúsculas Inter 300 com opacidade mais suave" },
+          ],
+          improve: [
+            { en: "Grabbed note always floats on top (z-index fix)", es: "La nota agarrada siempre flota encima (corrección de z-index)", fr: "La note saisie flotte toujours au-dessus (correction z-index)", de: "Gegriffene Notiz schwebt immer oben (z-index Fix)", ja: "つかんだノートが常に最前面に浮く（z-index修正）", zh: "抓取的笔记始终浮在顶部（z-index修复）", ko: "잡은 노트가 항상 위에 뜸 (z-index 수정)", pt: "Nota agarrada sempre flutua no topo (correção de z-index)" },
+          ]
+        }
+      },
+      {
+        date: { en: "January 28, 2026", es: "28 de enero de 2026", fr: "28 janvier 2026", de: "28. Januar 2026", ja: "2026年1月28日", zh: "2026年1月28日", ko: "2026년 1월 28일", pt: "28 de janeiro de 2026" },
+        version: "v1",
+        categories: {
+          new: [
+            { en: "Multi-note system with drag-to-move", es: "Sistema multi-nota con arrastrar para mover", fr: "Système multi-notes avec glisser-déplacer", de: "Multi-Notiz-System mit Drag-to-Move", ja: "ドラッグ移動対応のマルチノートシステム", zh: "支持拖动移动的多笔记系统", ko: "드래그하여 이동하는 멀티 노트 시스템", pt: "Sistema multi-notas com arrastar para mover" },
+            { en: "Drawing mode with pen colors, sizes, undo", es: "Modo de dibujo con colores de pluma, tamaños, deshacer", fr: "Mode dessin avec couleurs de stylo, tailles, annuler", de: "Zeichenmodus mit Stiftfarben, Größen, Rückgängig", ja: "ペンの色・サイズ・元に戻す機能付き描画モード", zh: "绘图模式支持画笔颜色、大小、撤销", ko: "펜 색상, 크기, 실행 취소가 있는 그리기 모드", pt: "Modo de desenho com cores de caneta, tamanhos, desfazer" },
+            { en: "Color changing (blue, yellow, pink)", es: "Cambio de color (azul, amarillo, rosa)", fr: "Changement de couleur (bleu, jaune, rose)", de: "Farbwechsel (Blau, Gelb, Rosa)", ja: "色の変更（青、黄、ピンク）", zh: "颜色更改（蓝色、黄色、粉色）", ko: "색상 변경 (파란색, 노란색, 분홍색)", pt: "Mudança de cor (azul, amarelo, rosa)" },
+            { en: "Apple Wallet pass generation", es: "Generación de pase de Apple Wallet", fr: "Génération de pass Apple Wallet", de: "Apple Wallet Pass-Generierung", ja: "Apple Walletパスの生成", zh: "Apple Wallet通行证生成", ko: "Apple Wallet 패스 생성", pt: "Geração de passe Apple Wallet" },
+            { en: "i18n support (EN, ES, FR, DE, JP, KR, ZH)", es: "Soporte i18n (EN, ES, FR, DE, JP, KR, ZH)", fr: "Support i18n (EN, ES, FR, DE, JP, KR, ZH)", de: "i18n-Unterstützung (EN, ES, FR, DE, JP, KR, ZH)", ja: "i18nサポート（EN, ES, FR, DE, JP, KR, ZH）", zh: "i18n支持（EN, ES, FR, DE, JP, KR, ZH）", ko: "i18n 지원 (EN, ES, FR, DE, JP, KR, ZH)", pt: "Suporte i18n (EN, ES, FR, DE, JP, KR, ZH)" },
+          ],
+          design: [
+            { en: "Paper texture SVG with realistic shadows", es: "Textura de papel SVG con sombras realistas", fr: "Texture papier SVG avec ombres réalistes", de: "Papierstruktur-SVG mit realistischen Schatten", ja: "リアルな影のある紙テクスチャSVG", zh: "具有逼真阴影的纸张纹理SVG", ko: "사실적인 그림자가 있는 종이 텍스처 SVG", pt: "Textura de papel SVG com sombras realistas" },
+          ]
+        }
+      },
+    ];
 
-    <div class="date-group">
-      <h2>January 29, 2026 <span class="version-tag">v5</span></h2>
-      <ul>
-        <li><span class="cl-tag cl-new">✨ New</span> QR code pass-redirect endpoint for mobile scanning</li>
-        <li><span class="cl-tag cl-fix">🔧 Fix</span> Matched strip/background colors in Apple Wallet pass (removed lighter ribbon)</li>
-        <li><span class="cl-tag cl-design">🎨 Design</span> Tinted logoText color in Apple Wallet pass</li>
-        <li><span class="cl-tag cl-design">🎨 Design</span> Removed text from strip image (text in coupon fields only)</li>
-      </ul>
-    </div>
+    // ==========================================
+    // Render & Language Switching
+    // ==========================================
+    const langDisplayMap = {
+      en: 'EN', es: 'ES', fr: 'FR', de: 'DE', ja: 'JA', zh: 'ZH', ko: 'KO', pt: 'PT'
+    };
+    // Category render order
+    const categoryOrder = ['new', 'fix', 'design', 'improve'];
 
-    <div class="date-group">
-      <h2>January 29, 2026 <span class="version-tag">v4</span></h2>
-      <ul>
-        <li><span class="cl-tag cl-design">🎨 Design</span> Switched title font to Cormorant Garamond 300</li>
-        <li><span class="cl-tag cl-design">🎨 Design</span> Uppercase Inter 300 tagline with softer opacity</li>
-        <li><span class="cl-tag cl-improve">⚡ Improvement</span> Grabbed note always floats on top (z-index fix)</li>
-      </ul>
-    </div>
+    function render(lang) {
+      const ui = uiStrings[lang] || uiStrings.en;
+      document.getElementById('back-link').textContent = ui.back;
+      document.getElementById('page-title').innerHTML = ui.title + ' <span class="test-badge">TEST</span>';
+      document.getElementById('page-subtitle').textContent = ui.subtitle;
+      document.title = ui.title + ' (Test) — ' + (uiStrings[lang] || uiStrings.en).back;
 
-    <div class="date-group">
-      <h2>January 28, 2026 <span class="version-tag">v1</span></h2>
-      <ul>
-        <li><span class="cl-tag cl-new">✨ New</span> Multi-note system with drag-to-move</li>
-        <li><span class="cl-tag cl-new">✨ New</span> Drawing mode with pen colors, sizes, undo</li>
-        <li><span class="cl-tag cl-new">✨ New</span> Color changing (blue, yellow, pink)</li>
-        <li><span class="cl-tag cl-new">✨ New</span> Apple Wallet pass generation</li>
-        <li><span class="cl-tag cl-design">🎨 Design</span> Paper texture SVG with realistic shadows</li>
-        <li><span class="cl-tag cl-new">✨ New</span> i18n support (EN, ES, FR, DE, JP, KR, ZH)</li>
-      </ul>
-    </div>
+      const container = document.getElementById('changelog-entries');
+      container.innerHTML = '';
+
+      entries.forEach(entry => {
+        const group = document.createElement('div');
+        group.className = 'date-group';
+
+        const h2 = document.createElement('h2');
+        h2.innerHTML = (entry.date[lang] || entry.date.en) + ' <span class="version-tag">' + entry.version + '</span>';
+        group.appendChild(h2);
+
+        categoryOrder.forEach(catKey => {
+          const items = entry.categories[catKey];
+          if (!items || items.length === 0) return;
+
+          const meta = categoryMeta[catKey];
+          const heading = document.createElement('div');
+          heading.className = 'category-heading';
+          heading.textContent = meta.emoji + ' ' + (meta.label[lang] || meta.label.en);
+          group.appendChild(heading);
+
+          const ul = document.createElement('ul');
+          items.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = item[lang] || item.en;
+            ul.appendChild(li);
+          });
+          group.appendChild(ul);
+        });
+
+        container.appendChild(group);
+      });
+
+      // Update picker display
+      document.getElementById('current-lang').textContent = langDisplayMap[lang] || 'EN';
+      document.querySelectorAll('.lang-option').forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.lang === lang);
+      });
+    }
+
+    // ==========================================
+    // Language Picker
+    // ==========================================
+    (function() {
+      const picker = document.getElementById('lang-picker');
+      const btn = document.getElementById('lang-btn');
+      const options = document.querySelectorAll('.lang-option');
+
+      // Get language from localStorage (shared with main page)
+      let currentLang = localStorage.getItem('walletmemo-lang');
+      if (!currentLang) {
+        const browserLang = (navigator.language || navigator.userLanguage).split('-')[0];
+        currentLang = langDisplayMap[browserLang] ? browserLang : 'en';
+      }
+
+      render(currentLang);
+
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        picker.classList.toggle('open');
+      });
+
+      document.addEventListener('click', () => picker.classList.remove('open'));
+
+      options.forEach(opt => {
+        opt.addEventListener('click', (e) => {
+          e.stopPropagation();
+          currentLang = opt.dataset.lang;
+          localStorage.setItem('walletmemo-lang', currentLang);
+          render(currentLang);
+          picker.classList.remove('open');
+        });
+      });
+    })();
+    </script>
   </body>
 </html>

@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Inter:wght@300&family=Fraunces:wght@300&family=Cormorant+Garamond:wght@300&family=Noto+Serif+JP:wght@900&family=Noto+Serif+KR:wght@900&family=Noto+Serif+SC:wght@900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css">
     <script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
-    <link rel="stylesheet" href="./style.css?v=12" />
+    <link rel="stylesheet" href="./style.css?v=13" />
     <!-- Hreflang alternate links for SEO -->
     <link rel="alternate" hreflang="en" href="https://walletmemo.com/" />
     <link rel="alternate" hreflang="es" href="https://walletmemo.com/?lang=es" />
@@ -255,6 +255,7 @@
           stickers: "Stickers",
           drawOnNote: "Draw on Note",
           emailUs: "Email Us",
+          changelog: "Changelog",
           comingSoonExcl: "Coming soon!",
           placeholders: [
             "Buy oat milk\nText mom\nDon't forget…",
@@ -286,6 +287,7 @@
           stickers: "Stickers",
           drawOnNote: "Dibujar en Nota",
           emailUs: "Escríbenos",
+          changelog: "Registro de cambios",
           comingSoonExcl: "¡Próximamente!",
           placeholders: [
             "Comprar leche\nLlamar a mamá\nNo olvidar…",
@@ -317,6 +319,7 @@
           stickers: "Autocollants",
           drawOnNote: "Dessiner sur la Note",
           emailUs: "Nous Écrire",
+          changelog: "Journal des modifications",
           comingSoonExcl: "Bientôt disponible !",
           placeholders: [
             "Acheter du lait\nAppeler maman\nNe pas oublier…",
@@ -348,6 +351,7 @@
           stickers: "Sticker",
           drawOnNote: "Auf Notiz Zeichnen",
           emailUs: "Schreib Uns",
+          changelog: "Änderungsprotokoll",
           comingSoonExcl: "Demnächst verfügbar!",
           placeholders: [
             "Milch kaufen\nMama anrufen\nNicht vergessen…",
@@ -379,6 +383,7 @@
           stickers: "ステッカー",
           drawOnNote: "メモに描く",
           emailUs: "メールする",
+          changelog: "変更履歴",
           comingSoonExcl: "近日公開！",
           placeholders: [
             "牛乳を買う\nお母さんに電話\n忘れないで…",
@@ -410,6 +415,7 @@
           stickers: "贴纸",
           drawOnNote: "在便签上画画",
           emailUs: "发邮件给我们",
+          changelog: "更新日志",
           comingSoonExcl: "即将推出！",
           placeholders: [
             "买牛奶\n给妈妈打电话\n别忘了…",
@@ -441,6 +447,7 @@
           stickers: "스티커",
           drawOnNote: "메모에 그리기",
           emailUs: "이메일 보내기",
+          changelog: "변경 이력",
           comingSoonExcl: "곧 출시됩니다!",
           placeholders: [
             "우유 사기\n엄마한테 전화\n잊지 말기…",
@@ -472,6 +479,7 @@
           stickers: "Adesivos",
           drawOnNote: "Desenhar na Nota",
           emailUs: "Envie um Email",
+          changelog: "Registro de alterações",
           comingSoonExcl: "Em breve!",
           placeholders: [
             "Comprar leite\nLigar pra mãe\nNão esquecer…",
@@ -1931,7 +1939,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v12';
+      if (tv) tv.textContent = ' · test v13';
 
       // Add changelog link to footer (test → test changelog)
       const footerArea = document.querySelector('.build-hover-area');
@@ -1939,11 +1947,15 @@
         const clLink = document.createElement('a');
         clLink.href = 'changelog-test.html';
         clLink.className = 'footer-link changelog-footer-link';
+        clLink.setAttribute('data-i18n', 'changelog');
         clLink.textContent = 'Changelog';
         const dot = document.createTextNode(' · ');
         footerArea.insertBefore(dot, footerArea.firstChild);
         footerArea.insertBefore(clLink, footerArea.firstChild);
       }
+      // Re-apply i18n so the dynamically added link gets translated
+      const savedLang = localStorage.getItem('walletmemo-lang');
+      if (savedLang) applyLanguage(savedLang);
     }
 
     // Production changelog link (always visible)
@@ -1953,11 +1965,15 @@
         const clLink = document.createElement('a');
         clLink.href = 'changelog.html';
         clLink.className = 'footer-link changelog-footer-link';
+        clLink.setAttribute('data-i18n', 'changelog');
         clLink.textContent = 'Changelog';
         const dot = document.createTextNode(' · ');
         footerArea.insertBefore(dot, footerArea.firstChild);
         footerArea.insertBefore(clLink, footerArea.firstChild);
       }
+      // Re-apply i18n so the dynamically added link gets translated
+      const savedLang2 = localStorage.getItem('walletmemo-lang');
+      if (savedLang2) applyLanguage(savedLang2);
     }
     </script>
   </body>
