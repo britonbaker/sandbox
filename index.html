@@ -153,7 +153,7 @@
           <textarea
             id="memo"
             class="textarea"
-            placeholder="Buy oat milk&#10;Text mom&#10;Don't forget…"
+            placeholder=""
             maxlength="140"
           ></textarea>
         </div>
@@ -201,6 +201,25 @@
     </div>
 
     <script>
+      // Randomize default note placeholder on load
+      (function() {
+        const ph = [
+          "Buy oat milk\nText mom\nDon't forget…",
+          "Pick up groceries\nCall dentist\nStretch!",
+          "Idea: build an app\nResearch competitors\nSketch wireframes",
+          "Monday meeting\nBring snacks\nAsk about timeline",
+          "Gift ideas:\nNew headphones?\nBook about space",
+          "Workout plan\nRun 2 miles\nDrink more water",
+          "Movie night picks:\nInterstellar\nEverything Everywhere",
+          "Pack for trip\nCharger\nPassport\nSnacks",
+          "Learn something new\nWatch a tutorial\nTake notes",
+          "Groceries:\nAvocados\nSourdough\nCoffee beans",
+          "Weekend plans\nFarmers market\nCook dinner\nRead",
+        ];
+        const memo = document.getElementById('memo');
+        if (memo) memo.placeholder = ph[Math.floor(Math.random() * ph.length)];
+      })();
+
       // Language picker and wallet buttons
       (function() {
         const appleImg = document.getElementById('apple-wallet-img');
@@ -1056,6 +1075,6 @@
         });
       })();
     </script>
-    <div class="build-hover-area"><span class="build-number">Build 120</span></div>
+    <div class="build-hover-area"><span class="build-number">Build 121</span></div>
   </body>
 </html>
