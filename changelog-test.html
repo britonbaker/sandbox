@@ -104,8 +104,13 @@
   </head>
   <body>
     <style>
-      html { background: linear-gradient(to bottom, #fafafa, #e5e5e5); background-attachment: fixed; min-height: 100vh; }
+      html { background: linear-gradient(to bottom, #fafafa, #e5e5e5); background-attachment: fixed; min-height: 100vh; overflow-y: overlay; }
       html, body { overflow-x: hidden; }
+      html::-webkit-scrollbar { width: 8px; }
+      html::-webkit-scrollbar-track { background: transparent; }
+      html::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 4px; }
+      html::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,.3); }
+      @supports (scrollbar-width: thin) { html { scrollbar-width: thin; scrollbar-color: rgba(0,0,0,.15) transparent; } }
       html.page-slide-in-right .page-content { animation: slideInFromRight 0.4s ease-out forwards; }
       html.page-slide-out-right .page-content { animation: slideOutRight 0.35s ease-in forwards; }
       @keyframes slideInFromRight {
