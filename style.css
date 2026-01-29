@@ -228,6 +228,14 @@ body {
   margin-top: 8px;
 }
 
+.note-wrapper.can-grab {
+  cursor: grab !important;
+}
+
+.note-wrapper.is-grabbing {
+  cursor: grabbing !important;
+}
+
 @media (hover: hover) {
   .note-wrapper:hover {
     transform: translateY(-2px);
