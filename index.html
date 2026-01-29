@@ -52,7 +52,7 @@
 
     <div class="content-group">
       <div class="hero-text">
-        <div class="hero-title">Wallet Memo</div>
+        <div class="hero-title" data-i18n="heroTitle">Wallet Memo</div>
         <div class="hero-tagline" id="hero-tagline">A sticky note for your Apple Wallet</div>
       </div>
 
@@ -220,6 +220,7 @@
       // ==========================================
       const i18n = {
         en: {
+          heroTitle: "Wallet Memo",
           heroTagline: "A sticky note for your Apple Wallet",
           changeColor: "Change Color",
           addStamp: "Add Stamp",
@@ -250,6 +251,7 @@
           ]
         },
         es: {
+          heroTitle: "Nota de Cartera",
           heroTagline: "Una nota adhesiva para tu Apple Wallet",
           changeColor: "Cambiar Color",
           addStamp: "Añadir Sello",
@@ -280,6 +282,7 @@
           ]
         },
         fr: {
+          heroTitle: "Mémo Portefeuille",
           heroTagline: "Un pense-bête pour votre Apple Wallet",
           changeColor: "Changer la Couleur",
           addStamp: "Ajouter un Tampon",
@@ -310,6 +313,7 @@
           ]
         },
         de: {
+          heroTitle: "Wallet-Notiz",
           heroTagline: "Ein Klebezettel für dein Apple Wallet",
           changeColor: "Farbe Ändern",
           addStamp: "Stempel Hinzufügen",
@@ -340,6 +344,7 @@
           ]
         },
         ja: {
+          heroTitle: "ウォレットメモ",
           heroTagline: "Apple Walletの付箋メモ",
           changeColor: "色を変更",
           addStamp: "スタンプを追加",
@@ -370,6 +375,7 @@
           ]
         },
         zh: {
+          heroTitle: "钱包备忘录",
           heroTagline: "Apple Wallet 的便利贴",
           changeColor: "更换颜色",
           addStamp: "添加印章",
@@ -400,6 +406,7 @@
           ]
         },
         ko: {
+          heroTitle: "지갑 메모",
           heroTagline: "Apple Wallet을 위한 메모 스티커",
           changeColor: "색상 변경",
           addStamp: "스탬프 추가",
@@ -430,6 +437,7 @@
           ]
         },
         pt: {
+          heroTitle: "Memo Carteira",
           heroTagline: "Um lembrete para o seu Apple Wallet",
           changeColor: "Mudar Cor",
           addStamp: "Adicionar Carimbo",
@@ -466,6 +474,8 @@
         const t = i18n[lang] || i18n.en;
         // Set document lang attribute
         document.documentElement.lang = lang;
+        // Page title
+        if (t.heroTitle) document.title = t.heroTitle;
         // Hero tagline
         const tagline = document.getElementById('hero-tagline');
         if (tagline) tagline.textContent = t.heroTagline;
