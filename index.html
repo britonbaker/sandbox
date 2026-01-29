@@ -29,8 +29,8 @@
     <style>
       html { background: linear-gradient(to bottom, #fafafa, #e5e5e5); min-height: 100vh; }
       html, body { overflow-x: hidden; }
-      html.page-slide-out-left body { animation: slideOutLeft 0.35s ease-in forwards; }
-      html.page-slide-in-left body { animation: slideInFromLeft 0.4s ease-out forwards; }
+      html.page-slide-out-left .page-content { animation: slideOutLeft 0.35s ease-in forwards; }
+      html.page-slide-in-left .page-content { animation: slideInFromLeft 0.4s ease-out forwards; }
       @keyframes slideOutLeft {
         from { transform: translateX(0); opacity: 1; }
         to { transform: translateX(-100vw); opacity: 0; }
@@ -47,8 +47,7 @@
         sessionStorage.removeItem('page-transition');
       }
     </script>
-    <div class="focus-overlay" id="focus-overlay"></div>
-    <!-- Language picker -->
+    <!-- Language picker (outside page-content so it doesn't slide) -->
     <div class="lang-picker" id="lang-picker">
       <button class="lang-btn" id="lang-btn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -72,6 +71,8 @@
       </div>
     </div>
 
+    <div class="page-content">
+    <div class="focus-overlay" id="focus-overlay"></div>
     <div class="content-group">
       <div class="hero-text">
         <div class="hero-title" data-i18n="heroTitle">Wallet Memo</div>
@@ -1961,7 +1962,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v25';
+      if (tv) tv.textContent = ' · test v26';
 
       // Add changelog link to footer (test → test changelog)
       const footerArea = document.querySelector('.build-hover-area');
@@ -2010,5 +2011,6 @@
       setTimeout(() => { window.location.href = href; }, 300);
     });
     </script>
+    </div><!-- /page-content -->
   </body>
 </html>

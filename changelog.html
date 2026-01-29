@@ -98,8 +98,8 @@
     <style>
       html { background: linear-gradient(to bottom, #fafafa, #e5e5e5); min-height: 100vh; }
       html, body { overflow-x: hidden; }
-      html.page-slide-in-right body { animation: slideInFromRight 0.4s ease-out forwards; }
-      html.page-slide-out-right body { animation: slideOutRight 0.35s ease-in forwards; }
+      html.page-slide-in-right .page-content { animation: slideInFromRight 0.4s ease-out forwards; }
+      html.page-slide-out-right .page-content { animation: slideOutRight 0.35s ease-in forwards; }
       @keyframes slideInFromRight {
         from { transform: translateX(100vw); opacity: 0; }
         to { transform: translateX(0); opacity: 1; }
@@ -115,6 +115,7 @@
         sessionStorage.removeItem('page-transition');
       }
     </script>
+    <div class="page-content">
     <a href="./" class="back-link" id="back-link">Wallet Memo</a>
     <h1 id="page-title">Changelog</h1>
     <p class="subtitle" id="page-subtitle">What's new in Wallet Memo</p>
@@ -246,5 +247,6 @@
       setTimeout(() => { window.location.href = href; }, 300);
     });
     </script>
+    </div><!-- /page-content -->
   </body>
 </html>
