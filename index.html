@@ -618,6 +618,10 @@
                 animateNotePath(statePoints.curled, statePoints.flat);
                 animateNoteGradient(true);
                 wrapper.classList.add('flat');
+                wrapper.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                const current = wrapper.style.transform || '';
+                const base = current.replace(/scale\([^)]*\)/g, '').trim();
+                wrapper.style.transform = (base ? base + ' ' : '') + 'scale(1.08)';
               }
             });
 
@@ -627,6 +631,8 @@
                 animateNotePath(statePoints.flat, statePoints.curled);
                 animateNoteGradient(false);
                 wrapper.classList.remove('flat');
+                const current = wrapper.style.transform || '';
+                wrapper.style.transform = current.replace(/scale\([^)]*\)/g, '').trim();
               }
             });
           }
@@ -1232,6 +1238,6 @@
         });
       })();
     </script>
-    <div class="build-hover-area"><span class="build-number">Build 133</span></div>
+    <div class="build-hover-area"><span class="build-number">Build 134</span></div>
   </body>
 </html>
