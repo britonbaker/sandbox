@@ -237,7 +237,7 @@ body {
 
 @media (max-width: 600px) {
   .note-wrapper.flat {
-    transform: scale(var(--mobile-note-scale, 1.1)) translateY(-78px);
+    transform: scale(var(--mobile-note-scale, 1.1)) translateY(-80px);
   }
 }
 
@@ -781,7 +781,7 @@ body {
   /* Scale up bigger on mobile when clicked/focused - almost edge to edge */
   .note-wrapper.flat,
   .note-wrapper.flat:hover {
-    transform: scale(var(--mobile-note-scale, 1.03)) translateY(-78px);
+    transform: scale(var(--mobile-note-scale, 1.03)) translateY(-80px);
   }
 
   .note-paper {
@@ -880,14 +880,14 @@ body {
     max-height: 44px;
     transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 20;
-  }
-  .wallet-btn-link#apple-wallet-btn.qr-open {
-    max-height: 300px;
-    z-index: 30;
     position: absolute;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
+  }
+  .wallet-btn-link#apple-wallet-btn.qr-open {
+    max-height: 300px;
+    z-index: 30;
   }
   .wallet-qr {
     display: flex;
