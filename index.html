@@ -197,7 +197,7 @@
       </div>
     </main>
     
-    <div class="build-hover-area"><span class="build-number">Build 110</span></div>
+    <div class="build-hover-area"><span class="build-number">Build 111</span></div>
     </div>
 
     <script>
@@ -964,6 +964,19 @@
         makeDraggable(wrapper);
 
         // Add new note button
+        const placeholders = [
+          "Pick up groceries\nCall dentist\nStretch!",
+          "Idea: build an app\nResearch competitors\nSketch wireframes",
+          "Monday meeting\nBring snacks\nAsk about timeline",
+          "Gift ideas:\nNew headphones?\nBook about space",
+          "Workout plan\nRun 2 miles\nDrink more water",
+          "Movie night picks:\nInterstellar\nEverything Everywhere",
+          "Pack for trip\nCharger\nPassport\nSnacks",
+          "Learn something new\nWatch a tutorial\nTake notes",
+          "Groceries:\nAvocados\nSourdough\nCoffee beans",
+          "Weekend plans\nFarmers market\nCook dinner\nRead",
+        ];
+
         addBtn.addEventListener('click', () => {
           noteCounter++;
           const colors = ['blue', 'yellow', 'pink'];
@@ -1005,10 +1018,13 @@
               </defs>
             </svg>
             <div class="note" style="width:344px;height:324px;padding:48px 57px;position:absolute;top:0;left:0;z-index:2;">
-              <textarea class="textarea" placeholder="New note..." maxlength="140" style="font-family:'Patrick Hand',cursive;font-size:20px;line-height:1.5;color:#1a1a1a;border:none;background:transparent;resize:none;outline:none;text-align:center;width:100%;height:100%;transform:skewX(-3deg) skewY(1deg);"></textarea>
+              <textarea class="textarea" maxlength="140" style="font-family:'Patrick Hand',cursive;font-size:20px;line-height:1.5;color:#1a1a1a;border:none;background:transparent;resize:none;outline:none;text-align:center;width:100%;height:100%;transform:skewX(-3deg) skewY(1deg);"></textarea>
             </div>`;
 
           wrapper.parentElement.insertBefore(newWrapper, addBtn);
+          // Set random placeholder
+          const ta = newWrapper.querySelector('textarea');
+          if (ta) ta.placeholder = placeholders[Math.floor(Math.random() * placeholders.length)];
           makeDraggable(newWrapper);
 
           // Hide add button until this new one is dragged
