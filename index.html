@@ -759,14 +759,16 @@
           }
         });
 
-        // Close menu when clicking outside
-        document.addEventListener('click', (e) => {
+        // Close menu when clicking/tapping outside
+        function closeMenuOutside(e) {
           if (!dropdown.contains(e.target) && !menuBtn.contains(e.target)) {
             dropdown.classList.remove('open');
             menuBtn.classList.remove('active');
             colorSubmenu.classList.remove('open');
           }
-        });
+        }
+        document.addEventListener('click', closeMenuOutside);
+        document.addEventListener('touchstart', closeMenuOutside);
 
         // Color change functionality
         changeColorBtn.addEventListener('click', (e) => {
@@ -1314,6 +1316,6 @@
         });
       })();
     </script>
-    <div class="build-hover-area"><a href="mailto:ram@agentmail.to" class="footer-link"><i class="hgi-stroke hgi-mail-02" style="margin-right: 4px; font-size: 10px;"></i>Email Us</a> · <span class="build-number">Build 173</span></div>
+    <div class="build-hover-area"><a href="mailto:ram@agentmail.to" class="footer-link"><i class="hgi-stroke hgi-mail-02" style="margin-right: 4px; font-size: 10px;"></i>Email Us</a> · <span class="build-number">Build 174</span></div>
   </body>
 </html>
