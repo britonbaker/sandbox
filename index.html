@@ -197,7 +197,7 @@
       </div>
     </main>
     
-    <div class="build-hover-area"><span class="build-number">Build 104</span></div>
+    <div class="build-hover-area"><span class="build-number">Build 105</span></div>
     </div>
 
     <script>
@@ -587,6 +587,20 @@
           dropdown.classList.toggle('open');
           // Re-focus textarea so note stays in focused state
           if (isFlat) textarea.focus({ preventScroll: true });
+          // Clamp dropdown to viewport
+          if (dropdown.classList.contains('open')) {
+            requestAnimationFrame(() => {
+              const rect = dropdown.getBoundingClientRect();
+              if (rect.right > window.innerWidth) {
+                const overflow = rect.right - window.innerWidth + 8;
+                dropdown.style.right = (8 + overflow) + 'px';
+              } else {
+                dropdown.style.right = '';
+              }
+            });
+          } else {
+            dropdown.style.right = '';
+          }
         });
 
         // Close menu when clicking outside
