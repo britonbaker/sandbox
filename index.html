@@ -10,6 +10,16 @@
     <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css">
     <script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
     <link rel="stylesheet" href="./style.css" />
+    <!-- Hreflang alternate links for SEO -->
+    <link rel="alternate" hreflang="en" href="https://walletmemo.com/" />
+    <link rel="alternate" hreflang="es" href="https://walletmemo.com/?lang=es" />
+    <link rel="alternate" hreflang="fr" href="https://walletmemo.com/?lang=fr" />
+    <link rel="alternate" hreflang="de" href="https://walletmemo.com/?lang=de" />
+    <link rel="alternate" hreflang="ja" href="https://walletmemo.com/?lang=ja" />
+    <link rel="alternate" hreflang="zh" href="https://walletmemo.com/?lang=zh" />
+    <link rel="alternate" hreflang="ko" href="https://walletmemo.com/?lang=ko" />
+    <link rel="alternate" hreflang="pt" href="https://walletmemo.com/?lang=pt" />
+    <link rel="alternate" hreflang="x-default" href="https://walletmemo.com/" />
           <!-- GoatCounter analytics -->
     <script data-goatcounter="https://walletmemo.goatcounter.com/count"
             async src="//gc.zgo.at/count.js"></script>
@@ -43,7 +53,7 @@
     <div class="content-group">
       <div class="hero-text">
         <div class="hero-title">Wallet Memo</div>
-        <div class="hero-tagline">A sticky note for your Apple Wallet</div>
+        <div class="hero-tagline" id="hero-tagline">A sticky note for your Apple Wallet</div>
       </div>
 
       <main class="container">
@@ -115,7 +125,7 @@
           <div class="note-dropdown" id="note-dropdown">
             <button class="dropdown-item" id="change-color-btn">
               <span class="color-icon" id="color-icon"></span>
-              Change Color
+              <span data-i18n="changeColor">Change Color</span>
             </button>
             <div class="color-submenu" id="color-submenu">
               <div class="color-swatch" data-color="blue" style="background: #B4DCE8;"></div>
@@ -127,7 +137,7 @@
                 <rect x="3" y="11" width="18" height="10" rx="2"/>
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
               </svg>
-              Add Stamp <span class="coming-soon-tag">Coming soon</span>
+              <span data-i18n="addStamp">Add Stamp</span> <span class="coming-soon-tag" data-i18n="comingSoon">Coming soon</span>
             </button>
             <button class="dropdown-item" id="add-sticker-btn" disabled>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -136,7 +146,7 @@
                 <line x1="9" y1="9" x2="9.01" y2="9"/>
                 <line x1="15" y1="9" x2="15.01" y2="9"/>
               </svg>
-              Stickers <span class="coming-soon-tag">Coming soon</span>
+              <span data-i18n="stickers">Stickers</span> <span class="coming-soon-tag" data-i18n="comingSoon">Coming soon</span>
             </button>
             <button class="dropdown-item" id="draw-btn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -144,7 +154,7 @@
                 <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
                 <path d="M2 2l7.586 7.586"/>
               </svg>
-              Draw on Note
+              <span data-i18n="drawOnNote">Draw on Note</span>
             </button>
           </div>
 
@@ -191,8 +201,8 @@
             <img id="google-wallet-img" src="./assets/wallet-buttons/google-wallet-buttons/Locale=EN, Type=Primary.svg" alt="Add to Google Wallet">
           </a>
         </div>
-        <div class="wallet-message" id="wallet-message">Coming soon!</div>
-        <div class="build-hover-area"><a href="mailto:ram@agentmail.to" class="footer-link"><i class="hgi-stroke hgi-mail-02" style="margin-right: 4px; font-size: 10px;"></i>Email Us</a> · <span class="build-number">Build 191</span></div>
+        <div class="wallet-message" id="wallet-message" data-i18n="comingSoonExcl">Coming soon!</div>
+        <div class="build-hover-area"><a href="mailto:ram@agentmail.to" class="footer-link"><i class="hgi-stroke hgi-mail-02" style="margin-right: 4px; font-size: 10px;"></i><span data-i18n="emailUs">Email Us</span></a> · <span class="build-number">Build 192</span></div>
       </div>
     </main>
     
@@ -200,6 +210,272 @@
     </div>
 
     <script>
+      // ==========================================
+      // i18n Translations
+      // ==========================================
+      const i18n = {
+        en: {
+          heroTagline: "A sticky note for your Apple Wallet",
+          changeColor: "Change Color",
+          addStamp: "Add Stamp",
+          comingSoon: "Coming soon",
+          stickers: "Stickers",
+          drawOnNote: "Draw on Note",
+          emailUs: "Email Us",
+          comingSoonExcl: "Coming soon!",
+          placeholders: [
+            "Buy oat milk\nText mom\nDon't forget…",
+            "Pick up groceries\nCall dentist\nStretch!",
+            "Idea: build an app\nResearch competitors\nSketch wireframes",
+            "Monday meeting\nBring snacks\nAsk about timeline",
+            "Gift ideas:\nNew headphones?\nBook about space",
+            "Workout plan\nRun 2 miles\nDrink more water",
+            "Movie night picks:\nInterstellar\nEverything Everywhere",
+            "Pack for trip\nCharger\nPassport\nSnacks",
+            "Learn something new\nWatch a tutorial\nTake notes",
+            "Groceries:\nAvocados\nSourdough\nCoffee beans",
+            "Weekend plans\nFarmers market\nCook dinner\nRead",
+            "Buy it.\nUse it.\nBreak it.\nFix it.",
+            "It doesn't have to\nbe done. It just has\nto be perfect.",
+            "Drink water.",
+            "Send the email.",
+            "Stretch for\n30 seconds.\nCount it.",
+            "Call dentist.",
+            "Don't turn\nOff.",
+          ]
+        },
+        es: {
+          heroTagline: "Una nota adhesiva para tu Apple Wallet",
+          changeColor: "Cambiar Color",
+          addStamp: "Añadir Sello",
+          comingSoon: "Próximamente",
+          stickers: "Stickers",
+          drawOnNote: "Dibujar en Nota",
+          emailUs: "Escríbenos",
+          comingSoonExcl: "¡Próximamente!",
+          placeholders: [
+            "Comprar leche\nLlamar a mamá\nNo olvidar…",
+            "Ir al súper\nLlamar al dentista\n¡Estirar!",
+            "Idea: crear una app\nInvestigar competencia\nHacer bocetos",
+            "Reunión del lunes\nLlevar snacks\nPreguntar por plazos",
+            "Ideas de regalo:\n¿Audífonos nuevos?\nLibro de espacio",
+            "Plan de ejercicio\nCorrer 3 km\nBeber más agua",
+            "Noche de pelis:\nInterestelar\nEverything Everywhere",
+            "Hacer maleta\nCargador\nPasaporte\nSnacks",
+            "Aprender algo nuevo\nVer un tutorial\nTomar notas",
+            "Compras:\nAguacates\nPan\nCafé",
+            "Planes del finde\nMercado\nCocinar\nLeer",
+            "Cómpralo.\nÚsalo.\nRómpelo.\nArréglalo.",
+            "No tiene que estar\nterminado. Solo tiene\nque ser perfecto.",
+            "Bebe agua.",
+            "Envía el correo.",
+            "Estira por\n30 segundos.\nCuéntalos.",
+            "Llama al dentista.",
+            "No te\napagues.",
+          ]
+        },
+        fr: {
+          heroTagline: "Un pense-bête pour votre Apple Wallet",
+          changeColor: "Changer la Couleur",
+          addStamp: "Ajouter un Tampon",
+          comingSoon: "Bientôt",
+          stickers: "Autocollants",
+          drawOnNote: "Dessiner sur la Note",
+          emailUs: "Nous Écrire",
+          comingSoonExcl: "Bientôt disponible !",
+          placeholders: [
+            "Acheter du lait\nAppeler maman\nNe pas oublier…",
+            "Courses à faire\nAppeler le dentiste\nÉtirements !",
+            "Idée : créer une app\nÉtudier la concurrence\nFaire des croquis",
+            "Réunion lundi\nApporter des gâteaux\nDemander le planning",
+            "Idées cadeaux :\nNouveaux écouteurs ?\nLivre sur l'espace",
+            "Programme sport\nCourir 3 km\nBoire plus d'eau",
+            "Soirée ciné :\nInterstellar\nEverything Everywhere",
+            "Préparer la valise\nChargeur\nPasseport\nSnacks",
+            "Apprendre quelque chose\nRegarder un tuto\nPrendre des notes",
+            "Courses :\nAvocats\nPain\nGrains de café",
+            "Plans du week-end\nMarché\nCuisiner\nLire",
+            "Achète-le.\nUtilise-le.\nCasse-le.\nRépare-le.",
+            "Ça n'a pas besoin\nd'être fini. Juste\nparfait.",
+            "Bois de l'eau.",
+            "Envoie le mail.",
+            "Étire-toi\n30 secondes.\nCompte-les.",
+            "Appelle le dentiste.",
+            "Ne t'éteins\npas.",
+          ]
+        },
+        de: {
+          heroTagline: "Ein Klebezettel für dein Apple Wallet",
+          changeColor: "Farbe Ändern",
+          addStamp: "Stempel Hinzufügen",
+          comingSoon: "Demnächst",
+          stickers: "Sticker",
+          drawOnNote: "Auf Notiz Zeichnen",
+          emailUs: "Schreib Uns",
+          comingSoonExcl: "Demnächst verfügbar!",
+          placeholders: [
+            "Milch kaufen\nMama anrufen\nNicht vergessen…",
+            "Einkaufen gehen\nZahnarzt anrufen\nDehnen!",
+            "Idee: App bauen\nWettbewerb analysieren\nSkizzen machen",
+            "Meeting am Montag\nSnacks mitbringen\nNach Zeitplan fragen",
+            "Geschenkideen:\nNeue Kopfhörer?\nBuch über Weltraum",
+            "Trainingsplan\n3 km laufen\nMehr Wasser trinken",
+            "Filmabend:\nInterstellar\nEverything Everywhere",
+            "Koffer packen\nLadegerät\nReisepass\nSnacks",
+            "Etwas Neues lernen\nTutorial schauen\nNotizen machen",
+            "Einkaufsliste:\nAvocados\nBrot\nKaffeebohnen",
+            "Wochenendpläne\nMarkt\nKochen\nLesen",
+            "Kauf es.\nNutz es.\nBrich es.\nFix es.",
+            "Es muss nicht\nfertig sein. Nur\nperfekt.",
+            "Trink Wasser.",
+            "Schick die E-Mail.",
+            "Dehne dich\n30 Sekunden.\nZähle mit.",
+            "Ruf den Zahnarzt an.",
+            "Schalte nicht\nab.",
+          ]
+        },
+        ja: {
+          heroTagline: "Apple Walletの付箋メモ",
+          changeColor: "色を変更",
+          addStamp: "スタンプを追加",
+          comingSoon: "近日公開",
+          stickers: "ステッカー",
+          drawOnNote: "メモに描く",
+          emailUs: "メールする",
+          comingSoonExcl: "近日公開！",
+          placeholders: [
+            "牛乳を買う\nお母さんに電話\n忘れないで…",
+            "買い物に行く\n歯医者に電話\nストレッチ！",
+            "アイデア：アプリを作る\n競合を調査\nワイヤーフレームを描く",
+            "月曜の会議\nお菓子を持参\nスケジュールを確認",
+            "プレゼントのアイデア：\n新しいヘッドホン？\n宇宙の本",
+            "運動計画\n3km走る\nもっと水を飲む",
+            "映画ナイト：\nインターステラー\nエブエブ",
+            "旅行の準備\n充電器\nパスポート\nお菓子",
+            "新しいことを学ぶ\nチュートリアルを見る\nメモを取る",
+            "買い物リスト：\nアボカド\nパン\nコーヒー豆",
+            "週末の予定\n市場\n料理する\n読書",
+            "買う。\n使う。\n壊す。\n直す。",
+            "完成しなくていい。\nただ完璧で\nあればいい。",
+            "水を飲む。",
+            "メールを送る。",
+            "30秒\nストレッチ。\n数えて。",
+            "歯医者に電話。",
+            "消えないで。",
+          ]
+        },
+        zh: {
+          heroTagline: "Apple Wallet 的便利贴",
+          changeColor: "更换颜色",
+          addStamp: "添加印章",
+          comingSoon: "即将推出",
+          stickers: "贴纸",
+          drawOnNote: "在便签上画画",
+          emailUs: "发邮件给我们",
+          comingSoonExcl: "即将推出！",
+          placeholders: [
+            "买牛奶\n给妈妈打电话\n别忘了…",
+            "去超市\n预约牙医\n做拉伸！",
+            "想法：做个App\n研究竞品\n画线框图",
+            "周一开会\n带零食\n问进度",
+            "礼物清单：\n新耳机？\n太空书籍",
+            "健身计划\n跑步3公里\n多喝水",
+            "电影之夜：\n星际穿越\n瞬息全宇宙",
+            "收拾行李\n充电器\n护照\n零食",
+            "学点新东西\n看教程\n做笔记",
+            "购物清单：\n牛油果\n面包\n咖啡豆",
+            "周末计划\n逛市场\n做饭\n看书",
+            "买。\n用。\n坏。\n修。",
+            "不需要完成。\n只需要\n完美。",
+            "喝水。",
+            "发邮件。",
+            "拉伸\n30秒。\n数一数。",
+            "打电话给牙医。",
+            "别关机。",
+          ]
+        },
+        ko: {
+          heroTagline: "Apple Wallet을 위한 메모 스티커",
+          changeColor: "색상 변경",
+          addStamp: "스탬프 추가",
+          comingSoon: "곧 출시",
+          stickers: "스티커",
+          drawOnNote: "메모에 그리기",
+          emailUs: "이메일 보내기",
+          comingSoonExcl: "곧 출시됩니다!",
+          placeholders: [
+            "우유 사기\n엄마한테 전화\n잊지 말기…",
+            "장보기\n치과 예약\n스트레칭!",
+            "아이디어: 앱 만들기\n경쟁사 조사\n와이어프레임 그리기",
+            "월요일 회의\n간식 가져가기\n일정 확인",
+            "선물 아이디어:\n새 헤드폰?\n우주 관련 책",
+            "운동 계획\n3km 달리기\n물 더 마시기",
+            "영화 밤:\n인터스텔라\n에브리씽 에브리웨어",
+            "여행 짐 싸기\n충전기\n여권\n간식",
+            "새로운 것 배우기\n튜토리얼 보기\n메모하기",
+            "장보기:\n아보카도\n빵\n커피 원두",
+            "주말 계획\n시장 가기\n요리하기\n독서",
+            "사라.\n써라.\n부숴라.\n고쳐라.",
+            "완성할 필요 없어.\n그냥 완벽하면\n돼.",
+            "물 마시기.",
+            "이메일 보내기.",
+            "30초\n스트레칭.\n세어봐.",
+            "치과에 전화.",
+            "꺼지지 마.",
+          ]
+        },
+        pt: {
+          heroTagline: "Um lembrete para o seu Apple Wallet",
+          changeColor: "Mudar Cor",
+          addStamp: "Adicionar Carimbo",
+          comingSoon: "Em breve",
+          stickers: "Adesivos",
+          drawOnNote: "Desenhar na Nota",
+          emailUs: "Envie um Email",
+          comingSoonExcl: "Em breve!",
+          placeholders: [
+            "Comprar leite\nLigar pra mãe\nNão esquecer…",
+            "Ir ao mercado\nLigar pro dentista\nAlongar!",
+            "Ideia: criar um app\nPesquisar concorrência\nFazer esboços",
+            "Reunião segunda\nLevar lanches\nPerguntar sobre prazos",
+            "Ideias de presente:\nFones novos?\nLivro sobre espaço",
+            "Plano de treino\nCorrer 3 km\nBeber mais água",
+            "Noite de filme:\nInterestelar\nEverything Everywhere",
+            "Fazer mala\nCarregador\nPassaporte\nLanches",
+            "Aprender algo novo\nVer tutorial\nFazer anotações",
+            "Compras:\nAbacates\nPão\nGrãos de café",
+            "Planos de fim de semana\nFeira\nCozinhar\nLer",
+            "Compre.\nUse.\nQuebre.\nConserte.",
+            "Não precisa estar\npronto. Só precisa\nser perfeito.",
+            "Beba água.",
+            "Envie o email.",
+            "Alongue por\n30 segundos.\nConte.",
+            "Ligue pro dentista.",
+            "Não se\napague.",
+          ]
+        }
+      };
+
+      // Apply language to all translatable elements
+      function applyLanguage(lang) {
+        const t = i18n[lang] || i18n.en;
+        // Set document lang attribute
+        document.documentElement.lang = lang;
+        // Hero tagline
+        const tagline = document.getElementById('hero-tagline');
+        if (tagline) tagline.textContent = t.heroTagline;
+        // All data-i18n elements
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+          const key = el.getAttribute('data-i18n');
+          if (t[key]) el.textContent = t[key];
+        });
+        // Textarea placeholder (random from current language)
+        const memo = document.getElementById('memo');
+        if (memo) memo.placeholder = t.placeholders[Math.floor(Math.random() * t.placeholders.length)];
+        // Store globally for new note placeholders
+        window._currentI18nLang = lang;
+      }
+
       // Randomize default note placeholder on load
       (function() {
         const ph = [
@@ -285,6 +561,7 @@
 
         // Initialize
         updateWalletButtons(currentLang);
+        applyLanguage(currentLang);
 
         // Toggle dropdown
         langBtn.addEventListener('click', (e) => {
@@ -305,6 +582,7 @@
             currentLang = lang;
             localStorage.setItem('walletmemo-lang', lang);
             updateWalletButtons(lang);
+            applyLanguage(lang);
             langPicker.classList.remove('open');
           });
         });
