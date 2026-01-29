@@ -144,7 +144,7 @@ body {
 }
 
 .hero-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Playfair Display', 'Noto Serif JP', 'Noto Serif KR', 'Noto Serif SC', serif;
   font-size: clamp(72px, 15vw, 140px);
   font-weight: 900;
   letter-spacing: -2px;
