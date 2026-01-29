@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Inter:wght@300&family=Fraunces:wght@300&family=Cormorant+Garamond:wght@300&family=Noto+Serif+JP:wght@900&family=Noto+Serif+KR:wght@900&family=Noto+Serif+SC:wght@900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css">
     <script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
-    <link rel="stylesheet" href="./style.css?v=7" />
+    <link rel="stylesheet" href="./style.css?v=8" />
     <!-- Hreflang alternate links for SEO -->
     <link rel="alternate" hreflang="en" href="https://walletmemo.com/" />
     <link rel="alternate" hreflang="es" href="https://walletmemo.com/?lang=es" />
@@ -1104,7 +1104,7 @@
         // ==========================================
         // Drawing Mode (draws directly on note)
         // ==========================================
-        let isDrawingMode = false;
+        window.isDrawingMode = false;
         let drawingCtx = null;
         let isDrawing = false;
         let savedImageData = null;
@@ -1149,6 +1149,10 @@
           }
           isDrawingMode = false;
           isDrawing = false;
+          const toolbar = document.getElementById('drawing-toolbar');
+          if (toolbar) toolbar.classList.remove('visible');
+          const focusOverlay = document.querySelector('.focus-overlay');
+          if (focusOverlay) focusOverlay.classList.remove('active');
         };
 
         // Open drawing mode
@@ -1811,8 +1815,15 @@
             newWrapper.classList.add('flat');
 
             // Enable drawing mode
+            isDrawingMode = true;
             document.body.classList.add('drawing-mode-active');
             newWrapper.classList.add('drawing-mode');
+
+            // Show toolbar
+            const toolbar = document.getElementById('drawing-toolbar');
+            if (toolbar) toolbar.classList.add('visible');
+            const focusOverlay = document.querySelector('.focus-overlay');
+            if (focusOverlay) focusOverlay.classList.add('active');
 
             // Sync toolbar pen settings to this canvas
             spawnDrawingCtx.strokeStyle = currentPenColor;
@@ -1844,7 +1855,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = 'test v7';
+      if (tv) tv.textContent = 'test v8';
     }
     </script>
   </body>
