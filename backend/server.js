@@ -278,33 +278,14 @@ async function generateStripImage(color, drawingDataUrl, text) {
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext('2d');
   
-  // Gradient colors matching sticky notes
-  const gradientColors = {
-    blue: [
-      { pos: 0, color: '#9DD5EE' },
-      { pos: 0.5, color: '#B8E8F8' },
-      { pos: 1, color: '#E0F5FC' }
-    ],
-    yellow: [
-      { pos: 0, color: '#E2D060' },
-      { pos: 0.5, color: '#F0E480' },
-      { pos: 1, color: '#FDF8C0' }
-    ],
-    pink: [
-      { pos: 0, color: '#E4B8C0' },
-      { pos: 0.5, color: '#F0C8D0' },
-      { pos: 1, color: '#FCE8F0' }
-    ]
+  // Flat solid colors for wallet pass (no gradient)
+  const flatColors = {
+    blue: '#B8E8F8',
+    yellow: '#F0E480',
+    pink: '#F0C8D0'
   };
 
-  // Create vertical gradient
-  const gradient = ctx.createLinearGradient(0, height, 0, 0);
-  const stops = gradientColors[color] || gradientColors.blue;
-  stops.forEach(stop => {
-    gradient.addColorStop(stop.pos, stop.color);
-  });
-  
-  ctx.fillStyle = gradient;
+  ctx.fillStyle = flatColors[color] || flatColors.blue;
   ctx.fillRect(0, 0, width, height);
 
   // Overlay any drawing from the user
@@ -389,36 +370,14 @@ async function generateBackgroundImage(color, drawingDataUrl) {
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext('2d');
   
-  // Gradient colors - soft sticky note gradients
-  const gradientColors = {
-    blue: [
-      { pos: 0, color: '#7BC4E0' },
-      { pos: 0.4, color: '#9DD5EE' },
-      { pos: 0.7, color: '#B8E8F8' },
-      { pos: 1, color: '#E0F5FC' }
-    ],
-    yellow: [
-      { pos: 0, color: '#D4C44A' },
-      { pos: 0.4, color: '#E2D060' },
-      { pos: 0.7, color: '#F0E480' },
-      { pos: 1, color: '#FDF8C0' }
-    ],
-    pink: [
-      { pos: 0, color: '#D9A8B2' },
-      { pos: 0.4, color: '#E4B8C0' },
-      { pos: 0.7, color: '#F0C8D0' },
-      { pos: 1, color: '#FCE8F0' }
-    ]
+  // Flat solid colors for wallet pass (no gradient)
+  const flatColors = {
+    blue: '#B8E8F8',
+    yellow: '#F0E480',
+    pink: '#F0C8D0'
   };
 
-  // Create vertical gradient (bottom darker, top lighter)
-  const gradient = ctx.createLinearGradient(0, height, 0, 0);
-  const stops = gradientColors[color] || gradientColors.blue;
-  stops.forEach(stop => {
-    gradient.addColorStop(stop.pos, stop.color);
-  });
-  
-  ctx.fillStyle = gradient;
+  ctx.fillStyle = flatColors[color] || flatColors.blue;
   ctx.fillRect(0, 0, width, height);
 
   // Overlay any drawing from the user
@@ -461,20 +420,14 @@ async function generateIconImage(color) {
   const canvas = createCanvas(size, size);
   const ctx = canvas.getContext('2d');
 
-  const gradient = ctx.createLinearGradient(0, size, 0, 0);
-  
-  if (color === 'yellow') {
-    gradient.addColorStop(0, '#D4C44A');
-    gradient.addColorStop(1, '#F5E58A');
-  } else if (color === 'pink') {
-    gradient.addColorStop(0, '#D9A8B2');
-    gradient.addColorStop(1, '#F3D0D8');
-  } else {
-    gradient.addColorStop(0, '#9DD5EE');
-    gradient.addColorStop(1, '#C4E9F5');
-  }
-  
-  ctx.fillStyle = gradient;
+  // Flat solid colors (no gradient)
+  const flatColors = {
+    blue: '#B8E8F8',
+    yellow: '#F0E480',
+    pink: '#F0C8D0'
+  };
+
+  ctx.fillStyle = flatColors[color] || flatColors.blue;
   ctx.beginPath();
   ctx.roundRect(4, 4, size - 8, size - 8, 16);
   ctx.fill();
