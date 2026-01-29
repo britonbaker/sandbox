@@ -694,6 +694,10 @@
             animateGradient(true);
             noteShadow.src = './assets/paper-stuff/shadow-layer-two.svg';
             noteWrapper.classList.add('flat');
+            noteWrapper.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+            const current = noteWrapper.style.transform || '';
+            const base = current.replace(/scale\([^)]*\)/g, '').trim();
+            noteWrapper.style.transform = (base ? base + ' ' : '') + 'scale(1.08)';
             focusOverlay.classList.add('active');
             langPicker2.classList.add('hidden');
           }
@@ -708,6 +712,8 @@
             animateGradient(false);
             noteShadow.src = './assets/paper-stuff/shadow-layer.svg';
             noteWrapper.classList.remove('flat');
+            const current = noteWrapper.style.transform || '';
+            noteWrapper.style.transform = current.replace(/scale\([^)]*\)/g, '').trim();
             focusOverlay.classList.remove('active');
             langPicker2.classList.remove('hidden');
           }
@@ -1221,6 +1227,12 @@
           ta.style.cssText = "font-family:'Patrick Hand',cursive;font-size:20px;line-height:1.5;color:#1a1a1a;border:none;background:transparent;resize:none;outline:none;text-align:center;width:100%;overflow:hidden;";
           noteDiv.appendChild(ta);
           
+          // Add shadow layer (same as original note)
+          const shadowImg = document.createElement('img');
+          shadowImg.src = './assets/paper-stuff/shadow-layer.svg';
+          shadowImg.className = 'note-shadow';
+          shadowImg.alt = '';
+          newWrapper.appendChild(shadowImg);
           newWrapper.appendChild(svgNode);
           newWrapper.appendChild(noteDiv);
 
@@ -1238,6 +1250,6 @@
         });
       })();
     </script>
-    <div class="build-hover-area"><span class="build-number">Build 134</span></div>
+    <div class="build-hover-area"><span class="build-number">Build 135</span></div>
   </body>
 </html>
