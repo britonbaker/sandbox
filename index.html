@@ -924,10 +924,14 @@
             el.style.cursor = 'grabbing';
             el.style.transition = 'none';
             el.style.zIndex = String(50 + noteCounter);
-            // no shadow on drag
             // Lift off the wall - go flat
             el.classList.add('flat');
             el.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(1.03)`;
+            // Show add button immediately on grab
+            if (!hasMoved) {
+              hasMoved = true;
+              addBtn.style.display = 'flex';
+            }
           });
 
           document.addEventListener('mousemove', (e) => {
@@ -937,14 +941,6 @@
             offsetX = origX + dx;
             offsetY = origY + dy;
             el.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(1.03)`;
-
-            // Show add button once dragged enough
-            if (Math.abs(offsetX) > 30 || Math.abs(offsetY) > 30) {
-              if (!hasMoved) {
-                hasMoved = true;
-                addBtn.style.display = 'flex';
-              }
-            }
           });
 
           document.addEventListener('mouseup', () => {
@@ -1033,6 +1029,6 @@
         });
       })();
     </script>
-    <div class="build-hover-area"><span class="build-number">Build 114</span></div>
+    <div class="build-hover-area"><span class="build-number">Build 115</span></div>
   </body>
 </html>
