@@ -948,12 +948,18 @@
             isDragging = false;
             el.style.cursor = 'grab';
             el.style.transition = '';
-            // reset filter
             // Stick back to wall - remove flat, go back to curled
             el.classList.remove('flat');
             el.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
             const ta = el.querySelector('textarea');
             if (ta) ta.blur();
+            // Suppress the click event that fires after mouseup
+            // so it doesn't re-focus the textarea and flatten the note
+            el.addEventListener('click', function suppressClick(evt) {
+              evt.stopPropagation();
+              evt.preventDefault();
+              el.removeEventListener('click', suppressClick, true);
+            }, true);
           });
         }
 
@@ -1029,6 +1035,6 @@
         });
       })();
     </script>
-    <div class="build-hover-area"><span class="build-number">Build 116</span></div>
+    <div class="build-hover-area"><span class="build-number">Build 117</span></div>
   </body>
 </html>
