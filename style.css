@@ -805,6 +805,7 @@ body {
   .wallet-btn-link#apple-wallet-btn.qr-open {
     max-height: 250px;
     z-index: 30;
+    transform: translateY(-104px);
   }
   .wallet-qr {
     display: flex;
