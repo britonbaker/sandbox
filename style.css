@@ -655,12 +655,10 @@ body {
 }
 
 .wallet-btn-link:hover {
-  transform: translateY(-1px);
   filter: brightness(1.05);
 }
 
 .wallet-btn-link:active {
-  transform: translateY(0);
 }
 
 .wallet-btn-link img {
@@ -872,12 +870,14 @@ body {
   z-index: 20;
 }
 
-/* Desktop only: absolute position so QR doesn't shift page */
+/* Desktop only: QR expands without shifting page */
 @media (min-width: 601px) {
+  .wallet-buttons {
+    height: 44px;
+    overflow: visible;
+  }
   .wallet-btn-link#apple-wallet-btn {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
   }
 }
 
