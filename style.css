@@ -624,6 +624,7 @@ body {
   resize: none;
   outline: none;
   text-align: center;
+  overflow: hidden;
   position: relative;
   z-index: 1;
   transform: skewX(-3deg) skewY(1deg);
