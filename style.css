@@ -219,18 +219,17 @@ body {
   cursor: default;
   z-index: 10;
   margin-top: 8px;
-  transform: perspective(800px) rotateX(3deg);
 }
 
 @media (hover: hover) {
   .note-wrapper:hover {
-    transform: perspective(800px) rotateX(3deg) translateY(-2px);
+    transform: translateY(-2px);
   }
 }
 
 /* Focused state - note lifts and grows slightly */
 .note-wrapper.flat {
-  transform: scale(1.08) rotateX(0deg);
+  transform: scale(1.08);
 }
 
 @media (max-width: 600px) {
@@ -240,7 +239,7 @@ body {
 }
 
 .note-wrapper.flat:hover {
-  transform: scale(1.08) rotateX(0deg) translateY(-2px);
+  transform: scale(1.08) translateY(-2px);
 }
 
 /* Shadow layer - positioned behind and offset */
@@ -624,7 +623,12 @@ body {
   overflow: hidden;
   position: relative;
   z-index: 1;
+  transform: perspective(800px) rotateX(3deg);
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.note-wrapper.flat .textarea {
+  transform: perspective(800px) rotateX(0deg);
 }
 
 .textarea::placeholder {

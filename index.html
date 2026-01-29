@@ -1055,7 +1055,7 @@
             // Stick back to wall - remove flat, go back to curled
             el.classList.remove('flat');
             el.dispatchEvent(new Event('note:stick'));
-            el.style.transform = `perspective(800px) rotateX(3deg) translate(${offsetX}px, ${offsetY}px)`;
+            el.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
             const ta = el.querySelector('textarea');
             if (ta) ta.blur();
             // Suppress the click event that fires after mouseup
@@ -1194,6 +1194,6 @@
         });
       })();
     </script>
-    <div class="build-hover-area"><span class="build-number">Build 128</span></div>
+    <div class="build-hover-area"><span class="build-number">Build 129</span></div>
   </body>
 </html>
