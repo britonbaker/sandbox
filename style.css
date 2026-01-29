@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@900&display=swap');
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 /* Language picker */
@@ -639,6 +641,8 @@ body {
   display: flex;
   gap: 12px;
   align-items: stretch;
+  position: relative;
+  min-height: 44px;
 }
 
 .wallet-btn-link {
@@ -695,7 +699,7 @@ body {
   flex-direction: column;
   align-items: center;
   transition: opacity .3s ease;
-  min-height: 44px;
+  min-height: 54px;
 }
 
 .wallet-message {
@@ -862,15 +866,14 @@ body {
   box-shadow: 0 0 0 1px rgba(0,0,0,1);
   max-height: 44px;
   transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 20;
 }
 
 .wallet-btn-link#apple-wallet-btn.qr-open {
   max-height: 300px;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   z-index: 30;
 }
 
