@@ -233,7 +233,7 @@ body {
 
 @media (max-width: 600px) {
   .note-wrapper.flat {
-    transform: scale(var(--mobile-note-scale, 1.03)) translateY(-80px);
+    transform: scale(var(--mobile-note-scale, 1.03)) translateY(-75px);
   }
 }
 
@@ -791,7 +791,7 @@ body {
   /* Scale up bigger on mobile when clicked/focused - almost edge to edge */
   .note-wrapper.flat,
   .note-wrapper.flat:hover {
-    transform: scale(var(--mobile-note-scale, 1.03)) translateY(-80px);
+    transform: scale(var(--mobile-note-scale, 1.03)) translateY(-75px);
   }
 
   .note-paper {
