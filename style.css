@@ -459,6 +459,7 @@ body {
 }
 
 .note-wrapper.drawing-mode .note-drawing-layer {
+  touch-action: none;
   pointer-events: auto;
   cursor: crosshair;
 }

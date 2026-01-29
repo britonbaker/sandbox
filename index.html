@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
     <title>Wallet Memo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -192,7 +192,7 @@
           </a>
         </div>
         <div class="wallet-message" id="wallet-message">Coming soon!</div>
-        <div class="build-hover-area"><a href="mailto:ram@agentmail.to" class="footer-link"><i class="hgi-stroke hgi-mail-02" style="margin-right: 4px; font-size: 10px;"></i>Email Us</a> · <span class="build-number">Build 190</span></div>
+        <div class="build-hover-area"><a href="mailto:ram@agentmail.to" class="footer-link"><i class="hgi-stroke hgi-mail-02" style="margin-right: 4px; font-size: 10px;"></i>Email Us</a> · <span class="build-number">Build 191</span></div>
       </div>
     </main>
     
@@ -942,12 +942,21 @@
           }
           textarea.blur();
           // Force Safari to re-render the SVG filter/shadow (fixes rectangular artifact)
-          const svgEl = noteWrapper.querySelector('.note-paper');
-          if (svgEl) {
-            svgEl.style.display = 'none';
-            svgEl.offsetHeight; // force reflow
-            svgEl.style.display = '';
-          }
+          requestAnimationFrame(() => {
+            const notePaperEl = noteWrapper.querySelector('.note-paper');
+            if (notePaperEl) {
+              // Toggle will-change to force compositing layer reset
+              notePaperEl.style.willChange = 'transform';
+              requestAnimationFrame(() => {
+                notePaperEl.style.willChange = '';
+              });
+            }
+            // Also force the note-wrapper to re-composite
+            noteWrapper.style.willChange = 'transform';
+            requestAnimationFrame(() => {
+              noteWrapper.style.willChange = '';
+            });
+          });
         }
 
         // Pen color picker
