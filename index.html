@@ -540,6 +540,70 @@
           gradientAnimationId = requestAnimationFrame(animate);
         }
 
+        // Initialize lift/stick animations on any note wrapper
+        function initNoteAnimations(wrapper, colorKey, noteId) {
+          const shape = wrapper.querySelector('.note-paper path');
+          const stops = wrapper.querySelectorAll('.note-paper linearGradient stop');
+          let noteIsFlat = false;
+          let noteAnimId = null;
+          let noteGradAnimId = null;
+
+          const theme = colorThemes[colorKey];
+          const flatGrads = flatGradients[colorKey];
+
+          function animateNotePath(from, to, duration = 400) {
+            if (noteAnimId) cancelAnimationFrame(noteAnimId);
+            const startTime = performance.now();
+            function anim(t) {
+              const elapsed = t - startTime;
+              const progress = Math.min(elapsed / duration, 1);
+              const ep = easeOutCubic(progress);
+              const pts = lerpPoints(from, to, ep);
+              shape.setAttribute('d', pointsToPath(pts));
+              if (progress < 1) noteAnimId = requestAnimationFrame(anim);
+            }
+            noteAnimId = requestAnimationFrame(anim);
+          }
+
+          function animateNoteGradient(toFlat, duration = 400) {
+            if (noteGradAnimId) cancelAnimationFrame(noteGradAnimId);
+            const fromColors = (toFlat ? theme.gradient : flatGrads).map(hexToRgb);
+            const toColors = (toFlat ? flatGrads : theme.gradient).map(hexToRgb);
+            const startTime = performance.now();
+            function anim(t) {
+              const elapsed = t - startTime;
+              const progress = Math.min(elapsed / duration, 1);
+              const ep = easeOutCubic(progress);
+              fromColors.forEach((from, i) => {
+                const r = from[0] + (toColors[i][0] - from[0]) * ep;
+                const g = from[1] + (toColors[i][1] - from[1]) * ep;
+                const b = from[2] + (toColors[i][2] - from[2]) * ep;
+                if (stops[i]) stops[i].setAttribute('stop-color', rgbToHex(r, g, b));
+              });
+              if (progress < 1) noteGradAnimId = requestAnimationFrame(anim);
+            }
+            noteGradAnimId = requestAnimationFrame(anim);
+          }
+
+          wrapper.addEventListener('note:lift', () => {
+            if (!noteIsFlat) {
+              noteIsFlat = true;
+              animateNotePath(statePoints.curled, statePoints.flat);
+              animateNoteGradient(true);
+              wrapper.classList.add('flat');
+            }
+          });
+
+          wrapper.addEventListener('note:stick', () => {
+            if (noteIsFlat) {
+              noteIsFlat = false;
+              animateNotePath(statePoints.flat, statePoints.curled);
+              animateNoteGradient(false);
+              wrapper.classList.remove('flat');
+            }
+          });
+        }
+
         // Get textarea element
         const textarea = document.getElementById('memo');
 
@@ -1119,6 +1183,7 @@
           const ta = newWrapper.querySelector('textarea');
           if (ta) ta.placeholder = placeholders[Math.floor(Math.random() * placeholders.length)];
           makeDraggable(newWrapper);
+          initNoteAnimations(newWrapper, color, noteCounter);
 
           // Hide add button until this new one is dragged
           hasMoved = false;
