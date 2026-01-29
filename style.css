@@ -826,9 +826,21 @@ body {
   }
 
   .wallet-btn-link {
-    width: 100%;
-    max-width: 320px;
+    width: auto;
+    max-width: none;
     justify-content: center;
+  }
+
+  .wallet-btn-link#apple-wallet-btn {
+    max-height: none;
+    overflow: visible;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .wallet-btn-link#apple-wallet-btn .wallet-qr {
+    display: none;
   }
 
   .wallet-btn-link img {
