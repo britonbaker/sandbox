@@ -26,6 +26,7 @@
             async src="//gc.zgo.at/count.js"></script>
   </head>
   <body>
+    <div class="scroll-lock-overlay" id="scroll-lock-overlay"></div>
     <style>
       html { background: linear-gradient(to bottom, #fafafa, #e5e5e5); background-attachment: fixed; min-height: 100vh; scrollbar-gutter: stable; }
       html, body { overflow-x: hidden; }
@@ -268,18 +269,26 @@
         }
       };
       // Lock/unlock page scroll (mobile: prevents address bar + scroll issues)
+      // iOS Safari needs touchmove preventDefault to truly block scrolling
       window._scrollLockY = 0;
+      window._scrollLockHandler = function(e) {
+        // Allow touch on drawing canvas and toolbar
+        if (e.target.closest('.note-drawing-layer') || e.target.closest('.drawing-toolbar') || e.target.closest('.note') || e.target.closest('textarea')) return;
+        e.preventDefault();
+      };
       window.lockScroll = function() {
         if (document.body.classList.contains('scroll-locked')) return;
         window._scrollLockY = window.scrollY;
         document.body.classList.add('scroll-locked');
         document.body.style.top = `-${window._scrollLockY}px`;
+        document.addEventListener('touchmove', window._scrollLockHandler, { passive: false });
       };
       window.unlockScroll = function() {
         if (!document.body.classList.contains('scroll-locked')) return;
         document.body.classList.remove('scroll-locked');
         document.body.style.top = '';
         window.scrollTo(0, window._scrollLockY || 0);
+        document.removeEventListener('touchmove', window._scrollLockHandler);
       };
       window.getTargetNote = function() {
         var id = window.activeNoteId || window.lastActiveNoteId;
@@ -1086,7 +1095,14 @@
             const isMobileView = window.innerWidth <= 600;
             const mobileScale = getComputedStyle(document.documentElement).getPropertyValue('--mobile-note-focus-scale') || '1.15';
             if (isMobileView) {
-              noteWrapper.style.transform = (base ? base + ' ' : '') + 'scale(' + mobileScale + ') translateY(-100px)';
+              // Position note in visible area above keyboard
+              // Use visualViewport if available to account for keyboard
+              const vvh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+              const noteRect = noteWrapper.getBoundingClientRect();
+              const noteCenter = noteRect.top + noteRect.height / 2;
+              const targetY = vvh * 0.35; // aim for 35% down visible area
+              const offsetY = targetY - noteCenter;
+              noteWrapper.style.transform = (base ? base + ' ' : '') + 'scale(' + mobileScale + ') translateY(' + offsetY + 'px)';
             } else {
               noteWrapper.style.transform = (base ? base + ' ' : '') + 'scale(1.1)';
             }
@@ -2045,7 +2061,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v41';
+      if (tv) tv.textContent = ' · test v42';
 
       // Add changelog link to footer (test → test changelog)
       const footerArea = document.querySelector('.build-hover-area');
