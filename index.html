@@ -979,8 +979,8 @@
           wrapper.addEventListener('note:stick', () => {
             if (noteIsFlat) {
               noteIsFlat = false;
-              animateNotePath(statePoints.flat, statePoints.curled, 400, easeOutCubic);
-              animateNoteGradient(false, 400, easeOutCubic);
+              animateNotePath(statePoints.flat, statePoints.curled, 180, easeOutCubic);
+              animateNoteGradient(false, 180, easeOutCubic);
               wrapper.classList.remove('flat');
             }
           });
@@ -1009,8 +1009,8 @@
             noteTextarea.addEventListener('blur', () => {
               if (noteIsFlat) {
                 noteIsFlat = false;
-                animateNotePath(statePoints.flat, statePoints.curled, 400, easeOutCubic);
-                animateNoteGradient(false, 400, easeOutCubic);
+                animateNotePath(statePoints.flat, statePoints.curled, 180, easeOutCubic);
+                animateNoteGradient(false, 180, easeOutCubic);
                 wrapper.classList.remove('flat');
                 const current = wrapper.style.transform || '';
                 wrapper.style.transform = current.replace(/scale\([^)]*\)/g, '').trim();
@@ -2013,7 +2013,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v49';
+      if (tv) tv.textContent = ' · test v50';
 
       // Add changelog link to footer (test → test changelog)
       const footerArea = document.querySelector('.build-hover-area');
