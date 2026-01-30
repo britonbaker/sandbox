@@ -1288,10 +1288,14 @@
         });
 
         // Drawing on canvas - use event delegation via document for any active canvas
+        // Ballpoint pen: draw each stroke as one continuous path so semi-transparent
+        // strokes don't create dotted artifacts at segment joins.
+        let currentStrokePoints = [];
+        let preStrokeImageData = null;
+
         function handleDrawPointerDown(e) {
           const canvas = e.target.closest('.note-drawing-layer');
           if (!canvas || !isDrawingMode) return;
-          // Only draw on the active note's canvas
           if (activeDrawingCanvas && canvas !== activeDrawingCanvas) return;
           isDrawing = true;
           const ctx = activeDrawingCtx || drawingCtx;
@@ -1300,8 +1304,9 @@
           const scaleY = canvas.height / rect.height / 2;
           const x = (e.clientX - rect.left) * scaleX;
           const y = (e.clientY - rect.top) * scaleY;
-          ctx.beginPath();
-          ctx.moveTo(x, y);
+          // Save canvas state before this stroke so we can redraw cleanly
+          preStrokeImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          currentStrokePoints = [{x, y}];
         }
 
         function handleDrawPointerMove(e) {
@@ -1313,13 +1318,31 @@
           const scaleY = canvas.height / rect.height / 2;
           const x = (e.clientX - rect.left) * scaleX;
           const y = (e.clientY - rect.top) * scaleY;
-          ctx.lineTo(x, y);
-          ctx.stroke();
+          currentStrokePoints.push({x, y});
+          // Restore pre-stroke state and redraw entire current stroke as one path
+          // This ensures semi-transparent strokes render uniformly (no dotted artifacts)
+          if (preStrokeImageData) {
+            ctx.putImageData(preStrokeImageData, 0, 0);
+          }
+          // putImageData resets transform, so re-apply the 2x scale
+          ctx.setTransform(2, 0, 0, 2, 0, 0);
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          ctx.strokeStyle = currentPenColor;
+          ctx.lineWidth = currentPenSize;
           ctx.beginPath();
-          ctx.moveTo(x, y);
+          ctx.moveTo(currentStrokePoints[0].x, currentStrokePoints[0].y);
+          for (let i = 1; i < currentStrokePoints.length; i++) {
+            ctx.lineTo(currentStrokePoints[i].x, currentStrokePoints[i].y);
+          }
+          ctx.stroke();
         }
 
         function handleDrawPointerUp() {
+          if (isDrawing) {
+            preStrokeImageData = null;
+            currentStrokePoints = [];
+          }
           isDrawing = false;
         }
 
@@ -1989,7 +2012,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v38';
+      if (tv) tv.textContent = ' · test v39';
 
       // Add changelog link to footer (test → test changelog)
       const footerArea = document.querySelector('.build-hover-area');
