@@ -116,7 +116,7 @@ body {
   position: relative;
   width: 360px;
   height: 340px;
-  transition: transform 0.5s cubic-bezier(0.8, 0, 0.2, 1);
+  transition: transform 0.18s ease-out;
   cursor: default;
   z-index: 10;
   margin-top: 8px;

@@ -970,6 +970,7 @@
           wrapper.addEventListener('note:lift', () => {
             if (!noteIsFlat) {
               noteIsFlat = true;
+              wrapper.style.transition = 'transform 0.5s cubic-bezier(0.8, 0, 0.2, 1)';
               animateNotePath(statePoints.curled, statePoints.flat, 500, easePeelOff);
               animateNoteGradient(true, 500, easePeelOff);
               wrapper.classList.add('flat');
@@ -998,6 +999,7 @@
             noteTextarea.addEventListener('focus', () => {
               if (!noteIsFlat) {
                 noteIsFlat = true;
+                wrapper.style.transition = 'transform 0.5s cubic-bezier(0.8, 0, 0.2, 1)';
                 animateNotePath(statePoints.curled, statePoints.flat, 500, easePeelOff);
                 animateNoteGradient(true, 500, easePeelOff);
                 wrapper.classList.add('flat');
@@ -2017,7 +2019,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v51';
+      if (tv) tv.textContent = ' · test v52';
 
       // Add changelog link to footer (test → test changelog)
       const footerArea = document.querySelector('.build-hover-area');
