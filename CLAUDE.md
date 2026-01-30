@@ -27,8 +27,9 @@ This file explains how briton's GitHub repos are set up. Follow these rules to a
 
 ### 2. `clawdbrit/playground` — TEST SITE
 - **Live URL:** https://clawdbrit.github.io/playground
-- **Hosting:** GitHub Pages
+- **Hosting:** GitHub Pages (deploys from `gh-pages` branch)
 - **Main branch:** `main`
+- **⚠️ Push to `gh-pages` to deploy** — pushing to `main` won't update the live test site
 - **What it is:** Test/preview mirror of Wallet Memo for trying changes before production
 - **✅ Safe to push freely** — this is the sandbox for experimentation
 - **Git remote name** (in local repo): `test`
