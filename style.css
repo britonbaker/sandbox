@@ -367,6 +367,14 @@ body {
   z-index: 100;
 }
 
+/* Prevent scrolling on mobile during draw mode */
+body.drawing-mode-active {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  touch-action: none;
+}
+
 .note-wrapper.drawing-mode .note-drawing-layer {
   touch-action: none;
   pointer-events: auto;

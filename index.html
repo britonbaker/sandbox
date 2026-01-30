@@ -1222,6 +1222,8 @@
               activeDrawingCtx.putImageData(activeSavedImageData, 0, 0);
             }
             document.body.classList.remove('drawing-mode-active');
+            document.body.style.top = '';
+            window.scrollTo(0, window._drawScrollY || 0);
             activeDrawingNote.classList.remove('drawing-mode');
             activeDrawingNote.dispatchEvent(new Event('note:stick'));
             activeDrawingNote = null;
@@ -1277,8 +1279,10 @@
           focusOverlay.classList.add('active');
           langPicker2.classList.add('hidden');
 
-          // Enable drawing mode
+          // Enable drawing mode — lock scroll on mobile
+          window._drawScrollY = window.scrollY;
           document.body.classList.add('drawing-mode-active');
+          document.body.style.top = `-${window._drawScrollY}px`;
           noteWrapper.classList.add('drawing-mode');
           drawingToolbar.classList.add('visible');
 
@@ -1381,6 +1385,8 @@
           isDrawing = false;
           savedImageData = null;
           document.body.classList.remove('drawing-mode-active');
+          document.body.style.top = '';
+          window.scrollTo(0, window._drawScrollY || 0);
           targetWrapper.classList.remove('drawing-mode');
           drawingToolbar.classList.remove('visible');
 
@@ -1470,9 +1476,23 @@
           });
         });
 
-        // Handle window resize
+        // Handle window resize — preserve drawing data across resize
         window.addEventListener('resize', () => {
+          // Save current drawing before resize clears it
+          const canvas = noteDrawingLayer;
+          const oldData = drawingCtx ? canvas.toDataURL() : null;
           initNoteDrawingLayer();
+          // Restore drawing after resize
+          if (oldData) {
+            const img = new Image();
+            img.onload = () => {
+              drawingCtx.save();
+              drawingCtx.setTransform(1, 0, 0, 1, 0, 0);
+              drawingCtx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              drawingCtx.restore();
+            };
+            img.src = oldData;
+          }
         });
 
         // Apply random color on load and update active swatch
@@ -2012,7 +2032,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v39';
+      if (tv) tv.textContent = ' · test v40';
 
       // Add changelog link to footer (test → test changelog)
       const footerArea = document.querySelector('.build-hover-area');
