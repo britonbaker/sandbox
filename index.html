@@ -1195,13 +1195,13 @@
           drawingCtx.scale(2, 2);
           drawingCtx.lineCap = 'round';
           drawingCtx.lineJoin = 'round';
-          drawingCtx.strokeStyle = 'rgba(26, 26, 26, 0.9)';
-          drawingCtx.lineWidth = 4;
+          drawingCtx.strokeStyle = 'rgba(26, 26, 26, 0.45)';
+          drawingCtx.lineWidth = 2.5;
         }
         
-        // Pen settings
-        window.currentPenColor = 'rgba(26, 26, 26, 0.9)';
-        window.currentPenSize = 4;
+        // Pen settings — ballpoint pen: thin + semi-transparent so overlaps darken
+        window.currentPenColor = 'rgba(26, 26, 26, 0.45)';
+        window.currentPenSize = 2.5;
 
         initNoteDrawingLayer();
 
@@ -1421,7 +1421,7 @@
             document.querySelectorAll('.pen-color').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             const rgb = btn.dataset.color;
-            currentPenColor = `rgba(${rgb}, 0.9)`;
+            currentPenColor = `rgba(${rgb}, 0.45)`;
             const ctx = activeDrawingCtx || drawingCtx;
             if (ctx) ctx.strokeStyle = currentPenColor;
             // Update current swatch color

@@ -196,6 +196,7 @@ body {
   left: 0;
   isolation: isolate;
   z-index: 2;
+  overflow: hidden;
 }
 
 /* note-version removed - using build-hover-area instead */
