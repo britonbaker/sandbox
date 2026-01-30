@@ -87,24 +87,24 @@
       <main class="container">
       <div class="note-wrapper" id="note-wrapper">
         <!-- Shadow layer (behind note) -->
-        <img src="./assets/paper-stuff/shadow-layer.svg" class="note-shadow" id="note-shadow" alt="">
+        <div class="note-shadow" id="note-shadow"></div>
         <!-- Sticky note SVG - inlined for dynamic color updates -->
         <svg class="note-paper" id="note-paper" data-state="one" width="287" height="270" viewBox="0 0 287 270" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g filter="url(#noteFilter)">
             <path id="note-shape" d="M34.6016 19.2695L250.102 18.5996C250.102 18.5996 249.602 49.0996 257.602 228.6L28.6016 231.1C36.6029 66.5996 34.6016 19.2695 34.6016 19.2695Z" fill="url(#noteGradient)"/>
           </g>
           <defs>
-            <filter id="noteFilter" x="0.00156212" y="18" width="286.2" height="252" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <filter id="noteFilter" x="0.00156212" y="-0.000391006" width="286.2" height="269.7" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
               <feFlood flood-opacity="0" result="BackgroundImageFix"/>
               <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
               <feOffset/>
               <feGaussianBlur stdDeviation="5.14583"/>
-              <feColorMatrix id="shadowColor1" type="matrix" values="0 0 0 0 0.101961 0 0 0 0 0.55098 0 0 0 0 1 0 0 0 0 0"/>
+              <feColorMatrix id="shadowColor1" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
               <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
               <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
               <feOffset dy="10"/>
               <feGaussianBlur stdDeviation="14.3"/>
-              <feColorMatrix id="shadowColor2" type="matrix" values="0 0 0 0 0 0 0 0 0 0.334596 0 0 0 0 0.608357 0 0 0 0 0"/>
+              <feColorMatrix id="shadowColor2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
               <feBlend mode="normal" in2="effect1_dropShadow" result="effect2_dropShadow"/>
               <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
               <feOffset dy="0.2"/>
@@ -759,12 +759,19 @@
           const shadow3 = document.getElementById('shadowColor3');
 
           if (shadow1) {
-            const [r, g, b] = theme.shadow1;
-            shadow1.setAttribute('values', `0 0 0 0 ${r} 0 0 0 0 ${g} 0 0 0 0 ${b} 0 0 0 0.15 0`);
+            // SVG drop shadows disabled — using CSS .note-shadow rectangle instead
+            shadow1.setAttribute('values', `0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0`);
           }
           if (shadow2) {
+            shadow2.setAttribute('values', `0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0`);
+          }
+
+          // Update CSS shadow rectangle color to match theme
+          const shadowEl = document.getElementById('note-shadow');
+          if (shadowEl && theme.shadow2) {
             const [r, g, b] = theme.shadow2;
-            shadow2.setAttribute('values', `0 0 0 0 ${r} 0 0 0 0 ${g} 0 0 0 0 ${b} 0 0 0 0.14 0`);
+            const cr = Math.round(r * 255), cg = Math.round(g * 255), cb = Math.round(b * 255);
+            shadowEl.style.background = `linear-gradient(to bottom, rgba(${cr},${cg},${cb},0) 0%, rgba(${cr},${cg},${cb},0.4) 100%)`;
           }
           if (shadow3) {
             const [r, g, b] = theme.shadow3;
@@ -1063,7 +1070,7 @@
             isFlat = true;
             animatePath(statePoints.curled, statePoints.flat);
             animateGradient(true);
-            noteShadow.src = './assets/paper-stuff/shadow-layer-two.svg';
+            // noteShadow.src removed - now CSS div
             noteWrapper.classList.add('flat');
             noteWrapper.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
             const current = noteWrapper.style.transform || '';
@@ -1088,7 +1095,7 @@
             isFlat = false;
             animatePath(statePoints.flat, statePoints.curled);
             animateGradient(false);
-            noteShadow.src = './assets/paper-stuff/shadow-layer.svg';
+            // noteShadow.src removed - now CSS div
             noteWrapper.classList.remove('flat');
             const current = noteWrapper.style.transform || '';
             noteWrapper.style.transform = current.replace(/scale\([^)]*\)/g, '').replace(/translateY\([^)]*\)/g, '').trim();
@@ -1264,7 +1271,7 @@
             isFlat = true;
             animatePath(statePoints.curled, statePoints.flat);
             animateGradient(true);
-            noteShadow.src = './assets/paper-stuff/shadow-layer-two.svg';
+            // noteShadow.src removed - now CSS div
             noteWrapper.classList.add('flat');
           }
 
@@ -1367,7 +1374,7 @@
               isFlat = false;
               animatePath(statePoints.flat, statePoints.curled);
               animateGradient(false);
-              noteShadow.src = './assets/paper-stuff/shadow-layer.svg';
+              // noteShadow.src removed - now CSS div
               noteWrapper.classList.remove('flat');
               const current = noteWrapper.style.transform || '';
               noteWrapper.style.transform = current.replace(/scale\([^)]*\)/g, '').replace(/translateY\([^)]*\)/g, '').trim();
@@ -1958,11 +1965,9 @@
           });
 
           // Add shadow layer (same as original note)
-          const shadowImg = document.createElement('img');
-          shadowImg.src = './assets/paper-stuff/shadow-layer.svg';
-          shadowImg.className = 'note-shadow';
-          shadowImg.alt = '';
-          newWrapper.appendChild(shadowImg);
+          const shadowDiv = document.createElement('div');
+          shadowDiv.className = 'note-shadow';
+          newWrapper.appendChild(shadowDiv);
           newWrapper.appendChild(svgNode);
           newWrapper.appendChild(noteDiv);
 
