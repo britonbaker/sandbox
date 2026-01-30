@@ -831,6 +831,13 @@
           return 1 - Math.pow(1 - t, 3);
         }
 
+        // "Peel off" easing — resists at first then pops free
+        function easePeelOff(t) {
+          return t < 0.4
+            ? 0.15 * Math.pow(t / 0.4, 2)                    // slow resist
+            : 0.15 + 0.85 * Math.pow((t - 0.4) / 0.6, 0.5);  // quick release
+        }
+
         // Animate path morphing
         let animationId = null;
         function animatePath(from, to, duration = 400) {
@@ -926,13 +933,13 @@
           const theme = colorThemes[colorKey];
           const flatGrads = flatGradients[colorKey];
 
-          function animateNotePath(from, to, duration = 400) {
+          function animateNotePath(from, to, duration = 500, easeFn = easeOutCubic) {
             if (noteAnimId) cancelAnimationFrame(noteAnimId);
             const startTime = performance.now();
             function anim(t) {
               const elapsed = t - startTime;
               const progress = Math.min(elapsed / duration, 1);
-              const ep = easeOutCubic(progress);
+              const ep = easeFn(progress);
               const pts = lerpPoints(from, to, ep);
               shape.setAttribute('d', pointsToPath(pts));
               if (progress < 1) noteAnimId = requestAnimationFrame(anim);
@@ -940,7 +947,7 @@
             noteAnimId = requestAnimationFrame(anim);
           }
 
-          function animateNoteGradient(toFlat, duration = 400) {
+          function animateNoteGradient(toFlat, duration = 500, easeFn = easeOutCubic) {
             if (noteGradAnimId) cancelAnimationFrame(noteGradAnimId);
             const fromColors = (toFlat ? theme.gradient : flatGrads).map(hexToRgb);
             const toColors = (toFlat ? flatGrads : theme.gradient).map(hexToRgb);
@@ -948,7 +955,7 @@
             function anim(t) {
               const elapsed = t - startTime;
               const progress = Math.min(elapsed / duration, 1);
-              const ep = easeOutCubic(progress);
+              const ep = easeFn(progress);
               fromColors.forEach((from, i) => {
                 const r = from[0] + (toColors[i][0] - from[0]) * ep;
                 const g = from[1] + (toColors[i][1] - from[1]) * ep;
@@ -963,8 +970,8 @@
           wrapper.addEventListener('note:lift', () => {
             if (!noteIsFlat) {
               noteIsFlat = true;
-              animateNotePath(statePoints.curled, statePoints.flat);
-              animateNoteGradient(true);
+              animateNotePath(statePoints.curled, statePoints.flat, 500, easePeelOff);
+              animateNoteGradient(true, 500, easePeelOff);
               wrapper.classList.add('flat');
             }
           });
@@ -972,8 +979,8 @@
           wrapper.addEventListener('note:stick', () => {
             if (noteIsFlat) {
               noteIsFlat = false;
-              animateNotePath(statePoints.flat, statePoints.curled);
-              animateNoteGradient(false);
+              animateNotePath(statePoints.flat, statePoints.curled, 400, easeOutCubic);
+              animateNoteGradient(false, 400, easeOutCubic);
               wrapper.classList.remove('flat');
             }
           });
@@ -989,8 +996,8 @@
             noteTextarea.addEventListener('focus', () => {
               if (!noteIsFlat) {
                 noteIsFlat = true;
-                animateNotePath(statePoints.curled, statePoints.flat);
-                animateNoteGradient(true);
+                animateNotePath(statePoints.curled, statePoints.flat, 500, easePeelOff);
+                animateNoteGradient(true, 500, easePeelOff);
                 wrapper.classList.add('flat');
                 wrapper.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
                 const current = wrapper.style.transform || '';
@@ -1002,8 +1009,8 @@
             noteTextarea.addEventListener('blur', () => {
               if (noteIsFlat) {
                 noteIsFlat = false;
-                animateNotePath(statePoints.flat, statePoints.curled);
-                animateNoteGradient(false);
+                animateNotePath(statePoints.flat, statePoints.curled, 400, easeOutCubic);
+                animateNoteGradient(false, 400, easeOutCubic);
                 wrapper.classList.remove('flat');
                 const current = wrapper.style.transform || '';
                 wrapper.style.transform = current.replace(/scale\([^)]*\)/g, '').trim();
@@ -2006,7 +2013,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v47';
+      if (tv) tv.textContent = ' · test v48';
 
       // Add changelog link to footer (test → test changelog)
       const footerArea = document.querySelector('.build-hover-area');
