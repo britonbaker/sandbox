@@ -967,8 +967,12 @@ body {
 }
 
 .dragged-note {
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.18s ease-out;
   cursor: pointer;
+}
+
+.dragged-note.is-grabbing {
+  transition: none !important;
 }
 
 .build-hover-area {
