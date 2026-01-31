@@ -1850,6 +1850,7 @@
             if (relY >= dragZoneHeight) return;
             if (e.target.closest('.note-menu-btn') || e.target.closest('.note-dropdown')) return;
             if (isDrawingMode) return;
+            if (el.querySelector('.note-dropdown.open')) return;
 
             e.preventDefault();
             isDragging = true;
@@ -2367,7 +2368,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v120';
+      if (tv) tv.textContent = ' · test v121';
       // Make footer always visible on test site
       const footer = document.querySelector('.build-hover-area');
       if (footer) { footer.style.opacity = '1'; footer.style.visibility = 'visible'; }
