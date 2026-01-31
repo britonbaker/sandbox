@@ -844,9 +844,9 @@
           // -1 to 1 range, how far from center
           const dx = (cx - vw) / vw;
           const dy = (cy - vh) / vh;
-          // Max shift: 12px horizontal, 8px vertical
-          const shiftX = dx * 12;
-          const shiftY = dy * 8;
+          // Max shift: 20px horizontal, 14px vertical
+          const shiftX = dx * 20;
+          const shiftY = dy * -14;
           shadow.style.transform = `translate(${shiftX}px, ${shiftY}px)`;
         }
 
@@ -952,7 +952,7 @@
           const theme = colorThemes[colorKey];
           const flatGrads = flatGradients[colorKey];
 
-          function animateNotePath(from, to, duration = 500, easeFn = easeOutCubic) {
+          function animateNotePath(from, to, duration = 400, easeFn = easeOutCubic) {
             if (noteAnimId) cancelAnimationFrame(noteAnimId);
             const startTime = performance.now();
             function anim(t) {
@@ -966,7 +966,7 @@
             noteAnimId = requestAnimationFrame(anim);
           }
 
-          function animateNoteGradient(toFlat, duration = 500, easeFn = easeOutCubic) {
+          function animateNoteGradient(toFlat, duration = 400, easeFn = easeOutCubic) {
             if (noteGradAnimId) cancelAnimationFrame(noteGradAnimId);
             const fromColors = (toFlat ? theme.gradient : flatGrads).map(hexToRgb);
             const toColors = (toFlat ? flatGrads : theme.gradient).map(hexToRgb);
@@ -989,9 +989,9 @@
           wrapper.addEventListener('note:lift', () => {
             if (!noteIsFlat) {
               noteIsFlat = true;
-              wrapper.style.transition = 'transform 0.5s cubic-bezier(0.8, 0, 0.2, 1)';
-              animateNotePath(statePoints.curled, statePoints.flat, 500, easePeelOff);
-              animateNoteGradient(true, 500, easePeelOff);
+              wrapper.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+              animateNotePath(statePoints.curled, statePoints.flat, 400, easeOutCubic);
+              animateNoteGradient(true, 400, easeOutCubic);
               wrapper.classList.add('flat');
             }
           });
@@ -1018,11 +1018,10 @@
             noteTextarea.addEventListener('focus', () => {
               if (!noteIsFlat) {
                 noteIsFlat = true;
-                wrapper.style.transition = 'transform 0.5s cubic-bezier(0.8, 0, 0.2, 1)';
-                animateNotePath(statePoints.curled, statePoints.flat, 500, easePeelOff);
-                animateNoteGradient(true, 500, easePeelOff);
-                wrapper.classList.add('flat');
                 wrapper.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                animateNotePath(statePoints.curled, statePoints.flat, 400, easeOutCubic);
+                animateNoteGradient(true, 400, easeOutCubic);
+                wrapper.classList.add('flat');
                 const current = wrapper.style.transform || '';
                 const base = current.replace(/scale\([^)]*\)/g, '').trim();
                 wrapper.style.transform = (base ? base + ' ' : '') + 'scale(1.1)';
