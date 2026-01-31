@@ -244,13 +244,6 @@
           </div>
         </div>
         <div class="toolbar-divider"></div>
-        <div class="pen-sizes">
-          <button class="pen-size" data-size="1"><span style="width:4px;height:4px"></span></button>
-          <button class="pen-size active" data-size="2"><span style="width:6px;height:6px"></span></button>
-          <button class="pen-size" data-size="4"><span style="width:10px;height:10px"></span></button>
-          <button class="pen-size" data-size="6"><span style="width:14px;height:14px"></span></button>
-        </div>
-        <div class="toolbar-divider"></div>
         <button class="toolbar-btn done" id="done-drawing"><i class="hgi-stroke hgi-tick-02"></i></button>
       </div>
 
@@ -1284,12 +1277,12 @@
           drawingCtx.lineCap = 'round';
           drawingCtx.lineJoin = 'round';
           drawingCtx.strokeStyle = 'rgba(26, 26, 26, 0.7)';
-          drawingCtx.lineWidth = 3;
+          drawingCtx.lineWidth = 1;
         }
         
         // Pen settings — ballpoint pen: slightly thinner + semi-transparent
         window.currentPenColor = 'rgba(26, 26, 26, 0.7)';
-        window.currentPenSize = 3;
+        window.currentPenSize = 1;
 
         initNoteDrawingLayer();
 
@@ -2209,7 +2202,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v90';
+      if (tv) tv.textContent = ' · test v91';
       // Make footer always visible on test site
       const footer = document.querySelector('.build-hover-area');
       if (footer) { footer.style.opacity = '1'; footer.style.visibility = 'visible'; }
