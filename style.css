@@ -590,7 +590,7 @@ body {
   height: 100%;
   pointer-events: none;
   z-index: 5;
-  clip-path: polygon(12% 7%, 88% 7%, 89% 87%, 10% 88%);
+  clip-path: polygon(12% 7%, 88% 7%, 88% 83%, 10% 84%);
   overflow: hidden;
 }
 
