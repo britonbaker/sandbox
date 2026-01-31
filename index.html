@@ -882,7 +882,7 @@
         }
 
         // Sync drawing layer clip-path to current note shape
-        function syncDrawingClip(points, targetLayer) {
+        window.syncDrawingClip = function syncDrawingClip(points, targetLayer) {
           const dl = targetLayer || document.getElementById('note-drawing-layer');
           if (!dl) return;
           // SVG viewBox is 287x270, map to percentages
@@ -2293,7 +2293,7 @@
           // Hide add button until this new one is dragged
           hasMoved = false;
           addBtn.style.display = 'none';
-          } catch(err) { console.error('ADD BTN ERROR:', err); alert('Error: ' + err.message); }
+          } catch(err) { console.error('ADD BTN ERROR:', err); }
         });
       })();
 
@@ -2369,7 +2369,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v129-debug';
+      if (tv) tv.textContent = ' · test v129';
       // Make footer always visible on test site
       const footer = document.querySelector('.build-hover-area');
       if (footer) { footer.style.opacity = '1'; footer.style.visibility = 'visible'; }
