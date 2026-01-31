@@ -1116,6 +1116,8 @@
         noteWrapper.addEventListener('click', (e) => {
           // Don't steal clicks from menu, dropdown, or drawing layer
           if (e.target.closest('.note-menu-btn') || e.target.closest('.note-dropdown') || e.target.closest('.drawing-toolbar')) return;
+          // Only focus if click is on the actual note, not the shadow area below
+          if (!e.target.closest('.note')) return;
           textarea.focus();
         });
 
@@ -1135,6 +1137,7 @@
         noteWrapper.addEventListener('touchend', (e) => {
           if (e.target.closest('.note-menu-btn') || e.target.closest('.note-dropdown') || e.target.closest('.drawing-toolbar')) return;
           if (noteWrapper.classList.contains('drawing-mode')) return;
+          if (!e.target.closest('.note')) return;
           e.preventDefault();
           textarea.focus({ preventScroll: true });
         });
