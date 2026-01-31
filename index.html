@@ -154,11 +154,17 @@
           </defs>
         </svg>
         <script>
-          // Peel-to-reveal: immediately set tight curl before first paint
+          // Peel-to-reveal: immediately set tight curl + visual state before first paint
           if (!sessionStorage.getItem('wm-intro-seen')) {
+            console.log('[intro] Setting tight curl');
             document.getElementById('note-shape').setAttribute('d',
               'M34.6016 19.2695 L250.102 18.5996 C250.102 18.5996 260.602 30 285 100 L28.6016 231.1 C36.6029 66.5996 34.6016 19.2695 34.6016 19.2695 Z'
             );
+            // Also visually tilt the whole note as if it's peeling off the wall
+            var nw = document.getElementById('note-wrapper');
+            nw.style.transform = 'rotate(3deg) scale(0.97)';
+            nw.style.opacity = '0.85';
+            nw.style.transition = 'none';
           }
         </script>
         <div class="note" id="sticky-note">
@@ -1773,6 +1779,7 @@
 
           // After a brief pause, peel to normal curled state
           setTimeout(() => {
+            console.log('[intro] Starting peel animation');
             // Animate the SVG path: tightCurl → curled with peel easing
             if (animationId) cancelAnimationFrame(animationId);
             const introStart = performance.now();
@@ -1788,6 +1795,12 @@
               }
             }
             animationId = requestAnimationFrame(introAnimate);
+
+            // Animate the wrapper back to normal (rotation + opacity)
+            noteWrapper.style.transition = 'transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease-out';
+            noteWrapper.style.transform = '';
+            noteWrapper.style.opacity = '1';
+            setTimeout(() => { noteWrapper.style.transition = ''; }, 1300);
 
             // Fade shadow back in
             if (introShadow) {
