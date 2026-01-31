@@ -949,7 +949,7 @@
         // Flat gradient colors (more uniform, less dynamic)
         const flatGradients = {
           blue: ['#B3DDEE', '#B3DDEE', '#B3DDEE', '#B8E0F0', '#BDE3F2', '#C2E6F4'],
-          yellow: ['#E8D66C', '#E8D66C', '#E8D66C', '#ECDA74', '#EEDC78', '#F2E082'],
+          yellow: ['#EACC58', '#EACC58', '#EACC58', '#EED464', '#F0D86E', '#F4E07A'],
           pink: ['#EACAD2', '#EACAD2', '#EACAD2', '#EDCED6', '#F0D0D8', '#F2D4DB']
         };
 
@@ -1892,7 +1892,7 @@
           // Color configs (gradient + shadow colors per theme)
           const colorMap = {
             blue: ['#89C5E0', '#98C4DA', '#9BC8E7', '#ACD7E9', '#B8E3F3', '#C4E9F5'],
-            yellow: ['#C8B440', '#D4B94C', '#DEC75E', '#E8D46E', '#F0DF85', '#F7EA9C'],
+            yellow: ['#D4A830', '#DCBA3E', '#E4C854', '#ECD468', '#F2E080', '#F7EA9C'],
             pink: ['#CC9BA5', '#D7A0AA', '#E2B4BD', '#ECC4CC', '#F2D1D8', '#F8DEE3']
           };
           // SVG drop shadows disabled — using CSS .note-shadow rectangle instead
@@ -2254,7 +2254,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v102';
+      if (tv) tv.textContent = ' · test v103';
       // Make footer always visible on test site
       const footer = document.querySelector('.build-hover-area');
       if (footer) { footer.style.opacity = '1'; footer.style.visibility = 'visible'; }
