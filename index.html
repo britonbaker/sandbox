@@ -155,7 +155,7 @@
         </svg>
         <script>
           // Peel-to-reveal: immediately set tight curl + visual state before first paint
-          if (!sessionStorage.getItem('wm-intro-seen')) {
+          if (true || !sessionStorage.getItem('wm-intro-seen')) {
             console.log('[intro] Setting tight curl');
             document.getElementById('note-shape').setAttribute('d',
               'M34.6016 19.2695 L250.102 18.5996 C250.102 18.5996 249.602 42 262 195 L28.6016 231.1 C36.6029 66.5996 34.6016 19.2695 34.6016 19.2695 Z'
@@ -1768,7 +1768,7 @@
         // ==========================================
         // Peel-to-reveal intro animation (first visit only)
         // ==========================================
-        if (!sessionStorage.getItem('wm-intro-seen')) {
+        if (true || !sessionStorage.getItem('wm-intro-seen')) {
           // Start with tight curl (noteShape/statePoints are in an IIFE, re-query here)
           const introNoteShape = document.getElementById('note-shape');
           const introWrapper = document.getElementById('note-wrapper');
