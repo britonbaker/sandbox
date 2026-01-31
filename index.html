@@ -716,6 +716,22 @@
         const colorIcon = document.getElementById('color-icon');
         const noteDrawingLayer = document.getElementById('note-drawing-layer');
         const drawingToolbar = document.getElementById('drawing-toolbar');
+
+        // Position toolbar below note, or above if it would be off-screen
+        function positionToolbar(targetWrapper) {
+          if (!drawingToolbar) return;
+          const rect = targetWrapper.getBoundingClientRect();
+          const toolbarH = 52; // approx height
+          const belowY = rect.bottom + 12;
+          const aboveY = rect.top - toolbarH - 12;
+          drawingToolbar.style.bottom = 'auto';
+          if (belowY + toolbarH > window.innerHeight) {
+            drawingToolbar.style.top = aboveY + 'px';
+          } else {
+            drawingToolbar.style.top = belowY + 'px';
+          }
+          drawingToolbar.style.left = (rect.left + rect.width / 2) + 'px';
+        }
         const clearBtn = document.getElementById('clear-drawing');
         const cancelBtn = document.getElementById('cancel-drawing');
         const doneBtn = document.getElementById('done-drawing');
@@ -1415,13 +1431,9 @@
           // Enable drawing mode
           document.body.classList.add('drawing-mode-active');
           noteWrapper.classList.add('drawing-mode');
+          // Position toolbar then show
+          positionToolbar(noteWrapper);
           drawingToolbar.classList.add('visible');
-
-          // Position toolbar just below the note
-          const noteRect = noteWrapper.getBoundingClientRect();
-          drawingToolbar.style.bottom = 'auto';
-          drawingToolbar.style.top = (noteRect.bottom + 12) + 'px';
-          drawingToolbar.style.left = (noteRect.left + noteRect.width / 2) + 'px';
 
           // Hide placeholder text if textarea is empty
           const memo = document.getElementById('memo');
@@ -2180,15 +2192,10 @@
             document.body.classList.add('drawing-mode-active');
             newWrapper.classList.add('drawing-mode');
 
-            // Show toolbar positioned below this note
+            // Show toolbar positioned near this note
+            positionToolbar(newWrapper);
             const toolbar = document.getElementById('drawing-toolbar');
-            if (toolbar) {
-              toolbar.classList.add('visible');
-              const noteRect = newWrapper.getBoundingClientRect();
-              toolbar.style.bottom = 'auto';
-              toolbar.style.top = (noteRect.bottom + 12) + 'px';
-              toolbar.style.left = (noteRect.left + noteRect.width / 2) + 'px';
-            }
+            if (toolbar) toolbar.classList.add('visible');
             const focusOverlay = document.querySelector('.focus-overlay');
             if (focusOverlay) focusOverlay.classList.add('active');
 
@@ -2360,7 +2367,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v119';
+      if (tv) tv.textContent = ' · test v120';
       // Make footer always visible on test site
       const footer = document.querySelector('.build-hover-area');
       if (footer) { footer.style.opacity = '1'; footer.style.visibility = 'visible'; }
