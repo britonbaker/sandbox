@@ -37,6 +37,13 @@ body {
   transition: opacity .3s ease;
 }
 
+.hero-title,
+.hero-tagline,
+.note-title {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 .hero-title {
   font-family: 'Cormorant Garamond', 'Noto Serif JP', 'Noto Serif KR', 'Noto Serif SC', serif;
   font-size: clamp(72px, 15vw, 140px);
@@ -120,6 +127,8 @@ body {
   cursor: default;
   z-index: 10;
   margin-top: 8px;
+  user-select: none;
+  -webkit-user-select: none;
   transform: perspective(800px) rotateY(1.5deg) rotateX(-0.5deg);
 }
 
@@ -382,9 +391,19 @@ body {
   pointer-events: none;
 }
 
+.drawing-mode-active .wallet-wrapper .build-hover-area {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .note-wrapper.drawing-mode {
   transform: scale(1.1);
   z-index: 100;
+  cursor: crosshair !important;
+}
+
+.note-wrapper.drawing-mode.can-grab {
+  cursor: crosshair !important;
 }
 
 .note-wrapper.drawing-mode .note-drawing-layer {
@@ -1000,7 +1019,7 @@ body {
   font-size: 11px;
   color: rgba(0,0,0,0.5);
   letter-spacing: 0.5px;
-  word-spacing: 4px;
+  word-spacing: 8px;
 }
 
 .build-hover-area .copyright {
