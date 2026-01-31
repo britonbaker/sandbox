@@ -718,7 +718,7 @@
         const drawingToolbar = document.getElementById('drawing-toolbar');
 
         // Position toolbar below note, or above if it would be off-screen
-        function positionToolbar(targetWrapper) {
+        window.positionToolbar = function(targetWrapper) {
           if (!drawingToolbar) return;
           const rect = targetWrapper.getBoundingClientRect();
           const toolbarH = 52; // approx height
@@ -826,7 +826,7 @@
 
         // SVG path points for the two states (matching structure for smooth morphing)
         // Structure: [M, L, C1, C2, C3, L, C1, C2, C3]
-        const statePoints = {
+        window.statePoints = {
           // Slightly tighter curl for intro — bottom-right corner lifted
           tightCurl: [
             [34.6016, 19.2695],    // M - start (same)
@@ -2293,7 +2293,7 @@
           // Hide add button until this new one is dragged
           hasMoved = false;
           addBtn.style.display = 'none';
-          } catch(err) { alert('Error: ' + err.message + ' at ' + err.stack?.split('\n')[1]); }
+          } catch(err) { console.error('ADD BTN ERROR:', err); }
         });
       })();
 
@@ -2369,7 +2369,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v130-debug';
+      if (tv) tv.textContent = ' · test v130';
       // Make footer always visible on test site
       const footer = document.querySelector('.build-hover-area');
       if (footer) { footer.style.opacity = '1'; footer.style.visibility = 'visible'; }
