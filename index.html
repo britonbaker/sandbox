@@ -1277,12 +1277,12 @@
           drawingCtx.lineCap = 'round';
           drawingCtx.lineJoin = 'round';
           drawingCtx.strokeStyle = 'rgba(26, 26, 26, 0.7)';
-          drawingCtx.lineWidth = 1;
+          drawingCtx.lineWidth = 1.5;
         }
         
         // Pen settings — ballpoint pen: slightly thinner + semi-transparent
         window.currentPenColor = 'rgba(26, 26, 26, 0.7)';
-        window.currentPenSize = 1;
+        window.currentPenSize = 1.5;
 
         initNoteDrawingLayer();
 
@@ -2202,7 +2202,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v91';
+      if (tv) tv.textContent = ' · test v92';
       // Make footer always visible on test site
       const footer = document.querySelector('.build-hover-area');
       if (footer) { footer.style.opacity = '1'; footer.style.visibility = 'visible'; }
