@@ -803,17 +803,17 @@
         // SVG path points for the two states (matching structure for smooth morphing)
         // Structure: [M, L, C1, C2, C3, L, C1, C2, C3]
         const statePoints = {
-          // Extra tight curl for intro animation — bottom-right curls up dramatically
+          // Extra tight curl for intro animation — bottom-right folds way up
           tightCurl: [
-            [34.6016, 19.2695],    // M - start (same)
-            [250.102, 18.5996],    // L - top right (same)
-            [250.102, 18.5996],    // C1 (same)
-            [252.602, 35.0996],    // C2 - tighter
-            [270.602, 180.6],      // C3 - bottom right curls way up
-            [28.6016, 231.1],      // L - bottom left (same)
-            [36.6029, 66.5996],    // C1 (same)
-            [34.6016, 19.2695],    // C2 (same)
-            [34.6016, 19.2695]     // C3 (same)
+            [34.6016, 19.2695],    // M - start
+            [250.102, 18.5996],    // L - top right
+            [250.102, 18.5996],    // C1
+            [260.602, 30.0],       // C2 - very tight curve
+            [285.0, 100.0],        // C3 - bottom right folded WAY up
+            [28.6016, 231.1],      // L - bottom left
+            [36.6029, 66.5996],    // C1
+            [34.6016, 19.2695],    // C2
+            [34.6016, 19.2695]     // C3
           ],
           curled: [
             [34.6016, 19.2695],    // M - start
@@ -1765,8 +1765,21 @@
 
           // After a brief pause, peel to normal curled state
           setTimeout(() => {
-            // Animate the SVG path: tightCurl → curled
-            animatePath(statePoints.tightCurl, statePoints.curled, 900);
+            // Animate the SVG path: tightCurl → curled with peel easing
+            if (animationId) cancelAnimationFrame(animationId);
+            const introStart = performance.now();
+            const introDuration = 1200;
+            function introAnimate(currentTime) {
+              const elapsed = currentTime - introStart;
+              const progress = Math.min(elapsed / introDuration, 1);
+              const easedProgress = easePeelOff(progress);
+              const currentPoints = lerpPoints(statePoints.tightCurl, statePoints.curled, easedProgress);
+              noteShape.setAttribute('d', pointsToPath(currentPoints));
+              if (progress < 1) {
+                animationId = requestAnimationFrame(introAnimate);
+              }
+            }
+            animationId = requestAnimationFrame(introAnimate);
 
             // Fade shadow back in
             if (introShadow) {
