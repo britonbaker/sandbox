@@ -1817,7 +1817,7 @@
         // Create the "add new note" button that sits behind the note
         const addBtn = document.createElement('div');
         addBtn.className = 'add-note-btn';
-        addBtn.innerHTML = '';
+        addBtn.innerHTML = '<div class="plus-icon"></div>';
         addBtn.style.display = 'none';
         wrapper.parentElement.insertBefore(addBtn, wrapper);
 
@@ -2367,7 +2367,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v127';
+      if (tv) tv.textContent = ' · test v128';
       // Make footer always visible on test site
       const footer = document.querySelector('.build-hover-area');
       if (footer) { footer.style.opacity = '1'; footer.style.visibility = 'visible'; }
