@@ -1770,6 +1770,7 @@
             const relY = e.clientY - rect.top;
             if (relY >= dragZoneHeight) return;
             if (e.target.closest('.note-menu-btn') || e.target.closest('.note-dropdown')) return;
+            if (isDrawingMode) return;
 
             e.preventDefault();
             isDragging = true;
