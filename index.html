@@ -2092,6 +2092,12 @@
               if (reg) reg.color = ck;
               // Update animation color so lift/stick uses new color
               if (newWrapper._setNoteColor) newWrapper._setNoteColor(ck);
+              // Update shadow color to match new theme
+              if (theme.shadow2) {
+                const [r, g, b] = theme.shadow2;
+                const cr = Math.round(r * 255), cg = Math.round(g * 255), cb = Math.round(b * 255);
+                shadowDiv.style.background = `linear-gradient(to bottom, rgba(${cr},${cg},${cb},0) 0%, rgba(${cr},${cg},${cb},0.4) 100%)`;
+              }
               // Clear drawing when color changes
               if (spawnDrawingCtx) {
                 spawnDrawingCtx.clearRect(0, 0, spawnCanvas.width, spawnCanvas.height);
@@ -2188,6 +2194,48 @@
           const noteStops = svgNode.querySelectorAll('stop');
           initNoteAnimations(newWrapper, color, noteCounter, noteStops);
 
+          // Peel-in animation for spawned note (faster than intro)
+          {
+            const spawnShape = svgNode.querySelector('path');
+            const tightCurl = [
+              [34.6016, 19.2695], [250.102, 18.5996], [250.102, 18.5996],
+              [249.602, 49.0996], [255.0, 210.0],
+              [28.6016, 231.1], [36.6029, 66.5996], [34.6016, 19.2695], [34.6016, 19.2695]
+            ];
+            const curled = [
+              [34.6016, 19.2695], [250.102, 18.5996], [250.102, 18.5996],
+              [249.602, 49.0996], [257.602, 228.6],
+              [28.6016, 231.1], [36.6029, 66.5996], [34.6016, 19.2695], [34.6016, 19.2695]
+            ];
+            function spawnPtsToPath(pts) {
+              return `M${pts[0][0]} ${pts[0][1]} L${pts[1][0]} ${pts[1][1]} C${pts[2][0]} ${pts[2][1]} ${pts[3][0]} ${pts[3][1]} ${pts[4][0]} ${pts[4][1]} L${pts[5][0]} ${pts[5][1]} C${pts[6][0]} ${pts[6][1]} ${pts[7][0]} ${pts[7][1]} ${pts[8][0]} ${pts[8][1]} Z`;
+            }
+            // Start tight
+            spawnShape.setAttribute('d', spawnPtsToPath(tightCurl));
+            newWrapper.style.opacity = '0';
+            newWrapper.style.transform = 'scale(0.92)';
+            newWrapper.style.transition = 'opacity 0.3s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+            requestAnimationFrame(() => {
+              newWrapper.style.opacity = '1';
+              newWrapper.style.transform = '';
+              // Animate path from tight to curled
+              const dur = 600;
+              const start = performance.now();
+              function peelAnim(t) {
+                const elapsed = t - start;
+                const p = Math.min(elapsed / dur, 1);
+                const ep = 1 - Math.pow(1 - p, 3); // easeOutCubic
+                const pts = tightCurl.map((pt, i) => [
+                  pt[0] + (curled[i][0] - pt[0]) * ep,
+                  pt[1] + (curled[i][1] - pt[1]) * ep
+                ]);
+                spawnShape.setAttribute('d', spawnPtsToPath(pts));
+                if (p < 1) requestAnimationFrame(peelAnim);
+              }
+              requestAnimationFrame(peelAnim);
+            });
+          }
+
           // Hide add button until this new one is dragged
           hasMoved = false;
           addBtn.style.display = 'none';
@@ -2266,7 +2314,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v106';
+      if (tv) tv.textContent = ' · test v107';
       // Make footer always visible on test site
       const footer = document.querySelector('.build-hover-area');
       if (footer) { footer.style.opacity = '1'; footer.style.visibility = 'visible'; }
