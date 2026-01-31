@@ -158,11 +158,12 @@
           if (true || !sessionStorage.getItem('wm-intro-seen')) {
             console.log('[intro] Setting tight curl');
             document.getElementById('note-shape').setAttribute('d',
-              'M34.6016 19.2695 L250.102 18.5996 C250.102 18.5996 249.602 42 262 195 L28.6016 231.1 C36.6029 66.5996 34.6016 19.2695 34.6016 19.2695 Z'
+              'M34.6016 19.2695 L250.102 18.5996 C250.102 18.5996 249.602 49.0996 255 210 L28.6016 231.1 C36.6029 66.5996 34.6016 19.2695 34.6016 19.2695 Z'
             );
-            // Slight tilt as if corner is peeling
+            // Lighten bottom-right corner (back of paper showing)
+            document.getElementById('grad-stop-0').setAttribute('stop-color', '#DFF0FA');
+            document.getElementById('grad-stop-1').setAttribute('stop-color', '#D0E8F4');
             var nw = document.getElementById('note-wrapper');
-            nw.style.transform = 'rotate(1deg)';
             nw.style.transition = 'none';
           }
         </script>
@@ -1774,7 +1775,7 @@
           const introWrapper = document.getElementById('note-wrapper');
           const introTightCurl = [
             [34.6016, 19.2695], [250.102, 18.5996], [250.102, 18.5996],
-            [249.602, 42.0], [262.0, 195.0],
+            [249.602, 49.0996], [255.0, 210.0],
             [28.6016, 231.1], [36.6029, 66.5996], [34.6016, 19.2695], [34.6016, 19.2695]
           ];
           const introCurled = [
@@ -1805,12 +1806,26 @@
             function introPeelEase(t) {
               return t < 0.4 ? 0.15 * Math.pow(t / 0.4, 2) : 0.15 + 0.85 * Math.pow((t - 0.4) / 0.6, 0.5);
             }
+            // Gradient color lerp: light (curled) → original (uncurled)
+            const stop0 = document.getElementById('grad-stop-0');
+            const stop1 = document.getElementById('grad-stop-1');
+            const lightColors = [[0xDF,0xF0,0xFA], [0xD0,0xE8,0xF4]];
+            const origColors  = [[0x9D,0xD5,0xEE], [0x98,0xC4,0xDA]];
+            function lerpColor(from, to, t) {
+              const r = Math.round(from[0] + (to[0]-from[0])*t);
+              const g = Math.round(from[1] + (to[1]-from[1])*t);
+              const b = Math.round(from[2] + (to[2]-from[2])*t);
+              return '#' + [r,g,b].map(c => c.toString(16).padStart(2,'0')).join('');
+            }
             function introAnimate(currentTime) {
               const elapsed = currentTime - introStart;
               const progress = Math.min(elapsed / introDuration, 1);
               const ep = introPeelEase(progress);
               const pts = introLerp(introTightCurl, introCurled, ep);
               introNoteShape.setAttribute('d', introPointsToPath(pts));
+              // Fade gradient back to original
+              stop0.setAttribute('stop-color', lerpColor(lightColors[0], origColors[0], ep));
+              stop1.setAttribute('stop-color', lerpColor(lightColors[1], origColors[1], ep));
               if (progress < 1) {
                 introAnimId = requestAnimationFrame(introAnimate);
               }
