@@ -745,7 +745,7 @@
             shadow3: [0.425615, 0.695906, 0.842314] // Blue edge
           },
           yellow: {
-            gradient: ['#D4A830', '#DCBA3E', '#E4C854', '#ECD468', '#F2E080', '#F7EA9C'],
+            gradient: ['#DAAF40', '#E0C04C', '#E6CC5E', '#EEDA70', '#F2E082', '#F7EA9C'],
             shadow1: [0.92, 0.65, 0.15],          // Orange-yellow tint
             shadow2: [0.7, 0.45, 0.1],            // Orange-yellow tint
             shadow3: [0.9, 0.7, 0.3]              // Orange-yellow edge
@@ -1952,7 +1952,7 @@
           // Color configs (gradient + shadow colors per theme)
           const colorMap = {
             blue: ['#89C5E0', '#98C4DA', '#9BC8E7', '#ACD7E9', '#B8E3F3', '#C4E9F5'],
-            yellow: ['#D4A830', '#DCBA3E', '#E4C854', '#ECD468', '#F2E080', '#F7EA9C'],
+            yellow: ['#DAAF40', '#E0C04C', '#E6CC5E', '#EEDA70', '#F2E082', '#F7EA9C'],
             pink: ['#CC9BA5', '#D7A0AA', '#E2B4BD', '#ECC4CC', '#F2D1D8', '#F8DEE3']
           };
           // SVG drop shadows disabled — using CSS .note-shadow rectangle instead
@@ -2368,7 +2368,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v121';
+      if (tv) tv.textContent = ' · test v122';
       // Make footer always visible on test site
       const footer = document.querySelector('.build-hover-area');
       if (footer) { footer.style.opacity = '1'; footer.style.visibility = 'visible'; }
