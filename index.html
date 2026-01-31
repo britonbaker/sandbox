@@ -1498,8 +1498,11 @@
           document.body.classList.remove('drawing-mode-active');
           targetWrapper.classList.remove('drawing-mode');
           drawingToolbar.classList.remove('visible');
+          // Restore placeholder on all textareas
           const memo2 = document.getElementById('memo');
           if (memo2) memo2.classList.remove('hide-for-drawing');
+          const targetTa = targetWrapper.querySelector('.textarea');
+          if (targetTa) targetTa.classList.remove('hide-for-drawing');
 
           if (isOriginalNote) {
             // Original note: full close with animations
@@ -2143,11 +2146,22 @@
             document.body.classList.add('drawing-mode-active');
             newWrapper.classList.add('drawing-mode');
 
-            // Show toolbar
+            // Show toolbar positioned below this note
             const toolbar = document.getElementById('drawing-toolbar');
-            if (toolbar) toolbar.classList.add('visible');
+            if (toolbar) {
+              toolbar.classList.add('visible');
+              const noteRect = newWrapper.getBoundingClientRect();
+              toolbar.style.bottom = 'auto';
+              toolbar.style.top = (noteRect.bottom + 12) + 'px';
+              toolbar.style.left = (noteRect.left + noteRect.width / 2) + 'px';
+            }
             const focusOverlay = document.querySelector('.focus-overlay');
             if (focusOverlay) focusOverlay.classList.add('active');
+
+            // Hide placeholder text if textarea is empty
+            if (ta && !ta.value.trim()) {
+              ta.classList.add('hide-for-drawing');
+            }
 
             // Sync toolbar pen settings to this canvas
             spawnDrawingCtx.strokeStyle = currentPenColor;
@@ -2314,7 +2328,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v107';
+      if (tv) tv.textContent = ' · test v108';
       // Make footer always visible on test site
       const footer = document.querySelector('.build-hover-area');
       if (footer) { footer.style.opacity = '1'; footer.style.visibility = 'visible'; }
