@@ -153,6 +153,14 @@
             </linearGradient>
           </defs>
         </svg>
+        <script>
+          // Peel-to-reveal: immediately set tight curl before first paint
+          if (!sessionStorage.getItem('wm-intro-seen')) {
+            document.getElementById('note-shape').setAttribute('d',
+              'M34.6016 19.2695 L250.102 18.5996 C250.102 18.5996 260.602 30 285 100 L28.6016 231.1 C36.6029 66.5996 34.6016 19.2695 34.6016 19.2695 Z'
+            );
+          }
+        </script>
         <div class="note" id="sticky-note">
           <!-- Ellipsis menu button -->
           <button class="note-menu-btn" id="menu-btn">
