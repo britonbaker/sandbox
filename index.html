@@ -2245,11 +2245,9 @@
             // Start tight
             spawnShape.setAttribute('d', spawnPtsToPath(tightCurl));
             newWrapper.style.opacity = '0';
-            newWrapper.style.transform = 'scale(0.92)';
-            newWrapper.style.transition = 'opacity 0.3s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+            newWrapper.style.transition = 'opacity 0.3s ease';
             requestAnimationFrame(() => {
               newWrapper.style.opacity = '1';
-              newWrapper.style.transform = '';
               // Animate path from tight to curled
               const dur = 600;
               const start = performance.now();
@@ -2346,7 +2344,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v114';
+      if (tv) tv.textContent = ' · test v115';
       // Make footer always visible on test site
       const footer = document.querySelector('.build-hover-area');
       if (footer) { footer.style.opacity = '1'; footer.style.visibility = 'visible'; }
