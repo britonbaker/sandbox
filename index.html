@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css">
     <script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
     <link rel="stylesheet" href="lang-picker.css?v=2">
-    <link rel="stylesheet" href="./style.css?v=15" />
+    <link rel="stylesheet" href="./style.css?v=16" />
     <!-- Hreflang alternate links for SEO -->
     <link rel="alternate" hreflang="en" href="https://walletmemo.com/" />
     <link rel="alternate" hreflang="es" href="https://walletmemo.com/?lang=es" />
@@ -87,7 +87,7 @@
       <main class="container">
       <div class="note-wrapper" id="note-wrapper">
         <!-- Shadow layer (behind note) -->
-        <img src="./assets/paper-stuff/shadow-layer.svg" class="note-shadow" id="note-shadow" alt="">
+        <div class="note-shadow" id="note-shadow"></div>
         <!-- Sticky note SVG - inlined for dynamic color updates -->
         <svg class="note-paper" id="note-paper" data-state="one" width="287" height="270" viewBox="0 0 287 270" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g filter="url(#noteFilter)">
@@ -99,12 +99,12 @@
               <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
               <feOffset/>
               <feGaussianBlur stdDeviation="5.14583"/>
-              <feColorMatrix id="shadowColor1" type="matrix" values="0 0 0 0 0.101961 0 0 0 0 0.55098 0 0 0 0 1 0 0 0 0 0"/>
+              <feColorMatrix id="shadowColor1" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
               <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
               <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
               <feOffset dy="10"/>
               <feGaussianBlur stdDeviation="14.3"/>
-              <feColorMatrix id="shadowColor2" type="matrix" values="0 0 0 0 0 0 0 0 0 0.334596 0 0 0 0 0.608357 0 0 0 0 0"/>
+              <feColorMatrix id="shadowColor2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
               <feBlend mode="normal" in2="effect1_dropShadow" result="effect2_dropShadow"/>
               <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
               <feOffset dy="0.2"/>
@@ -759,12 +759,19 @@
           const shadow3 = document.getElementById('shadowColor3');
 
           if (shadow1) {
-            const [r, g, b] = theme.shadow1;
-            shadow1.setAttribute('values', `0 0 0 0 ${r} 0 0 0 0 ${g} 0 0 0 0 ${b} 0 0 0 0.15 0`);
+            // SVG drop shadows disabled — using CSS .note-shadow rectangle instead
+            shadow1.setAttribute('values', `0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0`);
           }
           if (shadow2) {
+            shadow2.setAttribute('values', `0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0`);
+          }
+
+          // Update CSS shadow rectangle color to match theme
+          const shadowEl = document.getElementById('note-shadow');
+          if (shadowEl && theme.shadow2) {
             const [r, g, b] = theme.shadow2;
-            shadow2.setAttribute('values', `0 0 0 0 ${r} 0 0 0 0 ${g} 0 0 0 0 ${b} 0 0 0 0.14 0`);
+            const cr = Math.round(r * 255), cg = Math.round(g * 255), cb = Math.round(b * 255);
+            shadowEl.style.background = `linear-gradient(to bottom, rgba(${cr},${cg},${cb},0) 0%, rgba(${cr},${cg},${cb},0.4) 100%)`;
           }
           if (shadow3) {
             const [r, g, b] = theme.shadow3;
@@ -822,6 +829,13 @@
         // Easing function (ease-out cubic)
         function easeOutCubic(t) {
           return 1 - Math.pow(1 - t, 3);
+        }
+
+        // "Peel off" easing — resists at first then pops free
+        function easePeelOff(t) {
+          return t < 0.4
+            ? 0.15 * Math.pow(t / 0.4, 2)                    // slow resist
+            : 0.15 + 0.85 * Math.pow((t - 0.4) / 0.6, 0.5);  // quick release
         }
 
         // Animate path morphing
@@ -919,13 +933,13 @@
           const theme = colorThemes[colorKey];
           const flatGrads = flatGradients[colorKey];
 
-          function animateNotePath(from, to, duration = 400) {
+          function animateNotePath(from, to, duration = 500, easeFn = easeOutCubic) {
             if (noteAnimId) cancelAnimationFrame(noteAnimId);
             const startTime = performance.now();
             function anim(t) {
               const elapsed = t - startTime;
               const progress = Math.min(elapsed / duration, 1);
-              const ep = easeOutCubic(progress);
+              const ep = easeFn(progress);
               const pts = lerpPoints(from, to, ep);
               shape.setAttribute('d', pointsToPath(pts));
               if (progress < 1) noteAnimId = requestAnimationFrame(anim);
@@ -933,7 +947,7 @@
             noteAnimId = requestAnimationFrame(anim);
           }
 
-          function animateNoteGradient(toFlat, duration = 400) {
+          function animateNoteGradient(toFlat, duration = 500, easeFn = easeOutCubic) {
             if (noteGradAnimId) cancelAnimationFrame(noteGradAnimId);
             const fromColors = (toFlat ? theme.gradient : flatGrads).map(hexToRgb);
             const toColors = (toFlat ? flatGrads : theme.gradient).map(hexToRgb);
@@ -941,7 +955,7 @@
             function anim(t) {
               const elapsed = t - startTime;
               const progress = Math.min(elapsed / duration, 1);
-              const ep = easeOutCubic(progress);
+              const ep = easeFn(progress);
               fromColors.forEach((from, i) => {
                 const r = from[0] + (toColors[i][0] - from[0]) * ep;
                 const g = from[1] + (toColors[i][1] - from[1]) * ep;
@@ -956,8 +970,9 @@
           wrapper.addEventListener('note:lift', () => {
             if (!noteIsFlat) {
               noteIsFlat = true;
-              animateNotePath(statePoints.curled, statePoints.flat);
-              animateNoteGradient(true);
+              wrapper.style.transition = 'transform 0.5s cubic-bezier(0.8, 0, 0.2, 1)';
+              animateNotePath(statePoints.curled, statePoints.flat, 500, easePeelOff);
+              animateNoteGradient(true, 500, easePeelOff);
               wrapper.classList.add('flat');
             }
           });
@@ -965,9 +980,11 @@
           wrapper.addEventListener('note:stick', () => {
             if (noteIsFlat) {
               noteIsFlat = false;
-              animateNotePath(statePoints.flat, statePoints.curled);
-              animateNoteGradient(false);
+              wrapper.style.transition = 'transform 0.18s ease-out';
+              animateNotePath(statePoints.flat, statePoints.curled, 180, easeOutCubic);
+              animateNoteGradient(false, 180, easeOutCubic);
               wrapper.classList.remove('flat');
+              setTimeout(() => { wrapper.style.transition = ''; }, 200);
             }
           });
 
@@ -982,8 +999,9 @@
             noteTextarea.addEventListener('focus', () => {
               if (!noteIsFlat) {
                 noteIsFlat = true;
-                animateNotePath(statePoints.curled, statePoints.flat);
-                animateNoteGradient(true);
+                wrapper.style.transition = 'transform 0.5s cubic-bezier(0.8, 0, 0.2, 1)';
+                animateNotePath(statePoints.curled, statePoints.flat, 500, easePeelOff);
+                animateNoteGradient(true, 500, easePeelOff);
                 wrapper.classList.add('flat');
                 wrapper.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
                 const current = wrapper.style.transform || '';
@@ -995,11 +1013,13 @@
             noteTextarea.addEventListener('blur', () => {
               if (noteIsFlat) {
                 noteIsFlat = false;
-                animateNotePath(statePoints.flat, statePoints.curled);
-                animateNoteGradient(false);
+                wrapper.style.transition = 'transform 0.18s ease-out';
+                animateNotePath(statePoints.flat, statePoints.curled, 180, easeOutCubic);
+                animateNoteGradient(false, 180, easeOutCubic);
                 wrapper.classList.remove('flat');
                 const current = wrapper.style.transform || '';
                 wrapper.style.transform = current.replace(/scale\([^)]*\)/g, '').trim();
+                setTimeout(() => { wrapper.style.transition = ''; }, 200);
               }
             });
           }
@@ -1063,7 +1083,7 @@
             isFlat = true;
             animatePath(statePoints.curled, statePoints.flat);
             animateGradient(true);
-            noteShadow.src = './assets/paper-stuff/shadow-layer-two.svg';
+            // noteShadow.src removed - now CSS div
             noteWrapper.classList.add('flat');
             noteWrapper.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
             const current = noteWrapper.style.transform || '';
@@ -1088,7 +1108,7 @@
             isFlat = false;
             animatePath(statePoints.flat, statePoints.curled);
             animateGradient(false);
-            noteShadow.src = './assets/paper-stuff/shadow-layer.svg';
+            // noteShadow.src removed - now CSS div
             noteWrapper.classList.remove('flat');
             const current = noteWrapper.style.transform || '';
             noteWrapper.style.transform = current.replace(/scale\([^)]*\)/g, '').replace(/translateY\([^)]*\)/g, '').trim();
@@ -1264,7 +1284,7 @@
             isFlat = true;
             animatePath(statePoints.curled, statePoints.flat);
             animateGradient(true);
-            noteShadow.src = './assets/paper-stuff/shadow-layer-two.svg';
+            // noteShadow.src removed - now CSS div
             noteWrapper.classList.add('flat');
           }
 
@@ -1367,7 +1387,7 @@
               isFlat = false;
               animatePath(statePoints.flat, statePoints.curled);
               animateGradient(false);
-              noteShadow.src = './assets/paper-stuff/shadow-layer.svg';
+              // noteShadow.src removed - now CSS div
               noteWrapper.classList.remove('flat');
               const current = noteWrapper.style.transform || '';
               noteWrapper.style.transform = current.replace(/scale\([^)]*\)/g, '').replace(/translateY\([^)]*\)/g, '').trim();
@@ -1717,20 +1737,21 @@
             yellow: ['#D8C453', '#D4B94C', '#DEC75E', '#E8D46E', '#F0DF85', '#F7EA9C'],
             pink: ['#DCABB5', '#D7A0AA', '#E2B4BD', '#ECC4CC', '#F2D1D8', '#F8DEE3']
           };
+          // SVG drop shadows disabled — using CSS .note-shadow rectangle instead
           const shadowMap = {
             blue: {
-              s1: '0 0 0 0 0.101961 0 0 0 0 0.55098 0 0 0 0 1 0 0 0 0.15 0',
-              s2: '0 0 0 0 0 0 0 0 0 0.334596 0 0 0 0 0.608357 0 0 0 0.14 0',
+              s1: '0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0',
+              s2: '0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0',
               s3: '0 0 0 0 0.425615 0 0 0 0 0.695906 0 0 0 0 0.842314 0 0 0 1 0'
             },
             yellow: {
-              s1: '0 0 0 0 0.92 0 0 0 0 0.65 0 0 0 0 0.15 0 0 0 0.15 0',
-              s2: '0 0 0 0 0.7 0 0 0 0 0.45 0 0 0 0 0.1 0 0 0 0.14 0',
+              s1: '0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0',
+              s2: '0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0',
               s3: '0 0 0 0 0.9 0 0 0 0 0.7 0 0 0 0 0.3 0 0 0 1 0'
             },
             pink: {
-              s1: '0 0 0 0 0.9 0 0 0 0 0.55 0 0 0 0 0.65 0 0 0 0.15 0',
-              s2: '0 0 0 0 0.6 0 0 0 0 0.35 0 0 0 0 0.45 0 0 0 0.14 0',
+              s1: '0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0',
+              s2: '0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0',
               s3: '0 0 0 0 0.88 0 0 0 0 0.72 0 0 0 0 0.78 0 0 0 1 0'
             }
           };
@@ -1957,12 +1978,16 @@
             spawnDrawingCtx.lineWidth = currentPenSize;
           });
 
-          // Add shadow layer (same as original note)
-          const shadowImg = document.createElement('img');
-          shadowImg.src = './assets/paper-stuff/shadow-layer.svg';
-          shadowImg.className = 'note-shadow';
-          shadowImg.alt = '';
-          newWrapper.appendChild(shadowImg);
+          // Add shadow layer with theme-matched color
+          const shadowDiv = document.createElement('div');
+          shadowDiv.className = 'note-shadow';
+          const spawnTheme = colorThemes[color];
+          if (spawnTheme && spawnTheme.shadow2) {
+            const [r, g, b] = spawnTheme.shadow2;
+            const cr = Math.round(r * 255), cg = Math.round(g * 255), cb = Math.round(b * 255);
+            shadowDiv.style.background = `linear-gradient(to bottom, rgba(${cr},${cg},${cb},0) 0%, rgba(${cr},${cg},${cb},0.4) 100%)`;
+          }
+          newWrapper.appendChild(shadowDiv);
           newWrapper.appendChild(svgNode);
           newWrapper.appendChild(noteDiv);
 
@@ -2001,7 +2026,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v45';
+      if (tv) tv.textContent = ' · test v58';
 
       // Add changelog link to footer (test → test changelog)
       const footerArea = document.querySelector('.build-hover-area');
