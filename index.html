@@ -3,7 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name="theme-color" content="#fafafa">
     <title>Wallet Memo</title>
+    <meta name="description" content="A sticky note for your Apple Wallet. Write a memo, save it to your wallet, and never forget.">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Wallet Memo">
+    <meta property="og:description" content="A sticky note for your Apple Wallet.">
+    <meta property="og:image" content="https://walletmemo.com/assets/og/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://walletmemo.com/">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Wallet Memo">
+    <meta name="twitter:description" content="A sticky note for your Apple Wallet.">
+    <meta name="twitter:image" content="https://walletmemo.com/assets/og/og-image.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Inter:wght@300&family=Fraunces:wght@300&family=Cormorant+Garamond:wght@300&family=Noto+Serif+JP:wght@900&family=Noto+Serif+KR:wght@900&family=Noto+Serif+SC:wght@900&display=swap" rel="stylesheet">
@@ -93,6 +108,7 @@
           <g filter="url(#noteFilter)">
             <path id="note-shape" d="M34.6016 19.2695L250.102 18.5996C250.102 18.5996 249.602 49.0996 257.602 228.6L28.6016 231.1C36.6029 66.5996 34.6016 19.2695 34.6016 19.2695Z" fill="url(#noteGradient)"/>
           </g>
+          <!-- Bottom edge darkening handled by gradient stop-0 -->
           <defs>
             <filter id="noteFilter" x="0.00156212" y="-0.000391006" width="286.2" height="269.7" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
               <feFlood flood-opacity="0" result="BackgroundImageFix"/>
@@ -130,7 +146,7 @@
               <feBlend mode="normal" in="effect4_noise" in2="effect3_dropShadow" result="effect4_noise"/>
             </filter>
             <linearGradient id="noteGradient" x1="153.102" y1="231.1" x2="143.601" y2="18.5996" gradientUnits="userSpaceOnUse">
-              <stop id="grad-stop-0" stop-color="#9DD5EE"/>
+              <stop id="grad-stop-0" stop-color="#89C5E0"/>
               <stop id="grad-stop-1" offset="0.255906" stop-color="#98C4DA"/>
               <stop id="grad-stop-2" offset="0.812358" stop-color="#9BC8E7"/>
               <stop id="grad-stop-3" offset="0.864881" stop-color="#ACD7E9"/>
@@ -139,6 +155,19 @@
             </linearGradient>
           </defs>
         </svg>
+        <script>
+          // Peel-to-reveal: immediately set tight curl + visual state before first paint
+          if (true || !sessionStorage.getItem('wm-intro-seen')) {
+            console.log('[intro] Setting tight curl');
+            document.getElementById('note-shape').setAttribute('d',
+              'M34.6016 19.2695 L250.102 18.5996 C250.102 18.5996 249.602 49.0996 255 210 L28.6016 231.1 C36.6029 66.5996 34.6016 19.2695 34.6016 19.2695 Z'
+            );
+            // Mark that intro needs gradient lightening (applied after color theme loads)
+            window._introNeedsGradient = true;
+            var nw = document.getElementById('note-wrapper');
+            nw.style.transition = 'none';
+          }
+        </script>
         <div class="note" id="sticky-note">
           <!-- Ellipsis menu button -->
           <button class="note-menu-btn" id="menu-btn">
@@ -214,13 +243,6 @@
             <button class="pen-color" data-color="67,160,71" style="background:#43a047"></button>
             <button class="pen-color" data-color="142,36,170" style="background:#8e24aa"></button>
           </div>
-        </div>
-        <div class="toolbar-divider"></div>
-        <div class="pen-sizes">
-          <button class="pen-size" data-size="1"><span style="width:4px;height:4px"></span></button>
-          <button class="pen-size active" data-size="2"><span style="width:6px;height:6px"></span></button>
-          <button class="pen-size" data-size="4"><span style="width:10px;height:10px"></span></button>
-          <button class="pen-size" data-size="6"><span style="width:14px;height:14px"></span></button>
         </div>
         <div class="toolbar-divider"></div>
         <button class="toolbar-btn done" id="done-drawing"><i class="hgi-stroke hgi-tick-02"></i></button>
@@ -694,6 +716,22 @@
         const colorIcon = document.getElementById('color-icon');
         const noteDrawingLayer = document.getElementById('note-drawing-layer');
         const drawingToolbar = document.getElementById('drawing-toolbar');
+
+        // Position toolbar below note, or above if it would be off-screen
+        window.positionToolbar = function(targetWrapper) {
+          if (!drawingToolbar) return;
+          const rect = targetWrapper.getBoundingClientRect();
+          const toolbarH = 52; // approx height
+          const belowY = rect.bottom + 12;
+          const aboveY = rect.top - toolbarH - 12;
+          drawingToolbar.style.bottom = 'auto';
+          if (belowY + toolbarH > window.innerHeight) {
+            drawingToolbar.style.top = aboveY + 'px';
+          } else {
+            drawingToolbar.style.top = belowY + 'px';
+          }
+          drawingToolbar.style.left = (rect.left + rect.width / 2) + 'px';
+        }
         const clearBtn = document.getElementById('clear-drawing');
         const cancelBtn = document.getElementById('cancel-drawing');
         const doneBtn = document.getElementById('done-drawing');
@@ -701,19 +739,19 @@
         // Color theme definitions (exposed for spawned notes)
         window.colorThemes = {
           blue: {
-            gradient: ['#9DD5EE', '#98C4DA', '#9BC8E7', '#ACD7E9', '#B8E3F3', '#C4E9F5'],
+            gradient: ['#89C5E0', '#98C4DA', '#9BC8E7', '#ACD7E9', '#B8E3F3', '#C4E9F5'],
             shadow1: [0.101961, 0.55098, 1],      // Blue tint
             shadow2: [0, 0.334596, 0.608357],     // Blue tint
             shadow3: [0.425615, 0.695906, 0.842314] // Blue edge
           },
           yellow: {
-            gradient: ['#D8C453', '#D4B94C', '#DEC75E', '#E8D46E', '#F0DF85', '#F7EA9C'],
+            gradient: ['#DAAF40', '#E0C04C', '#E6CC5E', '#EEDA70', '#F2E082', '#F7EA9C'],
             shadow1: [0.92, 0.65, 0.15],          // Orange-yellow tint
             shadow2: [0.7, 0.45, 0.1],            // Orange-yellow tint
             shadow3: [0.9, 0.7, 0.3]              // Orange-yellow edge
           },
           pink: {
-            gradient: ['#DCABB5', '#D7A0AA', '#E2B4BD', '#ECC4CC', '#F2D1D8', '#F8DEE3'],
+            gradient: ['#D4899A', '#DE95A6', '#E8A8B8', '#F0BCC8', '#F4CED8', '#F8DEE3'],
             shadow1: [0.9, 0.55, 0.65],           // Pink tint
             shadow2: [0.6, 0.35, 0.45],           // Pink tint
             shadow3: [0.88, 0.72, 0.78]           // Pink edge
@@ -788,7 +826,19 @@
 
         // SVG path points for the two states (matching structure for smooth morphing)
         // Structure: [M, L, C1, C2, C3, L, C1, C2, C3]
-        const statePoints = {
+        window.statePoints = {
+          // Slightly tighter curl for intro — bottom-right corner lifted
+          tightCurl: [
+            [34.6016, 19.2695],    // M - start (same)
+            [250.102, 18.5996],    // L - top right (same)
+            [250.102, 18.5996],    // C1 (same)
+            [249.602, 42.0],       // C2 - slightly tighter curve
+            [262.0, 195.0],        // C3 - bottom right lifted up ~35px
+            [28.6016, 231.1],      // L - bottom left (same)
+            [36.6029, 66.5996],    // C1 (same)
+            [34.6016, 19.2695],    // C2 (same)
+            [34.6016, 19.2695]     // C3 (same)
+          ],
           curled: [
             [34.6016, 19.2695],    // M - start
             [250.102, 18.5996],    // L - top right
@@ -831,6 +881,56 @@
           return 1 - Math.pow(1 - t, 3);
         }
 
+        // Sync drawing layer clip-path to current note shape
+        window.syncDrawingClip = function syncDrawingClip(points, targetLayer) {
+          const dl = targetLayer || document.getElementById('note-drawing-layer');
+          if (!dl) return;
+          // SVG viewBox is 287x270, map to percentages
+          const vw = 287, vh = 270;
+          // Points: [M, L, C1, C2, C3(bottom-right), L(bottom-left), C1, C2, C3]
+          // Sample key corners for polygon
+          const tl = points[0], tr = points[1], br = points[4], bl = points[5];
+          // Inset by ~2px (as % of viewBox) to avoid bleeding past note edge
+          const inX = 2/vw*100, inY = 2/vh*100;
+          const poly = [tl, tr, br, bl].map((p, i) => {
+            const px = p[0]/vw*100, py = p[1]/vh*100;
+            // Nudge each corner inward
+            const dx = (i === 0 || i === 3) ? inX : -inX; // left corners right, right corners left
+            const dy = (i === 0 || i === 1) ? inY : -inY; // top corners down, bottom corners up
+            return `${(px + dx).toFixed(1)}% ${(py + dy).toFixed(1)}%`;
+          }).join(', ');
+          dl.style.clipPath = `polygon(${poly})`;
+        }
+
+        // Update shadow position based on note's screen position
+        // Light source is at viewport center — shadow shifts away from center
+        window.updateShadowPosition = function(wrapper) {
+          const shadow = wrapper.querySelector('.note-shadow');
+          if (!shadow) return;
+          const rect = wrapper.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const vw = window.innerWidth / 2;
+          const vh = window.innerHeight / 2;
+          // -1 to 1 range, how far from center
+          const dx = (cx - vw) / vw;
+          const dy = (cy - vh) / vh;
+          // Max shift: 20px horizontal, 14px vertical
+          const shiftX = dx * 20;
+          const shiftY = dy * 14;
+          // Top-right = sharper + darker, bottom-left = softer + lighter
+          // Combine dx and dy: top-right is dx>0, dy<0 → factor goes negative
+          const cornerFactor = (dx - dy) / 2; // -1 (bottom-left) to +1 (top-right)
+          const isLifted = wrapper.classList.contains('flat') || wrapper.classList.contains('drawing-mode');
+          const baseBlur = isLifted ? 52 : 30;
+          const blurAdjust = cornerFactor * -10; // top-right: less blur (-10), bottom-left: more (+10)
+          const opacityAdjust = cornerFactor * 0.22; // top-right: darker (+0.22)
+          const blur = Math.max(10, baseBlur + blurAdjust);
+          shadow.style.transform = `translate(${shiftX}px, ${shiftY}px)`;
+          shadow.style.filter = `blur(${blur}px)`;
+          shadow.style.opacity = Math.min(1, Math.max(0.2, 1 + opacityAdjust));
+        }
+
         // "Peel off" easing — resists at first then pops free
         function easePeelOff(t) {
           return t < 0.4
@@ -852,6 +952,8 @@
 
             const currentPoints = lerpPoints(from, to, easedProgress);
             noteShape.setAttribute('d', pointsToPath(currentPoints));
+            // Sync drawing layer clip to note shape
+            syncDrawingClip(currentPoints);
 
             if (progress < 1) {
               animationId = requestAnimationFrame(animate);
@@ -864,8 +966,8 @@
         // Flat gradient colors (more uniform, less dynamic)
         const flatGradients = {
           blue: ['#B3DDEE', '#B3DDEE', '#B3DDEE', '#B8E0F0', '#BDE3F2', '#C2E6F4'],
-          yellow: ['#E8D66C', '#E8D66C', '#E8D66C', '#ECDA74', '#EEDC78', '#F2E082'],
-          pink: ['#EACAD2', '#EACAD2', '#EACAD2', '#EDCED6', '#F0D0D8', '#F2D4DB']
+          yellow: ['#EACC58', '#EACC58', '#EACC58', '#EED464', '#F0D86E', '#F4E07A'],
+          pink: ['#F0B8C6', '#F0B8C6', '#F0B8C6', '#F2C2CE', '#F4CAD4', '#F6D2DA']
         };
 
         // Parse hex color to RGB array
@@ -930,10 +1032,15 @@
           let noteAnimId = null;
           let noteGradAnimId = null;
 
-          const theme = colorThemes[colorKey];
-          const flatGrads = flatGradients[colorKey];
+          // Track current color — can be updated by color swatches
+          let currentColorKey = colorKey;
+          wrapper._getNoteColor = () => currentColorKey;
+          wrapper._setNoteColor = (ck) => { currentColorKey = ck; };
 
-          function animateNotePath(from, to, duration = 500, easeFn = easeOutCubic) {
+          function getTheme() { return colorThemes[currentColorKey]; }
+          function getFlatGrads() { return flatGradients[currentColorKey]; }
+
+          function animateNotePath(from, to, duration = 400, easeFn = easeOutCubic) {
             if (noteAnimId) cancelAnimationFrame(noteAnimId);
             const startTime = performance.now();
             function anim(t) {
@@ -942,13 +1049,18 @@
               const ep = easeFn(progress);
               const pts = lerpPoints(from, to, ep);
               shape.setAttribute('d', pointsToPath(pts));
+              // Sync drawing clip for this note's canvas
+              const dl = wrapper.querySelector('.note-drawing-layer');
+              if (dl) syncDrawingClip(pts, dl);
               if (progress < 1) noteAnimId = requestAnimationFrame(anim);
             }
             noteAnimId = requestAnimationFrame(anim);
           }
 
-          function animateNoteGradient(toFlat, duration = 500, easeFn = easeOutCubic) {
+          function animateNoteGradient(toFlat, duration = 400, easeFn = easeOutCubic) {
             if (noteGradAnimId) cancelAnimationFrame(noteGradAnimId);
+            const theme = getTheme();
+            const flatGrads = getFlatGrads();
             const fromColors = (toFlat ? theme.gradient : flatGrads).map(hexToRgb);
             const toColors = (toFlat ? flatGrads : theme.gradient).map(hexToRgb);
             const startTime = performance.now();
@@ -970,9 +1082,9 @@
           wrapper.addEventListener('note:lift', () => {
             if (!noteIsFlat) {
               noteIsFlat = true;
-              wrapper.style.transition = 'transform 0.5s cubic-bezier(0.8, 0, 0.2, 1)';
-              animateNotePath(statePoints.curled, statePoints.flat, 500, easePeelOff);
-              animateNoteGradient(true, 500, easePeelOff);
+              wrapper.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+              animateNotePath(statePoints.curled, statePoints.flat, 400, easeOutCubic);
+              animateNoteGradient(true, 400, easeOutCubic);
               wrapper.classList.add('flat');
             }
           });
@@ -999,11 +1111,10 @@
             noteTextarea.addEventListener('focus', () => {
               if (!noteIsFlat) {
                 noteIsFlat = true;
-                wrapper.style.transition = 'transform 0.5s cubic-bezier(0.8, 0, 0.2, 1)';
-                animateNotePath(statePoints.curled, statePoints.flat, 500, easePeelOff);
-                animateNoteGradient(true, 500, easePeelOff);
-                wrapper.classList.add('flat');
                 wrapper.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                animateNotePath(statePoints.curled, statePoints.flat, 400, easeOutCubic);
+                animateNoteGradient(true, 400, easeOutCubic);
+                wrapper.classList.add('flat');
                 const current = wrapper.style.transform || '';
                 const base = current.replace(/scale\([^)]*\)/g, '').trim();
                 wrapper.style.transform = (base ? base + ' ' : '') + 'scale(1.1)';
@@ -1032,6 +1143,12 @@
         noteWrapper.addEventListener('click', (e) => {
           // Don't steal clicks from menu, dropdown, or drawing layer
           if (e.target.closest('.note-menu-btn') || e.target.closest('.note-dropdown') || e.target.closest('.drawing-toolbar')) return;
+          // Only focus if click is on the actual note, not the shadow/curl area below
+          const note = e.target.closest('.note');
+          if (!note) return;
+          const rect = note.getBoundingClientRect();
+          const relY = (e.clientY - rect.top) / rect.height;
+          if (relY > 0.82) return; // bottom ~18% is curl/shadow area
           textarea.focus();
         });
 
@@ -1051,6 +1168,12 @@
         noteWrapper.addEventListener('touchend', (e) => {
           if (e.target.closest('.note-menu-btn') || e.target.closest('.note-dropdown') || e.target.closest('.drawing-toolbar')) return;
           if (noteWrapper.classList.contains('drawing-mode')) return;
+          const note = e.target.closest('.note');
+          if (!note) return;
+          const rect = note.getBoundingClientRect();
+          const touch = e.changedTouches[0];
+          const relY = (touch.clientY - rect.top) / rect.height;
+          if (relY > 0.82) return;
           e.preventDefault();
           textarea.focus({ preventScroll: true });
         });
@@ -1058,6 +1181,15 @@
         // Focus/blur on textarea triggers the flat/curled animation
         const focusOverlay = document.getElementById('focus-overlay');
         const langPicker2 = document.getElementById('lang-picker');
+
+        // Click overlay to dismiss focused/drawing note
+        focusOverlay.addEventListener('click', () => {
+          if (isDrawingMode) return; // don't dismiss drawing mode from overlay
+          textarea.blur();
+          // Blur any spawned note textareas
+          document.querySelectorAll('.dragged-note .textarea').forEach(t => t.blur());
+        });
+
         // Custom events for external code (e.g., drag) to trigger flat/curl
         noteWrapper.addEventListener('note:lift', () => {
           if (!isFlat) {
@@ -1166,6 +1298,8 @@
             const colorKey = swatch.dataset.color;
             currentColor = colorKey;
             updateNoteColors(colorKey);
+            // Update animation color so lift/stick uses new color
+            if (noteWrapper._setNoteColor) noteWrapper._setNoteColor(colorKey);
             // Update registry
             var reg = window.noteRegistry.get('note-0');
             if (reg) reg.color = colorKey;
@@ -1216,12 +1350,12 @@
           drawingCtx.lineCap = 'round';
           drawingCtx.lineJoin = 'round';
           drawingCtx.strokeStyle = 'rgba(26, 26, 26, 0.7)';
-          drawingCtx.lineWidth = 3;
+          drawingCtx.lineWidth = 1.5;
         }
         
         // Pen settings — ballpoint pen: slightly thinner + semi-transparent
         window.currentPenColor = 'rgba(26, 26, 26, 0.7)';
-        window.currentPenSize = 3;
+        window.currentPenSize = 1.5;
 
         initNoteDrawingLayer();
 
@@ -1300,7 +1434,15 @@
           // Enable drawing mode
           document.body.classList.add('drawing-mode-active');
           noteWrapper.classList.add('drawing-mode');
+          // Position toolbar then show
+          positionToolbar(noteWrapper);
           drawingToolbar.classList.add('visible');
+
+          // Hide placeholder text if textarea is empty
+          const memo = document.getElementById('memo');
+          if (memo && !memo.value.trim()) {
+            memo.classList.add('hide-for-drawing');
+          }
 
           // Sync pen settings
           drawingCtx.strokeStyle = currentPenColor;
@@ -1380,6 +1522,27 @@
           document.body.classList.remove('drawing-mode-active');
           targetWrapper.classList.remove('drawing-mode');
           drawingToolbar.classList.remove('visible');
+          // Check if canvas has drawing content
+          const activeCanvas = activeDrawingCanvas;
+          let hasDrawing = false;
+          if (activeCanvas) {
+            const ctx = activeCanvas.getContext('2d');
+            const px = ctx.getImageData(0, 0, activeCanvas.width, activeCanvas.height).data;
+            for (let i = 3; i < px.length; i += 4) {
+              if (px[i] > 0) { hasDrawing = true; break; }
+            }
+          }
+
+          // Restore placeholder — but hide it if there's a drawing and no typed text
+          const memo2 = document.getElementById('memo');
+          if (memo2) memo2.classList.remove('hide-for-drawing');
+          const targetTa = targetWrapper.querySelector('.textarea');
+          if (targetTa) {
+            targetTa.classList.remove('hide-for-drawing');
+            if (hasDrawing && !targetTa.value.trim()) {
+              targetTa.placeholder = '';
+            }
+          }
 
           if (isOriginalNote) {
             // Original note: full close with animations
@@ -1486,9 +1649,31 @@
 
         // Apply random color on load and update active swatch
         updateNoteColors(currentColor);
+        // Set initial drawing clip from curled state
+        syncDrawingClip(statePoints.curled);
         colorSwatches.forEach(s => {
           s.classList.toggle('active', s.dataset.color === currentColor);
         });
+
+        // Apply intro gradient lightening AFTER color theme is set
+        if (window._introNeedsGradient) {
+          const s0 = document.getElementById('grad-stop-0');
+          const s1 = document.getElementById('grad-stop-1');
+          window._introOrigStop0 = s0.getAttribute('stop-color');
+          window._introOrigStop1 = s1.getAttribute('stop-color');
+          function lightenWarm(hex) {
+            const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+            return '#' + [
+              Math.min(255, Math.round(r + (255-r)*0.4 + 15)),
+              Math.min(255, Math.round(g + (255-g)*0.4 + 8)),
+              Math.min(255, Math.round(b + (255-b)*0.3))
+            ].map(c => c.toString(16).padStart(2,'0')).join('');
+          }
+          window._introLightStop0 = lightenWarm(window._introOrigStop0);
+          window._introLightStop1 = lightenWarm(window._introOrigStop1);
+          s0.setAttribute('stop-color', window._introLightStop0);
+          s1.setAttribute('stop-color', window._introLightStop1);
+        }
 
         // ==========================================
         // Apple Wallet Pass Generation
@@ -1524,7 +1709,25 @@
 
             // Prepare pass on server (includes drawing), get token for QR
             try {
-              walletQr.innerHTML = '<div style="padding:16px;text-align:center;color:#888;font-size:13px;">Generating QR…</div>';
+              // Show cycling placeholder QR codes while loading
+              const placeholderTexts = ['walletmemo.com/loading', 'walletmemo.com/memo', 'walletmemo.com/pass'];
+              let placeholderIdx = 0;
+              function showPlaceholderQR() {
+                const pqr = qrcode(0, 'M');
+                pqr.addData(placeholderTexts[placeholderIdx % placeholderTexts.length]);
+                pqr.make();
+                const pImg = document.createElement('img');
+                pImg.src = pqr.createDataURL(4, 4);
+                pImg.style.cssText = 'width:100%;height:auto;display:block;opacity:0.35;transition:opacity 0.25s;';
+                const pInner = document.createElement('div');
+                pInner.style.cssText = 'background:#fff;border-radius:6px;padding:8px;width:100%;box-sizing:border-box;';
+                pInner.appendChild(pImg);
+                walletQr.innerHTML = '';
+                walletQr.appendChild(pInner);
+                placeholderIdx++;
+              }
+              showPlaceholderQR();
+              const placeholderInterval = setInterval(showPlaceholderQR, 400);
               appleWalletBtn.classList.add('qr-open');
               
               const prepRes = await fetch(`${BACKEND_URL}/api/prepare-pass`, {
@@ -1548,10 +1751,12 @@
               const qrInner = document.createElement('div');
               qrInner.style.cssText = 'background:#fff;border-radius:6px;padding:8px;width:100%;box-sizing:border-box;';
               qrInner.appendChild(img);
+              clearInterval(placeholderInterval);
               walletQr.innerHTML = '';
               walletQr.appendChild(qrInner);
               qrVisible = true;
             } catch (err) {
+              clearInterval(placeholderInterval);
               console.error('QR generation failed:', err);
               walletQr.innerHTML = '';
               appleWalletBtn.classList.remove('qr-open');
@@ -1612,7 +1817,7 @@
         // Create the "add new note" button that sits behind the note
         const addBtn = document.createElement('div');
         addBtn.className = 'add-note-btn';
-        addBtn.innerHTML = '<i class="hgi-stroke hgi-add-01"></i>';
+        addBtn.innerHTML = '<div class="plus-icon"></div>';
         addBtn.style.display = 'none';
         wrapper.parentElement.insertBefore(addBtn, wrapper);
 
@@ -1638,6 +1843,8 @@
             const relY = e.clientY - rect.top;
             if (relY >= dragZoneHeight) return;
             if (e.target.closest('.note-menu-btn') || e.target.closest('.note-dropdown')) return;
+            if (isDrawingMode) return;
+            if (el.querySelector('.note-dropdown.open')) return;
 
             e.preventDefault();
             isDragging = true;
@@ -1678,6 +1885,7 @@
             offsetX = origX + dx;
             offsetY = origY + dy;
             el.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(1.03) rotate(${tiltDeg}deg)`;
+            updateShadowPosition(el);
           });
 
           document.addEventListener('mouseup', () => {
@@ -1691,6 +1899,7 @@
             el.classList.remove('flat');
             el.dispatchEvent(new Event('note:stick'));
             el.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+            updateShadowPosition(el);
             const ta = el.querySelector('textarea');
             if (ta) ta.blur();
             // Suppress the click event that fires after mouseup
@@ -1704,6 +1913,9 @@
         }
 
         makeDraggable(wrapper);
+        updateShadowPosition(wrapper);
+
+        // (intro animation moved to standalone script block below)
 
         // Add new note button
         const placeholders = [
@@ -1727,15 +1939,16 @@
         ];
 
         addBtn.addEventListener('click', () => {
+          try {
           noteCounter++;
           const colors = ['blue', 'yellow', 'pink'];
           const color = colors[noteCounter % 3];
 
           // Color configs (gradient + shadow colors per theme)
           const colorMap = {
-            blue: ['#9DD5EE', '#98C4DA', '#9BC8E7', '#ACD7E9', '#B8E3F3', '#C4E9F5'],
-            yellow: ['#D8C453', '#D4B94C', '#DEC75E', '#E8D46E', '#F0DF85', '#F7EA9C'],
-            pink: ['#DCABB5', '#D7A0AA', '#E2B4BD', '#ECC4CC', '#F2D1D8', '#F8DEE3']
+            blue: ['#89C5E0', '#98C4DA', '#9BC8E7', '#ACD7E9', '#B8E3F3', '#C4E9F5'],
+            yellow: ['#DAAF40', '#E0C04C', '#E6CC5E', '#EEDA70', '#F2E082', '#F7EA9C'],
+            pink: ['#D4899A', '#DE95A6', '#E8A8B8', '#F0BCC8', '#F4CED8', '#F8DEE3']
           };
           // SVG drop shadows disabled — using CSS .note-shadow rectangle instead
           const shadowMap = {
@@ -1835,6 +2048,8 @@
           const spawnCanvas = document.createElement('canvas');
           spawnCanvas.className = 'note-drawing-layer';
           noteDiv.appendChild(spawnCanvas);
+          // Apply initial clip-path matching note shape
+          syncDrawingClip(statePoints.curled, spawnCanvas);
 
           // Add menu button to spawned note
           const spawnMenuBtn = document.createElement('button');
@@ -1922,6 +2137,14 @@
               spawnColor = ck;
               var reg = window.noteRegistry.get(spawnNoteId);
               if (reg) reg.color = ck;
+              // Update animation color so lift/stick uses new color
+              if (newWrapper._setNoteColor) newWrapper._setNoteColor(ck);
+              // Update shadow color to match new theme
+              if (theme.shadow2) {
+                const [r, g, b] = theme.shadow2;
+                const cr = Math.round(r * 255), cg = Math.round(g * 255), cb = Math.round(b * 255);
+                shadowDiv.style.background = `linear-gradient(to bottom, rgba(${cr},${cg},${cb},0) 0%, rgba(${cr},${cg},${cb},0.4) 100%)`;
+              }
               // Clear drawing when color changes
               if (spawnDrawingCtx) {
                 spawnDrawingCtx.clearRect(0, 0, spawnCanvas.width, spawnCanvas.height);
@@ -1967,11 +2190,20 @@
             document.body.classList.add('drawing-mode-active');
             newWrapper.classList.add('drawing-mode');
 
-            // Show toolbar
+            // Apply clip-path to spawned canvas
+            syncDrawingClip(statePoints.flat, spawnCanvas);
+
+            // Show toolbar positioned near this note
+            positionToolbar(newWrapper);
             const toolbar = document.getElementById('drawing-toolbar');
             if (toolbar) toolbar.classList.add('visible');
             const focusOverlay = document.querySelector('.focus-overlay');
             if (focusOverlay) focusOverlay.classList.add('active');
+
+            // Hide placeholder text if textarea is empty
+            if (ta && !ta.value.trim()) {
+              ta.classList.add('hide-for-drawing');
+            }
 
             // Sync toolbar pen settings to this canvas
             spawnDrawingCtx.strokeStyle = currentPenColor;
@@ -2018,15 +2250,129 @@
           const noteStops = svgNode.querySelectorAll('stop');
           initNoteAnimations(newWrapper, color, noteCounter, noteStops);
 
+          // Peel-in animation for spawned note (faster than intro)
+          {
+            const spawnShape = svgNode.querySelector('path');
+            const tightCurl = [
+              [34.6016, 19.2695], [250.102, 18.5996], [250.102, 18.5996],
+              [249.602, 49.0996], [255.0, 210.0],
+              [28.6016, 231.1], [36.6029, 66.5996], [34.6016, 19.2695], [34.6016, 19.2695]
+            ];
+            const curled = [
+              [34.6016, 19.2695], [250.102, 18.5996], [250.102, 18.5996],
+              [249.602, 49.0996], [257.602, 228.6],
+              [28.6016, 231.1], [36.6029, 66.5996], [34.6016, 19.2695], [34.6016, 19.2695]
+            ];
+            function spawnPtsToPath(pts) {
+              return `M${pts[0][0]} ${pts[0][1]} L${pts[1][0]} ${pts[1][1]} C${pts[2][0]} ${pts[2][1]} ${pts[3][0]} ${pts[3][1]} ${pts[4][0]} ${pts[4][1]} L${pts[5][0]} ${pts[5][1]} C${pts[6][0]} ${pts[6][1]} ${pts[7][0]} ${pts[7][1]} ${pts[8][0]} ${pts[8][1]} Z`;
+            }
+            // Start tight
+            spawnShape.setAttribute('d', spawnPtsToPath(tightCurl));
+            newWrapper.style.opacity = '0';
+            newWrapper.style.transition = 'opacity 0.3s ease';
+            requestAnimationFrame(() => {
+              newWrapper.style.opacity = '1';
+              // Animate path from tight to curled
+              const dur = 600;
+              const start = performance.now();
+              function peelAnim(t) {
+                const elapsed = t - start;
+                const p = Math.min(elapsed / dur, 1);
+                const ep = 1 - Math.pow(1 - p, 3); // easeOutCubic
+                const pts = tightCurl.map((pt, i) => [
+                  pt[0] + (curled[i][0] - pt[0]) * ep,
+                  pt[1] + (curled[i][1] - pt[1]) * ep
+                ]);
+                spawnShape.setAttribute('d', spawnPtsToPath(pts));
+                if (p < 1) requestAnimationFrame(peelAnim);
+              }
+              requestAnimationFrame(peelAnim);
+            });
+          }
+
           // Hide add button until this new one is dragged
           hasMoved = false;
           addBtn.style.display = 'none';
+          } catch(err) { console.error('ADD BTN ERROR:', err); }
         });
       })();
+
+    // ==========================================
+    // Peel-to-reveal intro animation (standalone — works on mobile + desktop)
+    // ==========================================
+    (function() {
+      if (true || !sessionStorage.getItem('wm-intro-seen')) {
+        const introNoteShape = document.getElementById('note-shape');
+        const introWrapper = document.getElementById('note-wrapper');
+        const introTightCurl = [
+          [34.6016, 19.2695], [250.102, 18.5996], [250.102, 18.5996],
+          [249.602, 49.0996], [255.0, 210.0],
+          [28.6016, 231.1], [36.6029, 66.5996], [34.6016, 19.2695], [34.6016, 19.2695]
+        ];
+        const introCurled = [
+          [34.6016, 19.2695], [250.102, 18.5996], [250.102, 18.5996],
+          [249.602, 49.0996], [257.602, 228.6],
+          [28.6016, 231.1], [36.6029, 66.5996], [34.6016, 19.2695], [34.6016, 19.2695]
+        ];
+        function introPointsToPath(pts) {
+          return `M${pts[0][0]} ${pts[0][1]} L${pts[1][0]} ${pts[1][1]} C${pts[2][0]} ${pts[2][1]} ${pts[3][0]} ${pts[3][1]} ${pts[4][0]} ${pts[4][1]} L${pts[5][0]} ${pts[5][1]} C${pts[6][0]} ${pts[6][1]} ${pts[7][0]} ${pts[7][1]} ${pts[8][0]} ${pts[8][1]} Z`;
+        }
+        function introLerp(from, to, t) {
+          return from.map((p, i) => [p[0] + (to[i][0] - p[0]) * t, p[1] + (to[i][1] - p[1]) * t]);
+        }
+        introNoteShape.setAttribute('d', introPointsToPath(introTightCurl));
+
+        const introShadow = introWrapper.querySelector('.note-shadow');
+        if (introShadow) introShadow.style.opacity = '0.3';
+
+        setTimeout(() => {
+          const introStart = performance.now();
+          const introDuration = 1200;
+          let introAnimId = null;
+          function introPeelEase(t) {
+            return t < 0.4 ? 0.15 * Math.pow(t / 0.4, 2) : 0.15 + 0.85 * Math.pow((t - 0.4) / 0.6, 0.5);
+          }
+          const stop0 = document.getElementById('grad-stop-0');
+          const stop1 = document.getElementById('grad-stop-1');
+          function parseHex(hex) { return [parseInt(hex.slice(1,3),16), parseInt(hex.slice(3,5),16), parseInt(hex.slice(5,7),16)]; }
+          const lightColors = [parseHex(window._introLightStop0 || '#DFF0FA'), parseHex(window._introLightStop1 || '#D0E8F4')];
+          const origColors  = [parseHex(window._introOrigStop0 || '#89C5E0'), parseHex(window._introOrigStop1 || '#98C4DA')];
+          function lerpColor(from, to, t) {
+            return '#' + [0,1,2].map(i => Math.round(from[i] + (to[i]-from[i])*t).toString(16).padStart(2,'0')).join('');
+          }
+          function introAnimate(currentTime) {
+            const elapsed = currentTime - introStart;
+            const progress = Math.min(elapsed / introDuration, 1);
+            const ep = introPeelEase(progress);
+            const pts = introLerp(introTightCurl, introCurled, ep);
+            introNoteShape.setAttribute('d', introPointsToPath(pts));
+            stop0.setAttribute('stop-color', lerpColor(lightColors[0], origColors[0], ep));
+            stop1.setAttribute('stop-color', lerpColor(lightColors[1], origColors[1], ep));
+            if (progress < 1) introAnimId = requestAnimationFrame(introAnimate);
+          }
+          introAnimId = requestAnimationFrame(introAnimate);
+
+          introWrapper.style.transition = 'transform 1.2s cubic-bezier(0.4, 0, 0.2, 1)';
+          introWrapper.style.transform = '';
+          setTimeout(() => { introWrapper.style.transition = ''; }, 1300);
+
+          if (introShadow) {
+            introShadow.style.transition = 'opacity 0.9s ease-out';
+            introShadow.style.opacity = '1';
+            setTimeout(() => { introShadow.style.transition = ''; }, 1000);
+          }
+          sessionStorage.setItem('wm-intro-seen', '1');
+        }, 200);
+      }
+    })();
+
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v58';
+      if (tv) tv.textContent = ' · test v136';
+      // Make footer always visible on test site
+      const footer = document.querySelector('.build-hover-area');
+      if (footer) { footer.style.opacity = '1'; footer.style.visibility = 'visible'; }
 
       // Add changelog link to footer (test → test changelog)
       const footerArea = document.querySelector('.build-hover-area');

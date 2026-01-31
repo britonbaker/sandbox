@@ -17,6 +17,7 @@ body {
   align-items: center;
   min-height: 100vh;
   position: relative;
+  background-color: #fafafa;
   overflow: hidden;
 }
 
@@ -35,6 +36,13 @@ body {
   pointer-events: none;
   z-index: 5;
   transition: opacity .3s ease;
+}
+
+.hero-title,
+.hero-tagline,
+.note-title {
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .hero-title {
@@ -96,7 +104,7 @@ body {
 .focus-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.45);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -105,6 +113,7 @@ body {
 
 .focus-overlay.active {
   opacity: 1;
+  pointer-events: auto;
 }
 
 .note-wrapper {
@@ -120,6 +129,9 @@ body {
   cursor: default;
   z-index: 10;
   margin-top: 8px;
+  user-select: none;
+  -webkit-user-select: none;
+  transform: perspective(800px) rotateY(1.5deg) rotateX(-0.5deg);
 }
 
 .note-wrapper.can-grab {
@@ -134,6 +146,7 @@ body {
   .note-wrapper:hover {
     transform: translateY(-2px);
   }
+  .note-wrapper.drawing-mode,
   .note-wrapper.drawing-mode:hover {
     transform: scale(1.1);
   }
@@ -146,7 +159,7 @@ body {
 
 @media (max-width: 600px) {
   .note-wrapper {
-    transform: scale(var(--mobile-note-scale, 1.1));
+    transform: perspective(800px) rotateY(1.5deg) rotateX(-0.5deg) scale(var(--mobile-note-scale, 1.1));
   }
   .note-wrapper.flat {
     transform: scale(var(--mobile-note-focus-scale, 1.15)) translateY(-100px);
@@ -157,17 +170,24 @@ body {
   transform: scale(1.08) translateY(-2px);
 }
 
+.note-wrapper.drawing-mode:hover,
+.note-wrapper.drawing-mode.flat:hover {
+  transform: scale(1.1);
+}
+
 /* Shadow layer - blurred rectangle behind note, gradient fades in from top */
 .note-shadow {
   position: absolute;
-  top: 50px;
-  left: 40px;
-  width: 220px;
-  height: 230px;
+  top: 70px;
+  left: 30px;
+  width: 240px;
+  height: 240px;
   z-index: 0;
   pointer-events: none;
-  background: linear-gradient(to bottom, rgba(132, 175, 221, 0) 0%, rgba(132, 175, 221, 0.4) 100%);
-  filter: blur(14px);
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 55%, rgba(70, 100, 150, 0.22) 0%, transparent 70%),
+    linear-gradient(to bottom, rgba(132, 175, 221, 0) 0%, rgba(132, 175, 221, 0.3) 100%);
+  filter: blur(30px);
   border-radius: 4px;
   transition: all 0.25s ease-out;
 }
@@ -175,13 +195,15 @@ body {
 /* When lifted: shadow darkens, spreads out, shifts down to show depth */
 .note-wrapper.flat .note-shadow,
 .note-wrapper.drawing-mode .note-shadow {
-  background: rgba(80, 120, 170, 0.35);
-  opacity: 1;
+  background:
+    radial-gradient(ellipse 55% 45% at 50% 50%, rgba(50, 80, 140, 0.22) 0%, transparent 65%),
+    rgba(80, 120, 170, 0.25);
+  opacity: 0.85;
   top: 90px;
   left: 25px;
   width: 250px;
   height: 260px;
-  filter: blur(46px);
+  filter: blur(60px);
 }
 
 /* Sticky note paper SVG */
@@ -211,6 +233,7 @@ body {
   left: 0;
   isolation: isolate;
   z-index: 2;
+  overflow: hidden;
 }
 
 /* note-version removed - using build-hover-area instead */
@@ -370,23 +393,34 @@ body {
   overflow: hidden;
 }
 
-.drawing-mode-active .wallet-wrapper {
+.drawing-mode-active .wallet-wrapper > *:not(.build-hover-area) {
   opacity: 0;
   pointer-events: none;
 }
 
 .note-wrapper.drawing-mode {
-  transform: scale(1.15);
+  transform: scale(1.1);
   z-index: 100;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M3 21l1.5-4.5L17.5 3.5a1.4 1.4 0 0 1 2 0l1 1a1.4 1.4 0 0 1 0 2L7.5 19.5z' fill='%231a1a1a' stroke='white' stroke-width='1'/%3E%3C/svg%3E") 2 22, crosshair !important;
+}
+
+.note-wrapper.drawing-mode.can-grab {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M3 21l1.5-4.5L17.5 3.5a1.4 1.4 0 0 1 2 0l1 1a1.4 1.4 0 0 1 0 2L7.5 19.5z' fill='%231a1a1a' stroke='white' stroke-width='1'/%3E%3C/svg%3E") 2 22, crosshair !important;
 }
 
 .note-wrapper.drawing-mode .note-drawing-layer {
   touch-action: none;
   pointer-events: auto;
-  cursor: crosshair;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M3 21l1.5-4.5L17.5 3.5a1.4 1.4 0 0 1 2 0l1 1a1.4 1.4 0 0 1 0 2L7.5 19.5z' fill='%231a1a1a' stroke='white' stroke-width='1'/%3E%3C/svg%3E") 2 22, crosshair;
 }
 
 .note-wrapper.drawing-mode .note-menu-btn {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  display: none !important;
+}
+
+.note-wrapper.drawing-mode .textarea.hide-for-drawing {
   opacity: 0;
   pointer-events: none;
 }
@@ -403,12 +437,12 @@ body {
   background: rgba(0,0,0,.85);
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
-  padding: 10px 14px;
-  border-radius: 16px;
+  padding: 10px;
+  border-radius: 999px;
   box-shadow: 0 4px 24px rgba(0,0,0,.3);
   opacity: 0;
   visibility: hidden;
-  transition: opacity .3s ease, visibility .3s ease;
+  transition: none;
   z-index: 101;
 }
 
@@ -583,7 +617,8 @@ body {
   height: 100%;
   pointer-events: none;
   z-index: 5;
-  clip-path: inset(5% 3% 4% 3% round 2px);
+  clip-path: polygon(12.8% 7.9%, 86.4% 7.6%, 89.1% 83.9%, 10.7% 84.9%);
+  overflow: hidden;
 }
 
 .textarea {
@@ -754,13 +789,20 @@ body {
 
   .note-shadow {
     top: 50px;
-    left: 30px;
-    width: 200px;
-    height: 160px;
+    left: 20px;
+    width: 280px;
+    height: 260px;
+    filter: blur(28px);
+    opacity: 0.75;
   }
 
   .note-wrapper.flat .note-shadow {
-    opacity: 0;
+    top: 70px;
+    left: 15px;
+    width: 290px;
+    height: 270px;
+    filter: blur(44px);
+    opacity: 0.7;
   }
 
   /* Scale up bigger on mobile when clicked/focused - almost edge to edge */
@@ -841,14 +883,41 @@ body {
     right: 12px;
   }
 
-  /* Drawing mode adjustments */
+  /* Drawing mode adjustments — center note vertically, zoom slightly */
+  .drawing-mode-active {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99;
+  }
+
   .note-wrapper.drawing-mode {
-    transform: scale(1.08);
+    position: fixed !important;
+    top: 45% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) scale(1.12) !important;
+    z-index: 100 !important;
+    margin: 0 !important;
   }
 
   .drawing-mode-active .wallet-wrapper {
     opacity: 0;
     pointer-events: none;
+  }
+
+  /* Block overlay clicks in draw mode — must use toolbar to exit */
+  .drawing-mode-active .focus-overlay.active {
+    pointer-events: none;
+  }
+
+  /* Toolbar fixed at bottom center on mobile */
+  .drawing-toolbar.visible {
+    top: auto !important;
+    bottom: 40px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
   }
 }
 
@@ -941,30 +1010,52 @@ body {
   width: 200px;
   height: 200px;
   border: none;
-  border-radius: 16px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
   position: absolute;
-  background: rgba(0,0,0,0.04);
+  background: rgba(0,0,0,0.1);
   margin-top: 70px;
 }
 
 .add-note-btn:hover {
-  background: rgba(0,0,0,0.07);
+  background: rgba(0,0,0,0.06);
 }
 
-.add-note-btn i {
-  font-size: 48px;
-  color: rgba(0,0,0,0.35);
-  font-weight: bold;
-  transition: color 0.3s ease;
+.add-note-btn .plus-icon {
+  width: 40px;
+  height: 40px;
+  position: relative;
 }
 
-.add-note-btn:hover i {
-  color: rgba(0,0,0,0.4);
+.add-note-btn .plus-icon::before,
+.add-note-btn .plus-icon::after {
+  content: '';
+  position: absolute;
+  background: #ffffff;
+  border-radius: 4px;
+}
+
+.add-note-btn .plus-icon::before {
+  width: 4px;
+  height: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.add-note-btn .plus-icon::after {
+  height: 4px;
+  width: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.add-note-btn:hover .plus-icon::before,
+.add-note-btn:hover .plus-icon::after {
+  background: #ffffff;
 }
 
 .dragged-note {
@@ -984,6 +1075,8 @@ body {
   text-align: center;
   font-size: 11px;
   color: rgba(0,0,0,0.5);
+  letter-spacing: 0.5px;
+  word-spacing: 8px;
 }
 
 .build-hover-area .copyright {
