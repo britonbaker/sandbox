@@ -393,7 +393,7 @@ body {
   overflow: hidden;
 }
 
-.drawing-mode-active .wallet-wrapper > *:not(.build-hover-area):not(.wallet-buttons) {
+.drawing-mode-active .wallet-wrapper > *:not(.build-hover-area) {
   opacity: 0;
   pointer-events: none;
 }
