@@ -894,12 +894,12 @@ body {
   }
 
   .note-wrapper.drawing-mode {
-    transform: scale(1.12);
     position: fixed !important;
-    top: 50% !important;
+    top: 45% !important;
     left: 50% !important;
-    transform: translate(-50%, -55%) scale(1.12) !important;
+    transform: translate(-50%, -50%) scale(1.12) !important;
     z-index: 100 !important;
+    margin: 0 !important;
   }
 
   .drawing-mode-active .wallet-wrapper {
