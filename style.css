@@ -980,8 +980,8 @@ body {
 
 /* Hidden build number - shows on hover over bottom-left corner */
 .add-note-btn {
-  width: 260px;
-  height: 260px;
+  width: 200px;
+  height: 200px;
   border: none;
   border-radius: 20px;
   display: flex;
