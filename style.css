@@ -990,12 +990,12 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
   position: absolute;
-  background: rgba(0,0,0,0.04);
+  background: rgba(0,0,0,0.08);
   margin-top: 70px;
 }
 
 .add-note-btn:hover {
-  background: rgba(0,0,0,0.07);
+  background: rgba(0,0,0,0.12);
 }
 
 .add-note-btn .plus-icon {
