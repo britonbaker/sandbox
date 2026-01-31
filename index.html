@@ -864,6 +864,21 @@
           return 1 - Math.pow(1 - t, 3);
         }
 
+        // Sync drawing layer clip-path to current note shape
+        function syncDrawingClip(points) {
+          const dl = document.getElementById('note-drawing-layer');
+          if (!dl) return;
+          // SVG viewBox is 287x270, map to percentages
+          const vw = 287, vh = 270;
+          // Points: [M, L, C1, C2, C3(bottom-right), L(bottom-left), C1, C2, C3]
+          // Sample key corners for polygon
+          const tl = points[0], tr = points[1], br = points[4], bl = points[5];
+          const poly = [tl, tr, br, bl].map(p => 
+            `${(p[0]/vw*100).toFixed(1)}% ${(p[1]/vh*100).toFixed(1)}%`
+          ).join(', ');
+          dl.style.clipPath = `polygon(${poly})`;
+        }
+
         // Update shadow position based on note's screen position
         // Light source is at viewport center — shadow shifts away from center
         window.updateShadowPosition = function(wrapper) {
@@ -914,6 +929,8 @@
 
             const currentPoints = lerpPoints(from, to, easedProgress);
             noteShape.setAttribute('d', pointsToPath(currentPoints));
+            // Sync drawing layer clip to note shape
+            syncDrawingClip(currentPoints);
 
             if (progress < 1) {
               animationId = requestAnimationFrame(animate);
@@ -1547,6 +1564,8 @@
 
         // Apply random color on load and update active swatch
         updateNoteColors(currentColor);
+        // Set initial drawing clip from curled state
+        syncDrawingClip(statePoints.curled);
         colorSwatches.forEach(s => {
           s.classList.toggle('active', s.dataset.color === currentColor);
         });
@@ -2202,7 +2221,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v92';
+      if (tv) tv.textContent = ' · test v93';
       // Make footer always visible on test site
       const footer = document.querySelector('.build-hover-area');
       if (footer) { footer.style.opacity = '1'; footer.style.visibility = 'visible'; }
