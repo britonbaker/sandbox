@@ -359,15 +359,64 @@
     </div>
 
     <script>
-    // Decorative note drag + shape animation
+    // Decorative note drag + shape + color animation
     (function() {
       const curledPath = "M34.6016 19.2695L250.102 18.5996C250.102 18.5996 249.602 49.0996 257.602 228.6L28.6016 231.1C36.6029 66.5996 34.6016 19.2695 34.6016 19.2695Z";
       const flatPath = "M29 18L258 18C258 18 258 125 258 232L29 232C29 125 29 18 29 18Z";
+
+      // Curled (stuck) gradient stops per color
+      const curledGradients = {
+        blue:   ['#89C5E0','#98C4DA','#9BC8E7','#ACD7E9','#B8E3F3','#C4E9F5'],
+        yellow: ['#DAAF40','#E0C04C','#E6CC5E','#EEDA70','#F2E082','#F7EA9C'],
+        pink:   ['#D4899A','#DE95A6','#E8A8B8','#F0BCC8','#F4CED8','#F8DEE3'],
+      };
+      // Flat (lifted) gradient stops — lighter, more washed out
+      const flatGradients = {
+        blue:   ['#B3DDEE','#B3DDEE','#B3DDEE','#B8E0F0','#BDE3F2','#C2E6F4'],
+        yellow: ['#EACC58','#EACC58','#EACC58','#EED464','#F0D86E','#F4E07A'],
+        pink:   ['#F0B8C6','#F0B8C6','#F0B8C6','#F2C2CE','#F4CAD4','#F6D2DA'],
+      };
+      const stopOffsets = [0, 0.256, 0.812, 0.865, 0.954, 1];
+
+      function hexToRgb(hex) {
+        const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return r ? [parseInt(r[1],16),parseInt(r[2],16),parseInt(r[3],16)] : [0,0,0];
+      }
+      function rgbToHex([r,g,b]) {
+        return '#'+[r,g,b].map(v=>Math.round(v).toString(16).padStart(2,'0')).join('');
+      }
+      function lerpColor(from, to, t) {
+        return from.map((v,i) => v + (to[i]-v)*t);
+      }
+
+      function animateGradient(stops, fromColors, toColors, duration) {
+        const fromRgb = fromColors.map(hexToRgb);
+        const toRgb = toColors.map(hexToRgb);
+        const start = performance.now();
+        function tick(now) {
+          let t = Math.min((now - start) / duration, 1);
+          t = 1 - Math.pow(1 - t, 3); // easeOutCubic
+          stops.forEach((stop, i) => {
+            stop.setAttribute('stop-color', rgbToHex(lerpColor(fromRgb[i], toRgb[i], t)));
+          });
+          if (t < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      }
+
+      function getColorKey(note) {
+        if (note.classList.contains('blue')) return 'blue';
+        if (note.classList.contains('yellow')) return 'yellow';
+        if (note.classList.contains('pink')) return 'pink';
+        return 'blue';
+      }
 
       document.querySelectorAll('.deco-note').forEach(note => {
         const svg = note.querySelector('.deco-paper');
         const path = svg ? svg.querySelector('path') : null;
         const shadow = note.querySelector('.deco-shadow');
+        const gradStops = svg ? Array.from(svg.querySelectorAll('linearGradient stop')) : [];
+        const colorKey = getColorKey(note);
         let isDragging = false;
         let startX, startY, origLeft, origTop;
 
@@ -376,14 +425,15 @@
           isDragging = true;
           note.classList.add('is-dragging');
           const touch = e.touches ? e.touches[0] : e;
-          const rect = note.parentElement.getBoundingClientRect();
           startX = touch.clientX;
           startY = touch.clientY;
           origLeft = note.offsetLeft;
           origTop = note.offsetTop;
-          // Animate to flat/square shape
+          // Shape → flat
           if (path) path.setAttribute('d', flatPath);
-          // Expand shadow for lifted look
+          // Color → flat (animated)
+          if (gradStops.length) animateGradient(gradStops, curledGradients[colorKey], flatGradients[colorKey], 350);
+          // Shadow lifts
           if (shadow) {
             shadow.style.transition = 'all 0.3s ease';
             shadow.style.filter = 'blur(28px)';
@@ -396,10 +446,8 @@
           if (!isDragging) return;
           e.preventDefault();
           const touch = e.touches ? e.touches[0] : e;
-          const dx = touch.clientX - startX;
-          const dy = touch.clientY - startY;
-          note.style.left = (origLeft + dx) + 'px';
-          note.style.top = (origTop + dy) + 'px';
+          note.style.left = (origLeft + touch.clientX - startX) + 'px';
+          note.style.top = (origTop + touch.clientY - startY) + 'px';
           note.style.right = 'auto';
         }
 
@@ -407,8 +455,11 @@
           if (!isDragging) return;
           isDragging = false;
           note.classList.remove('is-dragging');
-          // Animate back to curled shape
+          // Shape → curled
           if (path) path.setAttribute('d', curledPath);
+          // Color → curled (animated)
+          if (gradStops.length) animateGradient(gradStops, flatGradients[colorKey], curledGradients[colorKey], 350);
+          // Shadow resets
           if (shadow) {
             shadow.style.filter = '';
             shadow.style.opacity = '';
