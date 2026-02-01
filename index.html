@@ -1214,6 +1214,7 @@
         });
 
         textarea.addEventListener('focus', () => {
+          if (window._restoringNotes) return;
           setActiveNote('note-0');
           if (!isFlat) {
             isFlat = true;
@@ -2375,7 +2376,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v156';
+      if (tv) tv.textContent = ' · test v157';
       // Make footer always visible on test site
       const footer = document.querySelector('.build-hover-area');
       if (footer) { footer.style.visibility = 'visible'; }
@@ -2511,8 +2512,6 @@
               wrapper.style.animation = '';
             }, 100);
           });
-          window._restoringNotes = false;
-
           // Reset note-0 to curled state (may have been flat when saved)
           const note0Wrapper = document.getElementById('note-wrapper');
           if (note0Wrapper) {
@@ -2544,6 +2543,24 @@
 
           // Restore add button visibility
           if (addBtnVisible && addBtn) addBtn.style.display = 'flex';
+
+          // Blur any accidentally focused textareas, then clear restore flag
+          document.querySelectorAll('.textarea').forEach(t => t.blur());
+          // After drawings load, hide placeholder on notes with drawing content
+          setTimeout(() => {
+            document.querySelectorAll('.note-drawing-layer').forEach(c => {
+              const ctx = c.getContext('2d');
+              const px = ctx.getImageData(0, 0, c.width, c.height).data;
+              let hasDraw = false;
+              for (let i = 3; i < px.length; i += 4) { if (px[i] > 0) { hasDraw = true; break; } }
+              if (hasDraw) {
+                const wrapper = c.closest('.note-wrapper, .dragged-note');
+                const ta = wrapper ? wrapper.querySelector('.textarea') : null;
+                if (ta && !ta.value.trim()) ta.placeholder = '';
+              }
+            });
+            window._restoringNotes = false;
+          }, 500);
         }, 200);
       } catch(e) { console.warn('Note restore failed:', e); }
     })();
