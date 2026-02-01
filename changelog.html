@@ -19,6 +19,7 @@
         overflow-x: hidden;
         background-image: linear-gradient(to bottom, #fafafa, #e5e5e5);
         background-attachment: fixed;
+        position: relative;
       }
       .page-content {
         padding: 40px 20px 60px;
@@ -103,14 +104,13 @@
          Decorative Sticky Notes
          ============================ */
       .deco-notes-container {
-        position: fixed;
+        position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
         pointer-events: none;
         z-index: 0;
-        overflow: hidden;
       }
       .deco-note {
         position: absolute;
@@ -194,12 +194,9 @@
       }
 
       /* Position notes on left and right sides */
-      .deco-note.left-1  { left: calc(50% - 480px); top: 80px; }
-      .deco-note.right-1 { right: calc(50% - 480px); top: 160px; left: auto; }
-      .deco-note.left-2  { left: calc(50% - 500px); top: 420px; }
-      .deco-note.right-2 { right: calc(50% - 500px); top: 520px; left: auto; }
-      .deco-note.left-3  { left: calc(50% - 470px); top: 760px; }
-      .deco-note.right-3 { right: calc(50% - 470px); top: 860px; left: auto; }
+      .deco-note.left-1  { left: calc(50% - 480px); top: 60px; }
+      .deco-note.right-1 { right: calc(50% - 490px); top: 400px; left: auto; }
+      .deco-note.left-2  { left: calc(50% - 470px); top: 740px; }
 
       /* Hide on narrow screens where they'd overlap content */
       @media (max-width: 1100px) {
@@ -296,66 +293,7 @@
         <div class="deco-text">don't forget snacks 🍪</div>
       </div>
 
-      <!-- Right side notes -->
-      <div class="deco-note blue right-2" style="--ry:-3.5deg;--rx:-2deg;--rz:-1deg">
-        <div class="deco-shadow"></div>
-        <svg class="deco-paper" width="287" height="270" viewBox="0 0 287 270" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <g filter="url(#df4)"><path d="M34.6016 19.2695L250.102 18.5996C250.102 18.5996 249.602 49.0996 257.602 228.6L28.6016 231.1C36.6029 66.5996 34.6016 19.2695 34.6016 19.2695Z" fill="url(#dg4)"/></g>
-          <defs>
-            <filter id="df4" x="0" y="0" width="287" height="270" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-              <feFlood flood-opacity="0" result="bg"/><feBlend in="SourceGraphic" in2="bg"/>
-              <feTurbulence type="fractalNoise" baseFrequency="1.667" stitchTiles="stitch" numOctaves="3" result="noise" seed="3501"/>
-              <feComponentTransfer in="noise" result="cn"><feFuncR type="linear" slope="2" intercept="-0.5"/><feFuncG type="linear" slope="2" intercept="-0.5"/><feFuncB type="linear" slope="2" intercept="-0.5"/><feFuncA type="discrete" tableValues="1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/></feComponentTransfer>
-              <feComposite operator="in" in="cn" in2="SourceGraphic" result="nc"/><feComponentTransfer in="nc" result="c1"><feFuncA type="table" tableValues="0 0.06"/></feComponentTransfer>
-              <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="c1"/></feMerge>
-            </filter>
-            <linearGradient id="dg4" x1="153" y1="231" x2="144" y2="19" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#89C5E0"/><stop offset="0.256" stop-color="#98C4DA"/><stop offset="0.812" stop-color="#9BC8E7"/><stop offset="0.865" stop-color="#ACD7E9"/><stop offset="0.954" stop-color="#B8E3F3"/><stop offset="1" stop-color="#C4E9F5"/>
-            </linearGradient>
-          </defs>
-        </svg>
-        <div class="deco-text">bugs are features in disguise 🐛</div>
-      </div>
-
-      <div class="deco-note yellow left-3" style="--ry:5.5deg;--rx:0.5deg;--rz:-3.5deg">
-        <div class="deco-shadow"></div>
-        <svg class="deco-paper" width="287" height="270" viewBox="0 0 287 270" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <g filter="url(#df5)"><path d="M34.6016 19.2695L250.102 18.5996C250.102 18.5996 249.602 49.0996 257.602 228.6L28.6016 231.1C36.6029 66.5996 34.6016 19.2695 34.6016 19.2695Z" fill="url(#dg5)"/></g>
-          <defs>
-            <filter id="df5" x="0" y="0" width="287" height="270" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-              <feFlood flood-opacity="0" result="bg"/><feBlend in="SourceGraphic" in2="bg"/>
-              <feTurbulence type="fractalNoise" baseFrequency="1.667" stitchTiles="stitch" numOctaves="3" result="noise" seed="7744"/>
-              <feComponentTransfer in="noise" result="cn"><feFuncR type="linear" slope="2" intercept="-0.5"/><feFuncG type="linear" slope="2" intercept="-0.5"/><feFuncB type="linear" slope="2" intercept="-0.5"/><feFuncA type="discrete" tableValues="1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/></feComponentTransfer>
-              <feComposite operator="in" in="cn" in2="SourceGraphic" result="nc"/><feComponentTransfer in="nc" result="c1"><feFuncA type="table" tableValues="0 0.06"/></feComponentTransfer>
-              <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="c1"/></feMerge>
-            </filter>
-            <linearGradient id="dg5" x1="153" y1="231" x2="144" y2="19" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#DAAF40"/><stop offset="0.256" stop-color="#E0C04C"/><stop offset="0.812" stop-color="#E6CC5E"/><stop offset="0.865" stop-color="#EEDA70"/><stop offset="0.954" stop-color="#F2E082"/><stop offset="1" stop-color="#F7EA9C"/>
-            </linearGradient>
-          </defs>
-        </svg>
-        <div class="deco-text">v2 ideas go here 💡</div>
-      </div>
-
-      <div class="deco-note pink right-3" style="--ry:-4.5deg;--rx:1.5deg;--rz:2.5deg">
-        <div class="deco-shadow"></div>
-        <svg class="deco-paper" width="287" height="270" viewBox="0 0 287 270" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <g filter="url(#df6)"><path d="M34.6016 19.2695L250.102 18.5996C250.102 18.5996 249.602 49.0996 257.602 228.6L28.6016 231.1C36.6029 66.5996 34.6016 19.2695 34.6016 19.2695Z" fill="url(#dg6)"/></g>
-          <defs>
-            <filter id="df6" x="0" y="0" width="287" height="270" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-              <feFlood flood-opacity="0" result="bg"/><feBlend in="SourceGraphic" in2="bg"/>
-              <feTurbulence type="fractalNoise" baseFrequency="1.667" stitchTiles="stitch" numOctaves="3" result="noise" seed="2055"/>
-              <feComponentTransfer in="noise" result="cn"><feFuncR type="linear" slope="2" intercept="-0.5"/><feFuncG type="linear" slope="2" intercept="-0.5"/><feFuncB type="linear" slope="2" intercept="-0.5"/><feFuncA type="discrete" tableValues="1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/></feComponentTransfer>
-              <feComposite operator="in" in="cn" in2="SourceGraphic" result="nc"/><feComponentTransfer in="nc" result="c1"><feFuncA type="table" tableValues="0 0.06"/></feComponentTransfer>
-              <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="c1"/></feMerge>
-            </filter>
-            <linearGradient id="dg6" x1="153" y1="231" x2="144" y2="19" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#D4899A"/><stop offset="0.256" stop-color="#DE95A6"/><stop offset="0.812" stop-color="#E8A8B8"/><stop offset="0.865" stop-color="#F0BCC8"/><stop offset="0.954" stop-color="#F4CED8"/><stop offset="1" stop-color="#F8DEE3"/>
-            </linearGradient>
-          </defs>
-        </svg>
-        <div class="deco-text">almost perfect ✨</div>
-      </div>
+      <!-- Right side note -->
     </div>
 
     <script>
