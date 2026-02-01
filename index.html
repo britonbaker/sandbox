@@ -2448,8 +2448,11 @@
           const ctx = canvas.getContext('2d');
           const img = new Image();
           img.onload = function() {
+            ctx.save();
+            ctx.setTransform(1, 0, 0, 1, 0, 0); // reset 2x scale
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            ctx.restore();
           };
           img.src = s.drawing;
           // Restore text
