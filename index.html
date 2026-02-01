@@ -2376,7 +2376,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v162';
+      if (tv) tv.textContent = ' · test v163';
       // Make footer always visible on test site
       const footer = document.querySelector('.build-hover-area');
       if (footer) { footer.style.visibility = 'visible'; }
@@ -2596,7 +2596,7 @@
     (function() {
       const d = document.createElement('div');
       d.id = 'debug-info';
-      d.style.cssText = 'position:fixed;bottom:60px;left:0;right:0;background:rgba(0,0,0,0.8);color:#0f0;font:10px monospace;padding:4px 8px;z-index:99999;word-wrap:break-word;max-height:80px;overflow:auto;';
+      d.style.cssText = 'position:fixed;top:0;left:0;right:0;background:rgba(0,0,0,0.9);color:#0f0;font:12px monospace;padding:8px;z-index:99999;word-wrap:break-word;max-height:120px;overflow:auto;';
       document.body.appendChild(d);
     })();
 
