@@ -2375,7 +2375,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v152';
+      if (tv) tv.textContent = ' · test v153';
       // Make footer always visible on test site
       const footer = document.querySelector('.build-hover-area');
       if (footer) { footer.style.opacity = '1'; footer.style.visibility = 'visible'; }
@@ -2430,7 +2430,9 @@
           transform: wrapper.style.transform || '',
         });
       });
-      sessionStorage.setItem('wm-note-state', JSON.stringify(state));
+      // Save add-button visibility
+      const saveData = { notes: state, addBtnVisible: addBtn && addBtn.style.display !== 'none' };
+      sessionStorage.setItem('wm-note-state', JSON.stringify(saveData));
     }
 
     // Restore ALL notes state on load
@@ -2439,7 +2441,10 @@
       if (!saved) return;
       sessionStorage.removeItem('wm-note-state');
       try {
-        const state = JSON.parse(saved);
+        const raw = JSON.parse(saved);
+        // Support both old array format and new object format
+        const state = Array.isArray(raw) ? raw : raw.notes;
+        const addBtnVisible = Array.isArray(raw) ? false : raw.addBtnVisible;
         // Mark that we're restoring so spawned notes skip peel animation
         window._restoringNotes = true;
 
@@ -2450,9 +2455,10 @@
 
         // Wait for spawned notes to initialize, then restore everything
         setTimeout(() => {
+          console.log('[restore] Registry:', [...window.noteRegistry.keys()], 'State ids:', state.map(s => s.id));
           state.forEach(s => {
             const reg = window.noteRegistry.get(s.id);
-            if (!reg) return;
+            if (!reg) { console.warn('[restore] Missing registry entry for', s.id); return; }
             const wrapper = reg.wrapper;
             const canvas = wrapper.querySelector('.note-drawing-layer');
             const textarea = wrapper.querySelector('.textarea');
@@ -2505,6 +2511,8 @@
             }, 100);
           });
           window._restoringNotes = false;
+          // Restore add button visibility
+          if (addBtnVisible && addBtn) addBtn.style.display = 'flex';
         }, 200);
       } catch(e) { console.warn('Note restore failed:', e); }
     })();
