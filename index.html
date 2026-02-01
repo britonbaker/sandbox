@@ -2376,7 +2376,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v158';
+      if (tv) tv.textContent = ' · test v159';
       // Make footer always visible on test site
       const footer = document.querySelector('.build-hover-area');
       if (footer) { footer.style.visibility = 'visible'; }
@@ -2569,6 +2569,78 @@
         }, 200);
       } catch(e) { console.warn('Note restore failed:', e); }
     })();
+
+    // Handle bfcache restore (mobile Safari back button)
+    window.addEventListener('pageshow', (e) => {
+      if (!e.persisted) return;
+      // Page was restored from bfcache — reset all notes to curled state
+      // Remove slide-out animation class
+      document.documentElement.classList.remove('page-slide-out-left');
+      document.documentElement.classList.add('page-slide-in-left');
+
+      // Reset note-0
+      const nw = document.getElementById('note-wrapper');
+      if (nw) {
+        nw.classList.remove('flat');
+        nw.style.transition = 'none';
+        // Reset transform to default (strip scale/translateY from flat mode)
+        const cur = nw.style.transform || '';
+        nw.style.transform = cur.replace(/scale\([^)]*\)/g, '').replace(/translateY\([^)]*\)/g, '').trim();
+        nw.offsetHeight;
+        nw.style.transition = '';
+      }
+
+      // Reset note-0 SVG path to curled
+      const noteShape = document.getElementById('note-shape');
+      if (noteShape && window.statePoints) {
+        const c = window.statePoints.curled;
+        noteShape.setAttribute('d',
+          'M' + c[0][0] + ' ' + c[0][1] +
+          ' L' + c[1][0] + ' ' + c[1][1] +
+          ' C' + c[2][0] + ' ' + c[2][1] + ' ' + c[3][0] + ' ' + c[3][1] + ' ' + c[4][0] + ' ' + c[4][1] +
+          ' L' + c[5][0] + ' ' + c[5][1] +
+          ' C' + c[6][0] + ' ' + c[6][1] + ' ' + c[7][0] + ' ' + c[7][1] + ' ' + c[8][0] + ' ' + c[8][1] + ' Z'
+        );
+      }
+
+      // Reset gradient to curled (non-flat) colors
+      if (window.noteRegistry && window.colorThemes) {
+        const reg0 = window.noteRegistry.get('note-0');
+        if (reg0 && window.colorThemes[reg0.color]) {
+          window.colorThemes[reg0.color].gradient.forEach((color, i) => {
+            const stop = document.getElementById('grad-stop-' + i);
+            if (stop) stop.setAttribute('stop-color', color);
+          });
+        }
+      }
+
+      // Dismiss focus overlay & blur textareas
+      const overlay = document.getElementById('focus-overlay');
+      if (overlay) overlay.classList.remove('active');
+      document.querySelectorAll('.textarea').forEach(t => t.blur());
+
+      // Reset spawned notes too
+      document.querySelectorAll('.dragged-note').forEach(dn => {
+        dn.classList.remove('flat');
+        const cur2 = dn.style.transform || '';
+        dn.style.transform = cur2.replace(/scale\([^)]*\)/g, '').replace(/translateY\([^)]*\)/g, '').trim();
+      });
+
+      // Hide placeholder on notes with drawings
+      setTimeout(() => {
+        document.querySelectorAll('.note-drawing-layer').forEach(c => {
+          const ctx = c.getContext('2d');
+          const px = ctx.getImageData(0, 0, c.width, c.height).data;
+          let hasDraw = false;
+          for (let i = 3; i < px.length; i += 4) { if (px[i] > 0) { hasDraw = true; break; } }
+          if (hasDraw) {
+            const wrapper = c.closest('.note-wrapper, .dragged-note');
+            const ta = wrapper ? wrapper.querySelector('.textarea') : null;
+            if (ta && !ta.value.trim()) ta.placeholder = '';
+          }
+        });
+      }, 100);
+    });
 
     // Page transition: slide out left when clicking changelog
     document.addEventListener('click', (e) => {
