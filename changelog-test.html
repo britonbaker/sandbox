@@ -24,6 +24,8 @@
         padding: 40px 20px 60px;
         max-width: 640px;
         margin: 0 auto;
+        position: relative;
+        overflow: visible;
       }
       .back-link {
         display: inline-block;
@@ -233,6 +235,9 @@
         sessionStorage.removeItem('page-transition');
       }
     </script>
+
+
+    <div class="page-content">
     <!-- Decorative sticky notes -->
     <div class="deco-notes-container">
       <div class="deco-note yellow left-1" style="--ry:4.5deg;--rx:-1deg;--rz:-2.5deg">
@@ -373,8 +378,6 @@
       });
     })();
     </script>
-
-    <div class="page-content">
     <a href="./" class="back-link" id="back-link">Wallet Memo</a>
     <h1 id="page-title">Changelog <span class="test-badge">TEST</span></h1>
     <p class="subtitle" id="page-subtitle">All changes — test builds</p>

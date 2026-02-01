@@ -27,6 +27,7 @@
         margin: 0 auto;
         position: relative;
         z-index: 1;
+        overflow: visible;
       }
       .back-link {
         display: inline-block;
@@ -230,7 +231,9 @@
         sessionStorage.removeItem('page-transition');
       }
     </script>
-    <!-- Decorative sticky notes (left & right of content) -->
+
+
+    <div class="page-content">
     <div class="deco-notes-container">
       <!-- Left side notes -->
       <div class="deco-note blue left-1" style="--ry:4deg;--rx:-1.5deg;--rz:-2deg">
@@ -414,8 +417,6 @@
       });
     })();
     </script>
-
-    <div class="page-content">
     <a href="./" class="back-link" id="back-link">Wallet Memo</a>
     <h1 id="page-title">Changelog</h1>
     <p class="subtitle" id="page-subtitle">What's new in Wallet Memo</p>
