@@ -193,13 +193,13 @@
         transform: scale(1.08) !important;
       }
 
-      /* Position notes on left and right sides */
-      .deco-note.left-1  { left: calc(50% - 480px); top: 60px; }
-      .deco-note.right-1 { right: calc(50% - 490px); top: 400px; left: auto; }
-      .deco-note.left-2  { left: calc(50% - 470px); top: 740px; }
+      /* Position notes on left and right sides — pushed further from content */
+      .deco-note.left-1  { left: calc(50% - 560px); top: 60px; }
+      .deco-note.right-1 { right: calc(50% - 560px); top: 400px; left: auto; }
+      .deco-note.left-2  { left: calc(50% - 540px); top: 740px; }
 
       /* Hide on narrow screens where they'd overlap content */
-      @media (max-width: 1100px) {
+      @media (max-width: 1200px) {
         .deco-notes-container { display: none; }
       }
     </style>
@@ -250,7 +250,7 @@
             </linearGradient>
           </defs>
         </svg>
-        <div class="deco-text">remember to update the readme ✏️</div>
+        <div class="deco-text">peel animations look so good 🤩</div>
       </div>
 
       <div class="deco-note yellow right-1" style="--ry:-5deg;--rx:1deg;--rz:1.5deg">
@@ -270,7 +270,7 @@
             </linearGradient>
           </defs>
         </svg>
-        <div class="deco-text">ship it! 🚀</div>
+        <div class="deco-text">shadows have depth now ✨</div>
       </div>
 
       <div class="deco-note pink left-2" style="--ry:3deg;--rx:2deg;--rz:3deg">
@@ -290,7 +290,7 @@
             </linearGradient>
           </defs>
         </svg>
-        <div class="deco-text">don't forget snacks 🍪</div>
+        <div class="deco-text">draw on ALL the notes 🎨</div>
       </div>
 
       <!-- Right side note -->
