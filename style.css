@@ -18,7 +18,7 @@ body {
   min-height: 100vh;
   position: relative;
   background-color: #fafafa;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 .content-group {
