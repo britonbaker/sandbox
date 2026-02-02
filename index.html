@@ -2371,7 +2371,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v169';
+      if (tv) tv.textContent = ' · test v170';
       // Make footer always visible on test site
       const footer = document.querySelector('.build-hover-area');
       if (footer) { footer.style.visibility = 'visible'; }
@@ -2542,6 +2542,10 @@
           // Reset note-0 to curled state (may have been flat when saved)
           const note0Wrapper = document.getElementById('note-wrapper');
           debugLog('n0flat:' + (note0Wrapper ? note0Wrapper.classList.contains('flat') : 'null'));
+          // Log shadow and wrapper computed styles
+          var ns = document.getElementById('note-shadow');
+          if (ns) debugLog('shadow:' + ns.style.cssText.substring(0,60));
+          if (note0Wrapper) debugLog('wt:' + getComputedStyle(note0Wrapper).transform.substring(0,40));
           if (note0Wrapper) {
             note0Wrapper.classList.remove('flat');
             window.isFlat = false;
