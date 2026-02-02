@@ -907,6 +907,13 @@ body {
     pointer-events: none;
   }
 
+  .drawing-mode-active .hero,
+  .drawing-mode-active .hero-tagline,
+  .drawing-mode-active .content-group > *:not(.note-wrapper):not(.add-note-btn) {
+    opacity: 0;
+    pointer-events: none;
+  }
+
   /* Block overlay clicks in draw mode — must use toolbar to exit */
   .drawing-mode-active .focus-overlay.active {
     pointer-events: none;
