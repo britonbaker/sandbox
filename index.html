@@ -2527,6 +2527,11 @@
 
         // Ensure notes in flat state get properly curled back
         document.querySelectorAll('.note-wrapper').forEach(function(wrapper) {
+          // Kill transitions so reset is instant (no ghost shadows mid-transition)
+          wrapper.style.transition = 'none';
+          var shadow = wrapper.querySelector('.note-shadow');
+          if (shadow) shadow.style.transition = 'none';
+
           // Dispatch stick event for animation system (animates SVG path + gradient)
           wrapper.dispatchEvent(new Event('note:stick'));
           // Remove flat/drawing classes
@@ -2540,6 +2545,11 @@
           // Force-hide any textarea placeholder that was hidden for drawing
           var textarea = wrapper.querySelector('.textarea');
           if (textarea) textarea.classList.remove('hide-for-drawing');
+
+          // Force reflow then re-enable transitions
+          wrapper.offsetHeight;
+          wrapper.style.transition = '';
+          if (shadow) shadow.style.transition = '';
         });
 
         // Re-show add button if notes have been moved (have transforms)
