@@ -132,9 +132,6 @@ body {
   user-select: none;
   -webkit-user-select: none;
   transform: perspective(800px) rotateY(1.5deg) rotateX(-0.5deg);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  will-change: transform;
 }
 
 .note-wrapper.can-grab {

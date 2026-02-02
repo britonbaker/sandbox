@@ -2526,9 +2526,14 @@
         }
 
         // Ensure notes in flat state get properly curled back
-        document.querySelectorAll('.note-wrapper.flat').forEach(function(wrapper) {
+        document.querySelectorAll('.note-wrapper').forEach(function(wrapper) {
+          // Remove flat state
           wrapper.classList.remove('flat');
+          // Dispatch stick event for animation system
           wrapper.dispatchEvent(new Event('note:stick'));
+          // Force-hide any textarea placeholder that was hidden for drawing
+          var textarea = wrapper.querySelector('.textarea');
+          if (textarea) textarea.classList.remove('hide-for-drawing');
         });
 
         // Re-show add button if notes have been moved (have transforms)
@@ -2541,6 +2546,10 @@
         // Ensure focus overlay is cleared
         var overlay = document.querySelector('.focus-overlay');
         if (overlay) overlay.classList.remove('active');
+
+        // Clear lang picker hidden state
+        var langPicker = document.getElementById('lang-picker');
+        if (langPicker) langPicker.classList.remove('hidden');
       }
     });
 
