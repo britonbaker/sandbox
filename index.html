@@ -65,9 +65,18 @@
       if (sessionStorage.getItem('page-transition') === 'back') {
         document.documentElement.classList.add('page-slide-in-left');
         sessionStorage.removeItem('page-transition');
-        // Remove class after animation so it doesn't interfere with draw mode
+        // Remove class and force-clear animation residue (Safari fix)
         setTimeout(function() {
           document.documentElement.classList.remove('page-slide-in-left');
+          var pc = document.querySelector('.page-content');
+          if (pc) {
+            pc.style.animation = 'none';
+            pc.style.transform = 'none';
+            pc.style.opacity = '';
+            pc.offsetHeight; // force reflow
+            pc.style.transform = '';
+            pc.style.animation = '';
+          }
         }, 500);
       }
     </script>
@@ -2376,7 +2385,7 @@
     // Show test version on test site
     if (location.hostname.includes('clawdbrit')) {
       const tv = document.getElementById('test-version');
-      if (tv) tv.textContent = ' · test v166';
+      if (tv) tv.textContent = ' · test v167';
       // Make footer always visible on test site
       const footer = document.querySelector('.build-hover-area');
       if (footer) { footer.style.visibility = 'visible'; }
