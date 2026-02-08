@@ -2401,7 +2401,7 @@
         clLink.href = 'changelog.html';
         clLink.className = 'footer-link changelog-footer-link';
         clLink.setAttribute('data-i18n', 'changelog');
-        clLink.textContent = 'Changelog';
+        clLink.innerHTML = '<i class="hgi-stroke hgi-clipboard" style="margin-right:4px;font-size:14px;vertical-align:-1px;"></i>Changelog';
         const dot = document.createTextNode(' · ');
         footerArea.insertBefore(dot, footerArea.firstChild);
         footerArea.insertBefore(clLink, footerArea.firstChild);
