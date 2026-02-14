@@ -853,6 +853,12 @@
             ctx.lineTo(28.6 * sx, 231.1 * sy);
             ctx.closePath();
             ctx.fill();
+            // Draw :) on the note
+            ctx.fillStyle = 'rgba(0,0,0,0.25)';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(':)', 16, 17);
             link.href = canvas.toDataURL('image/png');
           };
         })();
