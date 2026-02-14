@@ -803,6 +803,9 @@
             shadow2.setAttribute('values', `0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0`);
           }
 
+          // Update favicon to match note color
+          if (window.updateFavicon) window.updateFavicon(colorKey);
+
           // Update CSS shadow rectangle color to match theme
           const shadowEl = document.getElementById('note-shadow');
           if (shadowEl && theme.shadow2) {
@@ -815,6 +818,50 @@
             shadow3.setAttribute('values', `0 0 0 0 ${r} 0 0 0 0 ${g} 0 0 0 0 ${b} 0 0 0 1 0`);
           }
         }
+
+        // Dynamic favicon — sticky note silhouette matching current color
+        (function initDynamicFavicon() {
+          const canvas = document.createElement('canvas');
+          canvas.width = 32; canvas.height = 32;
+          const ctx = canvas.getContext('2d');
+          // Create link element for favicon
+          let link = document.querySelector("link[rel*='icon']");
+          if (!link) {
+            link = document.createElement('link');
+            link.rel = 'icon';
+            document.head.appendChild(link);
+          }
+          window.updateFavicon = function(colorKey) {
+            const theme = colorThemes[colorKey];
+            if (!theme) return;
+            ctx.clearRect(0, 0, 32, 32);
+            // Scale the sticky note path (viewBox 287x270) down to 32x32
+            // Original points: M34.6,19.27 L250.1,18.6 257.6,228.6 L28.6,231.1
+            const sx = 32 / 287, sy = 32 / 270;
+            // Create gradient matching note direction (bottom to top)
+            const grad = ctx.createLinearGradient(
+              153.1 * sx, 231.1 * sy,
+              143.6 * sx, 18.6 * sy
+            );
+            const offsets = [0, 0.2559, 0.8124, 0.8649, 0.9543, 1];
+            theme.gradient.forEach((c, i) => grad.addColorStop(offsets[i], c));
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.moveTo(34.6 * sx, 19.27 * sy);
+            ctx.lineTo(250.1 * sx, 18.6 * sy);
+            ctx.lineTo(257.6 * sx, 228.6 * sy);
+            ctx.lineTo(28.6 * sx, 231.1 * sy);
+            ctx.closePath();
+            ctx.fill();
+            // Draw :) on the note
+            ctx.fillStyle = 'rgba(0,0,0,0.25)';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(':)', 16, 17);
+            link.href = canvas.toDataURL('image/png');
+          };
+        })();
 
         // Note state toggle (click to switch between curled and flat)
         const noteWrapper = document.getElementById('note-wrapper');

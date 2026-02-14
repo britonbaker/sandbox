@@ -498,6 +498,27 @@
 
     const entries = [
       {
+        date: { en: "February 14, 2026", es: "14 de febrero de 2026", fr: "14 février 2026", de: "14. Februar 2026", ja: "2026年2月14日", zh: "2026年2月14日", ko: "2026년 2월 14일", pt: "14 de fevereiro de 2026" },
+        version: "v81–v196",
+        categories: {
+          new: [
+            { en: "Drawing on Apple Wallet pass — your sketches now appear on the actual pass", es: "Dibujo en el pase de Apple Wallet — tus bocetos ahora aparecen en el pase", fr: "Dessin sur le pass Apple Wallet — vos croquis apparaissent sur le pass", de: "Zeichnung auf dem Apple Wallet Pass — Skizzen erscheinen auf dem Pass", ja: "Apple Walletパスに描画 — スケッチが実際のパスに表示", zh: "在Apple钱包通行证上绘画 — 你的草图现在会出现在通行证上", ko: "Apple Wallet 패스에 그리기 — 스케치가 실제 패스에 표시됩니다", pt: "Desenho no passe Apple Wallet — seus esboços agora aparecem no passe" },
+            { en: "Cloudflare Workers backend for pass generation", es: "Backend de Cloudflare Workers para generación de pases", fr: "Backend Cloudflare Workers pour la génération de pass", de: "Cloudflare Workers Backend für Pass-Generierung", ja: "パス生成用のCloudflare Workersバックエンド", zh: "用于通行证生成的Cloudflare Workers后端", ko: "패스 생성을 위한 Cloudflare Workers 백엔드", pt: "Backend Cloudflare Workers para geração de passes" },
+            { en: "Dynamic favicon — browser tab icon matches your sticky note color", es: "Favicon dinámico — el icono de la pestaña coincide con el color de tu nota", fr: "Favicon dynamique — l'icône de l'onglet correspond à la couleur de votre note", de: "Dynamisches Favicon — Browser-Tab-Icon passt sich der Notizfarbe an", ja: "ダイナミックファビコン — ブラウザタブアイコンが付箋の色に一致", zh: "动态网站图标 — 浏览器标签图标与便签颜色匹配", ko: "동적 파비콘 — 브라우저 탭 아이콘이 스티커 노트 색상과 일치", pt: "Favicon dinâmico — ícone da aba combina com a cor da nota" },
+          ],
+          fix: [
+            { en: "Mobile Safari .pkpass download now works reliably (prepare→redirect flow)", es: "La descarga de .pkpass en Safari móvil ahora funciona de forma fiable", fr: "Le téléchargement .pkpass sur Safari mobile fonctionne maintenant de manière fiable", de: "Mobile Safari .pkpass-Download funktioniert jetzt zuverlässig", ja: "モバイルSafariの.pkpassダウンロードが確実に動作するように", zh: "移动Safari .pkpass下载现在可靠运行", ko: "모바일 Safari .pkpass 다운로드가 안정적으로 작동", pt: "Download .pkpass no Safari móvel agora funciona de forma confiável" },
+            { en: "Note state fully preserved across page navigation (position, color, drawings)", es: "Estado de la nota completamente preservado entre navegaciones", fr: "État des notes entièrement préservé lors de la navigation", de: "Notizzustand vollständig über Seitennavigation hinweg beibehalten", ja: "ページナビゲーション間でノートの状態を完全に保持", zh: "页面导航间完全保留笔记状态（位置、颜色、绘图）", ko: "페이지 탐색 간 노트 상태 완전 보존 (위치, 색상, 그리기)", pt: "Estado da nota totalmente preservado na navegação entre páginas" },
+            { en: "Safari 3D perspective flattening after animation resolved", es: "Aplanamiento de perspectiva 3D en Safari después de animación resuelto", fr: "Aplatissement de la perspective 3D Safari après animation résolu", de: "Safari 3D-Perspektiven-Abflachung nach Animation behoben", ja: "アニメーション後のSafari 3Dパース平坦化を解決", zh: "Safari动画后3D透视变平问题已解决", ko: "애니메이션 후 Safari 3D 원근 평면화 해결", pt: "Achatamento de perspectiva 3D do Safari após animação resolvido" },
+            { en: "Textarea overflow and height for multiline input", es: "Desbordamiento y altura del área de texto para entrada multilínea", fr: "Débordement et hauteur de la zone de texte pour la saisie multiligne", de: "Textbereich-Überlauf und Höhe für mehrzeilige Eingabe", ja: "複数行入力のテキストエリアのオーバーフローと高さ", zh: "多行输入的文本区域溢出和高度", ko: "여러 줄 입력을 위한 텍스트 영역 오버플로 및 높이", pt: "Overflow e altura da área de texto para entrada multilinha" },
+          ],
+          design: [
+            { en: "Refined sticky note glow — subtler, more realistic shadow opacity", es: "Brillo de nota adhesiva refinado — opacidad de sombra más sutil y realista", fr: "Lueur de note autocollante raffinée — opacité d'ombre plus subtile et réaliste", de: "Verfeinerte Haftnotiz-Leuchten — subtilere, realistischere Schattenopazität", ja: "付箋のグローを洗練 — より繊細でリアルな影の不透明度", zh: "精致的便签发光效果 — 更微妙、更逼真的阴影不透明度", ko: "정제된 스티커 노트 글로우 — 더 미묘하고 사실적인 그림자 불투명도", pt: "Brilho da nota adesiva refinado — opacidade de sombra mais sutil e realista" },
+            { en: "Changelog icon swapped from web font to inline SVG for mobile compatibility", es: "Icono del registro de cambios cambiado de fuente web a SVG en línea", fr: "Icône du changelog passée de police web à SVG en ligne", de: "Changelog-Symbol von Webfont zu Inline-SVG gewechselt", ja: "変更履歴アイコンをWebフォントからインラインSVGに変更", zh: "更新日志图标从网页字体改为内联SVG", ko: "변경 이력 아이콘을 웹 폰트에서 인라인 SVG로 변경", pt: "Ícone do changelog trocado de fonte web para SVG inline" },
+          ],
+        }
+      },
+      {
         date: { en: "February 1, 2026", es: "1 de febrero de 2026", fr: "1er février 2026", de: "1. Februar 2026", ja: "2026年2月1日", zh: "2026年2月1日", ko: "2026년 2월 1일", pt: "1 de fevereiro de 2026" },
         version: "v65–v80",
         categories: {
