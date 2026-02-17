@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -1908,83 +1908,65 @@
                 });
               }, 3500);
 
-              // 2. Note flies into wallet — + button placed UNDER it BEFORE animation
+              // 2. Note flies into wallet — restart button in normal flow
               var targetNote = window.getTargetNote();
               var nw = (targetNote && targetNote.wrapper)
                 ? targetNote.wrapper
                 : document.getElementById('note-wrapper');
-              var addBtn = document.querySelector('.add-note-btn');
 
               if (nw) {
                 var ta = nw.querySelector('textarea');
                 if (ta) ta.value = '';
 
-                // Snapshot note position before anything moves
-                var nwRect = nw.getBoundingClientRect();
-
-                // Place + button covering note exactly, behind it (z-index 5, note is 10)
-                if (addBtn) {
-                  addBtn.style.position     = 'fixed';
-                  addBtn.style.left         = nwRect.left   + 'px';
-                  addBtn.style.top          = nwRect.top    + 'px';
-                  addBtn.style.width        = nwRect.width  + 'px';
-                  addBtn.style.height       = nwRect.height + 'px';
-                  addBtn.style.margin       = '0';
-                  addBtn.style.borderRadius = '20px';
-                  addBtn.style.zIndex       = '5';
-                  addBtn.style.opacity      = '0';
-                  addBtn.style.transition   = 'opacity 0.3s ease';
-                  addBtn.style.display      = 'flex';
-                  setTimeout(function() { addBtn.style.opacity = '1'; }, 120);
-                }
+                // Insert restart button as a flow sibling — no coordinate math needed
+                var restartBtn = document.createElement('div');
+                restartBtn.className = 'add-note-btn';
+                restartBtn.innerHTML = '<div class="plus-icon"></div>';
+                restartBtn.style.position   = 'relative';
+                restartBtn.style.display    = 'none';
+                restartBtn.style.opacity    = '0';
+                restartBtn.style.transition = 'opacity 0.35s ease';
+                nw.parentNode.insertBefore(restartBtn, nw.nextSibling);
 
                 // Fall animation
                 nw.classList.add('note-wallet-exit');
                 setTimeout(function() {
-                  nw.style.visibility    = 'hidden';
-                  nw.style.pointerEvents = 'none';
+                  var cs = window.getComputedStyle(nw);
+                  nw.style.display = 'none';
                   nw.classList.remove('note-wallet-exit');
                   nw.style.transform = '';
 
-                  if (addBtn) {
-                    function onRestartClick(e) {
-                      e.stopImmediatePropagation();
-                      addBtn.removeEventListener('click', onRestartClick, true);
-                      addBtn.style.opacity = '0';
-                      setTimeout(function() {
-                        addBtn.style.display = 'none';
-                        var props = ['position','left','top','width','height',
-                                     'margin','borderRadius','zIndex','transition','opacity'];
-                        props.forEach(function(p) { addBtn.style[p] = ''; });
-                      }, 300);
-                      var note0 = document.getElementById('note-wrapper');
-                      if (!note0) return;
-                      var canvas = note0.querySelector('.note-drawing-layer');
-                      if (canvas) {
-                        var ctx = canvas.getContext('2d');
-                        if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
-                      }
-                      note0.dispatchEvent(new Event('note:stick'));
-                      note0.classList.remove('flat', 'drawing-mode', 'note-wallet-exit');
-                      var cur = note0.style.transform || '';
-                      note0.style.transform = cur
-                        .replace(/scale\([^)]*\)/g, '')
-                        .replace(/translateY\([^)]*\)/g, '')
-                        .trim();
-                      note0.style.visibility    = '';
-                      note0.style.pointerEvents = '';
-                      note0.classList.remove('note-land-in');
+                  restartBtn.style.width        = cs.width;
+                  restartBtn.style.height       = cs.height;
+                  restartBtn.style.marginBottom = cs.marginBottom;
+                  restartBtn.style.display      = 'flex';
+                  requestAnimationFrame(function() {
+                    requestAnimationFrame(function() { restartBtn.style.opacity = '1'; });
+                  });
+
+                  restartBtn.addEventListener('click', function onRestart() {
+                    restartBtn.removeEventListener('click', onRestart);
+                    restartBtn.style.opacity = '0';
+                    setTimeout(function() { restartBtn.remove(); }, 350);
+                    var note0 = document.getElementById('note-wrapper');
+                    if (!note0) return;
+                    var cvs = note0.querySelector('.note-drawing-layer');
+                    if (cvs) { var ctx2 = cvs.getContext('2d'); if (ctx2) ctx2.clearRect(0,0,cvs.width,cvs.height); }
+                    note0.dispatchEvent(new Event('note:stick'));
+                    note0.classList.remove('flat','drawing-mode','note-wallet-exit');
+                    var cur = note0.style.transform || '';
+                    note0.style.transform = cur.replace(/scale\([^)]*\)/g,'').replace(/translateY\([^)]*\)/g,'').trim();
+                    note0.style.display = '';
+                    note0.classList.remove('note-land-in');
+                    requestAnimationFrame(function() {
                       requestAnimationFrame(function() {
-                        requestAnimationFrame(function() {
-                          note0.classList.add('note-land-in');
-                          note0.addEventListener('animationend', function() {
-                            note0.classList.remove('note-land-in');
-                          }, { once: true });
-                        });
+                        note0.classList.add('note-land-in');
+                        note0.addEventListener('animationend', function() {
+                          note0.classList.remove('note-land-in');
+                        }, { once: true });
                       });
-                    }
-                    addBtn.addEventListener('click', onRestartClick, true);
-                  }
+                    });
+                  });
                 }, 550);
               }
             })();
