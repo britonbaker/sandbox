@@ -1854,25 +1854,30 @@
           appleWalletBtn.style.pointerEvents = 'none';
           
           try {
-            // Use prepareâ†’redirect flow (Safari can't open .pkpass from blob URLs)
-            const formData = new FormData();
-            formData.append('text', text);
-            formData.append('color', noteColor);
-            if (stripBlob) formData.append('strip', stripBlob, 'strip.png');
-            const prepRes = await fetch(`${BACKEND_URL}/api/prepare-pass`, {
-              method: 'POST',
-              body: formData
-            });
-            
-            if (!prepRes.ok) {
-              const error = await prepRes.json();
-              throw new Error(error.error || 'Failed to generate pass');
+            // Mobile pass delivery:
+            // - No drawing: instant-bundle URL (no KV, no cross-region expiry issues)
+            // - Has drawing: prepare->download (needs KV for strip PNG)
+            let passUrl;
+            if (!stripBlob) {
+              passUrl = `${BACKEND_URL}/api/instant-bundle?t0=${encodeURIComponent(text || '')}&c0=${noteColor}`;
+            } else {
+              const formData = new FormData();
+              formData.append('text', text);
+              formData.append('color', noteColor);
+              formData.append('strip', stripBlob, 'strip.png');
+              const prepRes = await fetch(`${BACKEND_URL}/api/prepare-pass`, {
+                method: 'POST',
+                body: formData
+              });
+              if (!prepRes.ok) {
+                const err = await prepRes.json();
+                throw new Error(err.error || 'Failed to generate pass');
+              }
+              const { token } = await prepRes.json();
+              passUrl = `${BACKEND_URL}/api/download-pass/${token}`;
             }
-            
-            const { token } = await prepRes.json();
-            window.location.href = `${BACKEND_URL}/api/download-pass/${token}`;
-
-            // â”€â”€ âœ“ Added toast + note flies into wallet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            window.location.href = passUrl;
+    // â”€â”€ âœ“ Added toast + note flies into wallet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             (function() {
               function dismissPill(pill, timer) {
                 clearTimeout(timer);
