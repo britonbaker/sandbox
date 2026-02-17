@@ -1872,27 +1872,51 @@
             const { token } = await prepRes.json();
             window.location.href = `${BACKEND_URL}/api/download-pass/${token}`;
 
-            // ── ✓ Added confirmation pill + fresh-note slide-in ──────────────
+            // ── ✓ Added toast + fresh-note slide-in ──────────────────────────
             (function() {
-              // 1. Pill: spring in above wallet button
-              var walletButtons = document.querySelector('.wallet-buttons');
-              var pill = document.createElement('div');
-              pill.className = 'wallet-added-pill';
-              pill.textContent = '✓ Added';
-              walletButtons.appendChild(pill);
-              requestAnimationFrame(function() {
-                requestAnimationFrame(function() { pill.classList.add('pop-in'); });
-              });
-              // Fade out pill after 2.5 s
-              setTimeout(function() {
-                pill.style.transition = 'opacity 0.35s ease';
+              function dismissPill(pill, autoDismissTimer) {
+                clearTimeout(autoDismissTimer);
+                pill.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
                 requestAnimationFrame(function() {
                   pill.style.opacity = '0';
-                  setTimeout(function() { pill.remove(); }, 400);
+                  pill.style.transform = 'translateX(-50%) translateY(-20px)';
+                  setTimeout(function() { pill.remove(); }, 350);
                 });
-              }, 2500);
+              }
 
-              // 2. Clear note text + slide-in animation after 1 s
+              // 1. Toast: drop in from top after 3.5s (after Apple Wallet sheet is dismissed)
+              setTimeout(function() {
+                var pill = document.createElement('div');
+                pill.className = 'wallet-added-pill';
+
+                var label = document.createElement('span');
+                label.textContent = '✓ Added to Wallet';
+                pill.appendChild(label);
+
+                var xBtn = document.createElement('button');
+                xBtn.className = 'pill-dismiss';
+                xBtn.textContent = '×';
+                xBtn.setAttribute('aria-label', 'Dismiss');
+                pill.appendChild(xBtn);
+
+                document.body.appendChild(pill);
+
+                requestAnimationFrame(function() {
+                  requestAnimationFrame(function() { pill.classList.add('pop-in'); });
+                });
+
+                // Auto-dismiss after 5s
+                var autoDismissTimer = setTimeout(function() {
+                  dismissPill(pill, autoDismissTimer);
+                }, 5000);
+
+                // X button dismisses immediately
+                xBtn.addEventListener('click', function() {
+                  dismissPill(pill, autoDismissTimer);
+                });
+              }, 3500);
+
+              // 2. Clear note text + slide-in animation after 1s
               setTimeout(function() {
                 var targetNote = window.getTargetNote();
                 var ta = targetNote && targetNote.wrapper

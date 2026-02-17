@@ -1170,33 +1170,53 @@ body {
 .cl-improve { background: rgba(16,185,129,0.08); color: rgba(14,150,105,0.85); }
 
 /* ==========================================
-   Wallet "✓ Added" confirmation pill
+   Wallet "✓ Added" confirmation toast
    ========================================== */
 .wallet-added-pill {
-  position: absolute;
-  bottom: calc(100% + 8px);
+  position: fixed;
+  top: 16px;
   left: 50%;
-  transform: translateX(-50%) scale(0);
+  transform: translateX(-50%) translateY(-80px);
   background: #1a1a1a;
   color: #fff;
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.2px;
-  padding: 5px 14px;
-  border-radius: 20px;
+  padding: 9px 14px 9px 18px;
+  border-radius: 24px;
   white-space: nowrap;
-  pointer-events: none;
-  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 9999;
   opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
 }
 
 .wallet-added-pill.pop-in {
-  animation: walletPillSpring 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: walletToastDrop 0.4s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+  pointer-events: auto;
 }
 
-@keyframes walletPillSpring {
-  from { transform: translateX(-50%) scale(0); opacity: 0; }
-  to   { transform: translateX(-50%) scale(1); opacity: 1; }
+.wallet-added-pill .pill-dismiss {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.6);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+  margin-left: 2px;
+  flex-shrink: 0;
+}
+.wallet-added-pill .pill-dismiss:hover {
+  color: #fff;
+}
+
+@keyframes walletToastDrop {
+  from { transform: translateX(-50%) translateY(-80px); opacity: 0; }
+  to   { transform: translateX(-50%) translateY(0);     opacity: 1; }
 }
 
 /* Note "land in" after wallet add.
