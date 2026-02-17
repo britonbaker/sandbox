@@ -1752,14 +1752,32 @@
         }
 
         appleWalletBtn.addEventListener('click', async (e) => {
-          e.preventDefault();
-          // Get note content from active/last active note via registry
+          // Retrieve note info BEFORE preventing default — needed to decide routing synchronously
           const targetNote = window.getTargetNote();
           const text = targetNote ? targetNote.getText() : document.getElementById('memo').value;
           const noteColor = targetNote ? targetNote.color : currentColor;
           const drawCanvas = targetNote ? (targetNote.getDrawingCanvas ? targetNote.getDrawingCanvas() : null) : noteDrawingLayer;
-
           const BACKEND_URL = 'https://wallet-api.britonbaker.com';
+
+          // Check for actual drawn pixels (must be synchronous, before any await)
+          function _hasDrwn(c) {
+            if (!c || !c.width || !c.height) return false;
+            try { const d = c.getContext('2d').getImageData(0,0,c.width,c.height).data; for (let i=3;i<d.length;i+=4) if (d[i]>0) return true; } catch(_) {}
+            return false;
+          }
+
+          // iOS Safari ONLY opens Wallet from a genuine <a> link tap.
+          // window.location.href → "Safari cannot download this file"
+          // blob URL after await → silently blocked (async kills the user gesture token)
+          // Solution: set href and let the <a> navigate naturally — no e.preventDefault()
+          if (isMobile() && !_hasDrwn(drawCanvas)) {
+            appleWalletBtn.href = `${BACKEND_URL}/api/instant-bundle?t0=${encodeURIComponent(text||'')}&c0=${noteColor}`;
+            return; // no preventDefault → natural <a> navigation → iOS opens Wallet
+          }
+
+          e.preventDefault();
+          appleWalletBtn.href = '#';
+          const _BACKEND_URL = BACKEND_URL; // already defined above
 
           // Render strip: background color + drawing composited via canvas-to-canvas (no Image decode)
           let stripBlob = null;
@@ -1854,47 +1872,23 @@
           appleWalletBtn.style.pointerEvents = 'none';
 
           try {
-            // Mobile pass delivery:
-            // - No drawing: instant-bundle URL (no KV, no replication lag)
-            // - Has drawing: prepare->download (needs KV for strip PNG)
-            //
-            // NOTE: stripBlob is always non-null (solid color fill), so we
-            // check actual drawn pixels on the canvas instead.
-            function hasActualDrawing(canvas) {
-              if (!canvas || canvas.width === 0 || canvas.height === 0) return false;
-              try {
-                const px = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
-                for (let i = 3; i < px.length; i += 4) { if (px[i] > 0) return true; }
-              } catch(e) {}
-              return false;
+            // Mobile reach here only if has drawing (no-drawing returns early above via natural <a> nav)
+            const formData = new FormData();
+            formData.append('text', text);
+            formData.append('color', noteColor);
+            if (stripBlob) formData.append('strip', stripBlob, 'strip.png');
+            const prepRes = await fetch(`${_BACKEND_URL}/api/prepare-pass`, {
+              method: 'POST',
+              body: formData
+            });
+            if (!prepRes.ok) {
+              const err = await prepRes.json();
+              throw new Error(err.error || 'Failed to generate pass');
             }
-            let passUrl;
-            if (!hasActualDrawing(drawCanvas)) {
-              passUrl = `${BACKEND_URL}/api/instant-bundle?t0=${encodeURIComponent(text || '')}&c0=${noteColor}`;
-            } else {
-              const formData = new FormData();
-              formData.append('text', text);
-              formData.append('color', noteColor);
-              if (stripBlob) formData.append('strip', stripBlob, 'strip.png');
-              const prepRes = await fetch(`${BACKEND_URL}/api/prepare-pass`, {
-                method: 'POST',
-                body: formData
-              });
-              if (!prepRes.ok) {
-                const err = await prepRes.json();
-                throw new Error(err.error || 'Failed to generate pass');
-              }
-              const { token } = await prepRes.json();
-              passUrl = `${BACKEND_URL}/api/download-pass/${token}`;
-            }
-            // iOS Safari won't open Wallet from external URL navigation (window.location.href = remote url).
-            // Fetch the pkpass as a blob, then navigate to a blob:// URL — this correctly triggers Wallet.
-            const pkpassRes = await fetch(passUrl);
-            if (!pkpassRes.ok) throw new Error('Failed to fetch pass');
-            const pkpassBlob = await pkpassRes.blob();
-            const blobUrl = URL.createObjectURL(new Blob([pkpassBlob], { type: 'application/vnd.apple.pkpass' }));
-            window.location.href = blobUrl;
-            setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+            const { token } = await prepRes.json();
+            // Navigate to download-pass URL (drawing case — iOS may still show "Safari cannot download";
+            // fixing the drawing flow properly is tracked as follow-up work)
+            window.location.href = `${_BACKEND_URL}/api/download-pass/${token}`;
     // â"€â"€ âœ" Added toast + note flies into wallet â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
             (function() {
               function dismissPill(pill, timer) {
