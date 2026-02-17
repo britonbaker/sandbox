@@ -820,7 +820,7 @@ body {
   .note {
     width: 320px;
     height: 302px;
-    padding: 44px 50px 44px 56px;
+    padding: 44px 50px;
   }
 
   .textarea {
