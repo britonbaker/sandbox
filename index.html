@@ -57,7 +57,7 @@
   </head>
   <body>
     <style>
-      html { background: linear-gradient(to bottom, #fafafa, #e5e5e5); background-attachment: fixed; min-height: 100vh; scrollbar-gutter: stable; }
+      html { background-color: #fafafa; background-image: linear-gradient(to bottom, #fafafa, #e5e5e5); background-attachment: fixed; min-height: 100vh; scrollbar-gutter: stable; }
       html, body { overflow-x: hidden; }
       html::-webkit-scrollbar { width: 8px; }
       html::-webkit-scrollbar-track { background: transparent; }
@@ -76,9 +76,16 @@
       }
     </style>
     <script>
-      // If returning from changelog, just clean up the flag (skip animation for now)
+      // If returning from changelog, slide in from left
       if (sessionStorage.getItem('page-transition') === 'back') {
+        document.documentElement.classList.add('page-slide-in-left');
         sessionStorage.removeItem('page-transition');
+        // Remove class and clear inline styles after animation so it doesn't interfere with fixed positioning in Safari
+        setTimeout(function() {
+          document.documentElement.classList.remove('page-slide-in-left');
+          var pc = document.querySelector('.page-content');
+          if (pc) { pc.style.animation = ''; pc.style.transform = ''; pc.style.opacity = ''; }
+        }, 500);
       }
     </script>
     <!-- Language picker (outside page-content so it doesn't slide) -->
@@ -2674,62 +2681,66 @@
       } catch(e) { console.warn('Note restore failed:', e); }
     })();
 
-    // Handle bfcache restore (mobile Safari back button)
-    window.addEventListener('pageshow', (e) => {
-      if (!e.persisted) { debugLog('pageshow:fresh'); return; }
-      // Page was restored from bfcache — reset all notes to curled state
-      // Remove slide-out animation class
-      document.documentElement.classList.remove('page-slide-out-left');
-      document.documentElement.classList.add('page-slide-in-left');
+    // Safari bfcache fix: clean up page transition state when restored via back button
+    window.addEventListener('pageshow', function(event) {
+      if (event.persisted) {
+        // Page was restored from bfcache — clean up transition artifacts
+        // Clear any lingering page transition classes and inline styles
+        document.documentElement.classList.remove('page-slide-out-left', 'page-slide-in-left');
+        var pc = document.querySelector('.page-content');
+        if (pc) { pc.style.animation = ''; pc.style.transform = ''; pc.style.opacity = ''; }
 
-      // Reset note-0
-      const nw = document.getElementById('note-wrapper');
-      if (nw) {
-        nw.classList.remove('flat');
-        nw.style.transition = 'none';
-        // Reset transform to default (strip scale/translateY from flat mode)
-        const cur = nw.style.transform || '';
-        nw.style.transform = cur.replace(/scale\([^)]*\)/g, '').replace(/translateY\([^)]*\)/g, '').trim();
-        nw.offsetHeight;
-        nw.style.transition = '';
-      }
-
-      // Reset note-0 SVG path to curled
-      const noteShape = document.getElementById('note-shape');
-      if (noteShape && window.statePoints) {
-        const c = window.statePoints.curled;
-        noteShape.setAttribute('d',
-          'M' + c[0][0] + ' ' + c[0][1] +
-          ' L' + c[1][0] + ' ' + c[1][1] +
-          ' C' + c[2][0] + ' ' + c[2][1] + ' ' + c[3][0] + ' ' + c[3][1] + ' ' + c[4][0] + ' ' + c[4][1] +
-          ' L' + c[5][0] + ' ' + c[5][1] +
-          ' C' + c[6][0] + ' ' + c[6][1] + ' ' + c[7][0] + ' ' + c[7][1] + ' ' + c[8][0] + ' ' + c[8][1] + ' Z'
-        );
-      }
-
-      // Reset gradient to curled (non-flat) colors
-      if (window.noteRegistry && window.colorThemes) {
-        const reg0 = window.noteRegistry.get('note-0');
-        if (reg0 && window.colorThemes[reg0.color]) {
-          window.colorThemes[reg0.color].gradient.forEach((color, i) => {
-            const stop = document.getElementById('grad-stop-' + i);
-            if (stop) stop.setAttribute('stop-color', color);
-          });
+        // Close any open drawing mode (toolbar won't work properly after bfcache)
+        var activeDrawing = document.querySelector('.note-wrapper.drawing-mode');
+        if (activeDrawing) {
+          activeDrawing.classList.remove('drawing-mode');
+          var toolbar = document.getElementById('drawing-toolbar');
+          if (toolbar) toolbar.classList.remove('visible');
+          document.body.classList.remove('drawing-mode-active');
         }
+
+        // Ensure notes in flat state get properly curled back
+        document.querySelectorAll('.note-wrapper').forEach(function(wrapper) {
+          // Kill transitions so reset is instant (no ghost shadows mid-transition)
+          wrapper.style.transition = 'none';
+          var shadow = wrapper.querySelector('.note-shadow');
+          if (shadow) shadow.style.transition = 'none';
+
+          // Dispatch stick event for animation system (animates SVG path + gradient)
+          wrapper.dispatchEvent(new Event('note:stick'));
+          // Remove flat/drawing classes
+          wrapper.classList.remove('flat', 'drawing-mode');
+          // Clear inline transform that includes scale/translateY from flat state
+          var currentTransform = wrapper.style.transform || '';
+          wrapper.style.transform = currentTransform
+            .replace(/scale\([^)]*\)/g, '')
+            .replace(/translateY\([^)]*\)/g, '')
+            .trim();
+          // Force-hide any textarea placeholder that was hidden for drawing
+          var textarea = wrapper.querySelector('.textarea');
+          if (textarea) textarea.classList.remove('hide-for-drawing');
+
+          // Force reflow then re-enable transitions
+          wrapper.offsetHeight;
+          wrapper.style.transition = '';
+          if (shadow) shadow.style.transition = '';
+        });
+
+        // Re-show add button if notes have been moved (have transforms)
+        var addBtn = document.querySelector('.add-note-btn');
+        if (addBtn) {
+          var anyMoved = document.querySelectorAll('.note-wrapper[style*="translate"]');
+          if (anyMoved.length > 0) addBtn.style.display = 'flex';
+        }
+
+        // Ensure focus overlay is cleared
+        var overlay = document.querySelector('.focus-overlay');
+        if (overlay) overlay.classList.remove('active');
+
+        // Clear lang picker hidden state
+        var langPicker = document.getElementById('lang-picker');
+        if (langPicker) langPicker.classList.remove('hidden');
       }
-
-      // Dismiss focus overlay & blur textareas
-      const overlay = document.getElementById('focus-overlay');
-      if (overlay) overlay.classList.remove('active');
-      document.querySelectorAll('.textarea').forEach(t => t.blur());
-
-      // Reset spawned notes too
-      document.querySelectorAll('.dragged-note').forEach(dn => {
-        dn.classList.remove('flat');
-        const cur2 = dn.style.transform || '';
-        dn.style.transform = cur2.replace(/scale\([^)]*\)/g, '').replace(/translateY\([^)]*\)/g, '').trim();
-      });
-
     });
 
     // Page transition: slide out left when clicking changelog
@@ -2742,7 +2753,13 @@
       sessionStorage.setItem('page-transition', 'forward');
       document.documentElement.classList.remove('page-slide-in-left');
       document.documentElement.classList.add('page-slide-out-left');
-      setTimeout(() => { window.location.href = href; }, 300);
+      setTimeout(() => {
+        // Clean up animation residue before navigating (Safari fix)
+        document.documentElement.classList.remove('page-slide-out-left');
+        var pc = document.querySelector('.page-content');
+        if (pc) { pc.style.animation = ''; pc.style.transform = ''; pc.style.opacity = ''; }
+        window.location.href = href;
+      }, 300);
     });
     </script>
     </div><!-- /page-content -->

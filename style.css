@@ -908,6 +908,10 @@ body {
     pointer-events: none;
   }
 
+  .drawing-mode-active .hero-text {
+    display: none !important;
+  }
+
   /* Block overlay clicks in draw mode — must use toolbar to exit */
   .drawing-mode-active .focus-overlay.active {
     pointer-events: none;
