@@ -840,7 +840,7 @@ body {
     right: 0;
     width: 100%;
     height: auto;
-    padding: 16px 20px 32px;
+    padding: 16px 20px max(32px, env(safe-area-inset-bottom, 32px));
     background: linear-gradient(to top, rgba(250,250,250,1) 60%, rgba(250,250,250,0));
   }
 

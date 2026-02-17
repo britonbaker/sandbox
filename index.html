@@ -1751,6 +1751,24 @@
           return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         }
 
+        // iOS Safari captures href at touchstart time, not when the click handler runs.
+        // Pre-set the href on touchstart so the natural <a> navigation uses the right URL.
+        appleWalletBtn.addEventListener('touchstart', function() {
+          if (!isMobile()) return;
+          const tn = window.getTargetNote();
+          const txt = tn ? tn.getText() : (document.getElementById('memo').value || '');
+          const col = tn ? tn.color : currentColor;
+          const dc = tn ? (tn.getDrawingCanvas ? tn.getDrawingCanvas() : null) : noteDrawingLayer;
+          function _chkDraw(c) {
+            if (!c || !c.width || !c.height) return false;
+            try { const d = c.getContext('2d').getImageData(0,0,c.width,c.height).data; for (let i=3;i<d.length;i+=4) if(d[i]>0) return true; } catch(e) {}
+            return false;
+          }
+          if (!_chkDraw(dc)) {
+            appleWalletBtn.href = 'https://wallet-api.britonbaker.com/api/instant-bundle?t0=' + encodeURIComponent(txt) + '&c0=' + col;
+          }
+        }, { passive: true });
+
         appleWalletBtn.addEventListener('click', async (e) => {
           // Retrieve note info BEFORE preventing default — needed to decide routing synchronously
           const targetNote = window.getTargetNote();
