@@ -1924,21 +1924,27 @@
                 var ta = nw.querySelector('textarea');
                 if (ta) ta.value = '';
 
+                // Capture note's viewport rect BEFORE animation moves it
+                var nwRect = nw.getBoundingClientRect();
+                var btnSize = 200;
+                var btnFixedLeft = nwRect.left + (nwRect.width  - btnSize) / 2;
+                var btnFixedTop  = nwRect.top  + (nwRect.height - btnSize) / 2;
+
                 // Fly-out animation
                 nw.classList.add('note-wallet-exit');
                 setTimeout(function() {
-                  // visibility:hidden keeps layout space so offsetLeft/Top stay accurate
                   nw.style.visibility = 'hidden';
                   nw.style.pointerEvents = 'none';
                   nw.classList.remove('note-wallet-exit');
                   nw.style.transform = '';
 
-                  // Show the + button, centered exactly where the note sits
+                  // position:fixed + getBoundingClientRect coords always match exactly
                   if (addBtn) {
-                    var btnSize = 200;
-                    addBtn.style.left   = (nw.offsetLeft + (nw.offsetWidth  - btnSize) / 2) + 'px';
-                    addBtn.style.top    = (nw.offsetTop  + (nw.offsetHeight - btnSize) / 2) + 'px';
+                    addBtn.style.position = 'fixed';
+                    addBtn.style.left   = btnFixedLeft + 'px';
+                    addBtn.style.top    = btnFixedTop  + 'px';
                     addBtn.style.margin = '0';
+                    addBtn.style.zIndex = '50';
                     addBtn.style.display = 'flex';
 
                     // One-time interceptor: + tap restores fresh note-0
@@ -1946,6 +1952,12 @@
                       e.stopImmediatePropagation();
                       addBtn.removeEventListener('click', onRestartClick, true);
                       addBtn.style.display = 'none';
+                      // Reset positioning overrides for future use
+                      addBtn.style.position = '';
+                      addBtn.style.left = '';
+                      addBtn.style.top = '';
+                      addBtn.style.margin = '';
+                      addBtn.style.zIndex = '';
 
                       var note0 = document.getElementById('note-wrapper');
                       if (!note0) return;
