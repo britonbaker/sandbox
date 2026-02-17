@@ -1,5 +1,12 @@
 # DEPLOY.md — Wallet Memo Push Checklist
 
+## Architecture
+
+- **Frontend:** Cloudflare Pages (`walletmemo` project), auto-deploys from `britonbaker/sandbox` `main` branch
+- **Backend:** Cloudflare Worker (`wallet-worker` → `wallet-api.britonbaker.com`)
+- **Test site:** GitHub Pages via `clawdbrit/playground` (gh-pages branch)
+- **Live URL:** https://walletmemo.com
+
 ## Before Every Push, Ask:
 
 ### 1. Where does this go?
@@ -17,8 +24,7 @@
 - **Never push experimental/untested changes**
 - **Ask briton first** unless he explicitly said "push it live"
 - No test version numbers in footer (the JS only shows them on `clawdbrit` hostname, but double-check)
-- Frontend deploys via GitHub Pages (auto ~1-2 min)
-- Backend deploys via Railway (auto ~1-2 min from `/backend` folder)
+- Frontend deploys via **Cloudflare Pages** (auto ~1 min after push to main)
 - Live at: https://walletmemo.com
 
 ### 4. Pre-push checks
@@ -31,13 +37,13 @@
   - Test push → add entry to `changelog-test.html` with new version number
   - Production push → add entry to `changelog.html` if it's a notable change
   - Include translations for all 7 languages in the entry
-  - Keep entries grouped by category (✨ New, 🔧 Fix, 🎨 Design, ⚡ Improvement)
+  - Keep entries grouped by category (🆕 New, 🐛 Fix, 🎨 Design, 🔧 Improvement)
 
 ### 5. After pushing
-- Verify the deploy succeeded (`gh run list -R <repo> -L 1`)
+- Verify deploy succeeded in Cloudflare Pages dashboard (or check `gh run list -R britonbaker/sandbox -L 1`)
 - For test: check https://clawdbrit.github.io/playground/?v={N}
 - For production: check https://walletmemo.com
-- If backend changed: verify Railway auto-deployed
+- If backend (wallet-worker) changed: deploy separately with `cd ~/wallet-worker && npm run deploy`
 
 ### 6. Changelog safety
 - `changelog.html` = **production** changelog (linked from walletmemo.com footer)
@@ -49,7 +55,7 @@
 - Production entries should be high-level summaries (v1.0, v1.1, etc.)
 - Test entries should be granular per-build (v1, v2, v3, etc.)
 
-## Git Remotes (local repo: ~/clawd/sandbox)
+## Git Remotes (local repo: ~/sandbox or C:\Users\38bri\sandbox)
 - `origin` = `britonbaker/sandbox` (PRODUCTION)
 - `test` = `clawdbrit/playground` (TEST)
 
@@ -64,4 +70,14 @@ git push origin main
 
 # Both
 git push origin main && git push test main
+
+# Backend (wallet-worker) — separate deploy
+cd ~/wallet-worker && npm run deploy
 ```
+
+## Backend (wallet-worker)
+- Source: `~/wallet-worker/` (separate directory, not part of this repo)
+- Deploy: `npm run deploy` from that directory
+- Live at: https://wallet-api.britonbaker.com
+- Dashboard: Cloudflare Workers → wallet-worker
+- See `HOSTING.md` for full backend documentation
