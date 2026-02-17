@@ -1855,16 +1855,27 @@
           
           try {
             // Mobile pass delivery:
-            // - No drawing: instant-bundle URL (no KV, no cross-region expiry issues)
+            // - No drawing: instant-bundle URL (no KV, no replication lag)
             // - Has drawing: prepare->download (needs KV for strip PNG)
+            //
+            // NOTE: stripBlob is always non-null (solid color fill), so we
+            // check actual drawn pixels on the canvas instead.
+            function hasActualDrawing(canvas) {
+              if (!canvas || canvas.width === 0 || canvas.height === 0) return false;
+              try {
+                const px = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
+                for (let i = 3; i < px.length; i += 4) { if (px[i] > 0) return true; }
+              } catch(e) {}
+              return false;
+            }
             let passUrl;
-            if (!stripBlob) {
+            if (!hasActualDrawing(drawCanvas)) {
               passUrl = `${BACKEND_URL}/api/instant-bundle?t0=${encodeURIComponent(text || '')}&c0=${noteColor}`;
             } else {
               const formData = new FormData();
               formData.append('text', text);
               formData.append('color', noteColor);
-              formData.append('strip', stripBlob, 'strip.png');
+              if (stripBlob) formData.append('strip', stripBlob, 'strip.png');
               const prepRes = await fetch(`${BACKEND_URL}/api/prepare-pass`, {
                 method: 'POST',
                 body: formData
