@@ -1764,7 +1764,8 @@
             try { var _d = _dc.getContext('2d').getImageData(0,0,_dc.width,_dc.height).data; for (var _i=3;_i<_d.length;_i+=4){if(_d[_i]>0){_drawn=true;break;}} } catch(ex) {}
           }
           if (!_drawn) {
-            appleWalletBtn.href = 'https://wallet-api.britonbaker.com/api/instant-bundle?t0=' + encodeURIComponent(_txt) + '&c0=' + _col;
+            var _b64 = btoa(unescape(encodeURIComponent(_txt || '')));
+            appleWalletBtn.href = 'https://wallet-api.britonbaker.com/api/pass-redirect?t=' + encodeURIComponent(_b64) + '&c=' + encodeURIComponent(_col);
           }
         }, { passive: true });
 
