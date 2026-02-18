@@ -22,24 +22,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Inter:wght@300&family=Cormorant+Garamond:wght@300&display=swap" rel="stylesheet">
-    <script>
-      // Load CJK fonts only when needed (saves ~400KB for non-CJK users)
-      (function() {
-        var lang = localStorage.getItem('wm-lang') || navigator.language || '';
-        lang = lang.substring(0, 2).toLowerCase();
-        var cjkMap = { ja: 'Noto+Serif+JP', ko: 'Noto+Serif+KR', zh: 'Noto+Serif+SC' };
-        var family = cjkMap[lang];
-        if (family) {
-          var link = document.createElement('link');
-          link.rel = 'stylesheet';
-          link.href = 'https://fonts.googleapis.com/css2?family=' + family + ':wght@900&display=swap';
-          document.head.appendChild(link);
-        }
-      })();
-    </script>
     <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css">
     <script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
-    <link rel="stylesheet" href="lang-picker.css?v=2">
     <link rel="stylesheet" href="./style.css?v=17" />
     <!-- Hreflang alternate links for SEO -->
     <link rel="alternate" hreflang="en" href="https://walletmemo.com/" />
@@ -82,28 +66,6 @@
       }
     </script>
     <!-- Language picker (outside page-content so it doesn't slide) -->
-    <div class="lang-picker" id="lang-picker">
-      <button class="lang-btn" id="lang-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <circle cx="12" cy="12" r="10"/>
-          <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-        </svg>
-        <span id="current-lang">EN</span>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M6 9l6 6 6-6"/>
-        </svg>
-      </button>
-      <div class="lang-dropdown" id="lang-dropdown">
-        <button class="lang-option" data-lang="en">English</button>
-        <button class="lang-option" data-lang="es">EspaÃ±ol</button>
-        <button class="lang-option" data-lang="fr">FranÃ§ais</button>
-        <button class="lang-option" data-lang="de">Deutsch</button>
-        <button class="lang-option" data-lang="ja">æ—¥æœ¬èªž</button>
-        <button class="lang-option" data-lang="zh">ä¸­æ–‡</button>
-        <button class="lang-option" data-lang="ko">í•œêµ­ì–´</button>
-        <button class="lang-option" data-lang="pt">PortuguÃªs</button>
-      </div>
-    </div>
 
     <div class="page-content">
     <div class="focus-overlay" id="focus-overlay"></div>
@@ -346,230 +308,6 @@
             "Call dentist.",
             "Don't turn\nOff.",
           ]
-        },
-        es: {
-          heroTitle: "Nota de Cartera",
-          heroTagline: "Una nota adhesiva para tu Apple Wallet",
-          changeColor: "Cambiar Color",
-          addStamp: "AÃ±adir Sello",
-          comingSoon: "PrÃ³ximamente",
-          stickers: "Stickers",
-          drawOnNote: "Dibujar en Nota",
-          emailUs: "EscrÃ­benos",
-          changelog: "Registro de cambios",
-          comingSoonExcl: "Â¡PrÃ³ximamente!",
-          placeholders: [
-            "Comprar leche\nLlamar a mamÃ¡\nNo olvidarâ€¦",
-            "Ir al sÃºper\nLlamar al dentista\nÂ¡Estirar!",
-            "Idea: crear una app\nInvestigar competencia\nHacer bocetos",
-            "ReuniÃ³n del lunes\nLlevar snacks\nPreguntar por plazos",
-            "Ideas de regalo:\nÂ¿AudÃ­fonos nuevos?\nLibro de espacio",
-            "Plan de ejercicio\nCorrer 3 km\nBeber mÃ¡s agua",
-            "Noche de pelis:\nInterestelar\nEverything Everywhere",
-            "Hacer maleta\nCargador\nPasaporte\nSnacks",
-            "Aprender algo nuevo\nVer un tutorial\nTomar notas",
-            "Compras:\nAguacates\nPan\nCafÃ©",
-            "Planes del finde\nMercado\nCocinar\nLeer",
-            "CÃ³mpralo.\nÃšsalo.\nRÃ³mpelo.\nArrÃ©glalo.",
-            "No tiene que estar\nterminado. Solo tiene\nque ser perfecto.",
-            "Bebe agua.",
-            "EnvÃ­a el correo.",
-            "Estira por\n30 segundos.\nCuÃ©ntalos.",
-            "Llama al dentista.",
-            "No te\napagues.",
-          ]
-        },
-        fr: {
-          heroTitle: "MÃ©mo Portefeuille",
-          heroTagline: "Un pense-bÃªte pour votre Apple Wallet",
-          changeColor: "Changer la Couleur",
-          addStamp: "Ajouter un Tampon",
-          comingSoon: "BientÃ´t",
-          stickers: "Autocollants",
-          drawOnNote: "Dessiner sur la Note",
-          emailUs: "Nous Ã‰crire",
-          changelog: "Journal des modifications",
-          comingSoonExcl: "BientÃ´t disponible !",
-          placeholders: [
-            "Acheter du lait\nAppeler maman\nNe pas oublierâ€¦",
-            "Courses Ã  faire\nAppeler le dentiste\nÃ‰tirements !",
-            "IdÃ©e : crÃ©er une app\nÃ‰tudier la concurrence\nFaire des croquis",
-            "RÃ©union lundi\nApporter des gÃ¢teaux\nDemander le planning",
-            "IdÃ©es cadeaux :\nNouveaux Ã©couteurs ?\nLivre sur l'espace",
-            "Programme sport\nCourir 3 km\nBoire plus d'eau",
-            "SoirÃ©e cinÃ© :\nInterstellar\nEverything Everywhere",
-            "PrÃ©parer la valise\nChargeur\nPasseport\nSnacks",
-            "Apprendre quelque chose\nRegarder un tuto\nPrendre des notes",
-            "Courses :\nAvocats\nPain\nGrains de cafÃ©",
-            "Plans du week-end\nMarchÃ©\nCuisiner\nLire",
-            "AchÃ¨te-le.\nUtilise-le.\nCasse-le.\nRÃ©pare-le.",
-            "Ã‡a n'a pas besoin\nd'Ãªtre fini. Juste\nparfait.",
-            "Bois de l'eau.",
-            "Envoie le mail.",
-            "Ã‰tire-toi\n30 secondes.\nCompte-les.",
-            "Appelle le dentiste.",
-            "Ne t'Ã©teins\npas.",
-          ]
-        },
-        de: {
-          heroTitle: "Wallet-Notiz",
-          heroTagline: "Ein Klebezettel fÃ¼r dein Apple Wallet",
-          changeColor: "Farbe Ã„ndern",
-          addStamp: "Stempel HinzufÃ¼gen",
-          comingSoon: "DemnÃ¤chst",
-          stickers: "Sticker",
-          drawOnNote: "Auf Notiz Zeichnen",
-          emailUs: "Schreib Uns",
-          changelog: "Ã„nderungsprotokoll",
-          comingSoonExcl: "DemnÃ¤chst verfÃ¼gbar!",
-          placeholders: [
-            "Milch kaufen\nMama anrufen\nNicht vergessenâ€¦",
-            "Einkaufen gehen\nZahnarzt anrufen\nDehnen!",
-            "Idee: App bauen\nWettbewerb analysieren\nSkizzen machen",
-            "Meeting am Montag\nSnacks mitbringen\nNach Zeitplan fragen",
-            "Geschenkideen:\nNeue KopfhÃ¶rer?\nBuch Ã¼ber Weltraum",
-            "Trainingsplan\n3 km laufen\nMehr Wasser trinken",
-            "Filmabend:\nInterstellar\nEverything Everywhere",
-            "Koffer packen\nLadegerÃ¤t\nReisepass\nSnacks",
-            "Etwas Neues lernen\nTutorial schauen\nNotizen machen",
-            "Einkaufsliste:\nAvocados\nBrot\nKaffeebohnen",
-            "WochenendplÃ¤ne\nMarkt\nKochen\nLesen",
-            "Kauf es.\nNutz es.\nBrich es.\nFix es.",
-            "Es muss nicht\nfertig sein. Nur\nperfekt.",
-            "Trink Wasser.",
-            "Schick die E-Mail.",
-            "Dehne dich\n30 Sekunden.\nZÃ¤hle mit.",
-            "Ruf den Zahnarzt an.",
-            "Schalte nicht\nab.",
-          ]
-        },
-        ja: {
-          heroTitle: "ã‚¦ã‚©ãƒ¬ãƒƒãƒˆãƒ¡ãƒ¢",
-          heroTagline: "Apple Walletã®ä»˜ç®‹ãƒ¡ãƒ¢",
-          changeColor: "è‰²ã‚’å¤‰æ›´",
-          addStamp: "ã‚¹ã‚¿ãƒ³ãƒ—ã‚’è¿½åŠ ",
-          comingSoon: "è¿‘æ—¥å…¬é–‹",
-          stickers: "ã‚¹ãƒ†ãƒƒã‚«ãƒ¼",
-          drawOnNote: "ãƒ¡ãƒ¢ã«æã",
-          emailUs: "ãƒ¡ãƒ¼ãƒ«ã™ã‚‹",
-          changelog: "å¤‰æ›´å±¥æ­´",
-          comingSoonExcl: "è¿‘æ—¥å…¬é–‹ï¼",
-          placeholders: [
-            "ç‰›ä¹³ã‚’è²·ã†\nãŠæ¯ã•ã‚“ã«é›»è©±\nå¿˜ã‚Œãªã„ã§â€¦",
-            "è²·ã„ç‰©ã«è¡Œã\næ­¯åŒ»è€…ã«é›»è©±\nã‚¹ãƒˆãƒ¬ãƒƒãƒï¼",
-            "ã‚¢ã‚¤ãƒ‡ã‚¢ï¼šã‚¢ãƒ—ãƒªã‚’ä½œã‚‹\nç«¶åˆã‚’èª¿æŸ»\nãƒ¯ã‚¤ãƒ¤ãƒ¼ãƒ•ãƒ¬ãƒ¼ãƒ ã‚’æã",
-            "æœˆæ›œã®ä¼šè­°\nãŠè“å­ã‚’æŒå‚\nã‚¹ã‚±ã‚¸ãƒ¥ãƒ¼ãƒ«ã‚’ç¢ºèª",
-            "ãƒ—ãƒ¬ã‚¼ãƒ³ãƒˆã®ã‚¢ã‚¤ãƒ‡ã‚¢ï¼š\næ–°ã—ã„ãƒ˜ãƒƒãƒ‰ãƒ›ãƒ³ï¼Ÿ\nå®‡å®™ã®æœ¬",
-            "é‹å‹•è¨ˆç”»\n3kmèµ°ã‚‹\nã‚‚ã£ã¨æ°´ã‚’é£²ã‚€",
-            "æ˜ ç”»ãƒŠã‚¤ãƒˆï¼š\nã‚¤ãƒ³ã‚¿ãƒ¼ã‚¹ãƒ†ãƒ©ãƒ¼\nã‚¨ãƒ–ã‚¨ãƒ–",
-            "æ—…è¡Œã®æº–å‚™\nå……é›»å™¨\nãƒ‘ã‚¹ãƒãƒ¼ãƒˆ\nãŠè“å­",
-            "æ–°ã—ã„ã“ã¨ã‚’å­¦ã¶\nãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ã‚’è¦‹ã‚‹\nãƒ¡ãƒ¢ã‚’å–ã‚‹",
-            "è²·ã„ç‰©ãƒªã‚¹ãƒˆï¼š\nã‚¢ãƒœã‚«ãƒ‰\nãƒ‘ãƒ³\nã‚³ãƒ¼ãƒ’ãƒ¼è±†",
-            "é€±æœ«ã®äºˆå®š\nå¸‚å ´\næ–™ç†ã™ã‚‹\nèª­æ›¸",
-            "è²·ã†ã€‚\nä½¿ã†ã€‚\nå£Šã™ã€‚\nç›´ã™ã€‚",
-            "å®Œæˆã—ãªãã¦ã„ã„ã€‚\nãŸã å®Œç’§ã§\nã‚ã‚Œã°ã„ã„ã€‚",
-            "æ°´ã‚’é£²ã‚€ã€‚",
-            "ãƒ¡ãƒ¼ãƒ«ã‚’é€ã‚‹ã€‚",
-            "30ç§’\nã‚¹ãƒˆãƒ¬ãƒƒãƒã€‚\næ•°ãˆã¦ã€‚",
-            "æ­¯åŒ»è€…ã«é›»è©±ã€‚",
-            "æ¶ˆãˆãªã„ã§ã€‚",
-          ]
-        },
-        zh: {
-          heroTitle: "é’±åŒ…å¤‡å¿˜å½•",
-          heroTagline: "Apple Wallet çš„ä¾¿åˆ©è´´",
-          changeColor: "æ›´æ¢é¢œè‰²",
-          addStamp: "æ·»åŠ å°ç« ",
-          comingSoon: "å³å°†æŽ¨å‡º",
-          stickers: "è´´çº¸",
-          drawOnNote: "åœ¨ä¾¿ç­¾ä¸Šç”»ç”»",
-          emailUs: "å‘é‚®ä»¶ç»™æˆ‘ä»¬",
-          changelog: "æ›´æ–°æ—¥å¿—",
-          comingSoonExcl: "å³å°†æŽ¨å‡ºï¼",
-          placeholders: [
-            "ä¹°ç‰›å¥¶\nç»™å¦ˆå¦ˆæ‰“ç”µè¯\nåˆ«å¿˜äº†â€¦",
-            "åŽ»è¶…å¸‚\né¢„çº¦ç‰™åŒ»\nåšæ‹‰ä¼¸ï¼",
-            "æƒ³æ³•ï¼šåšä¸ªApp\nç ”ç©¶ç«žå“\nç”»çº¿æ¡†å›¾",
-            "å‘¨ä¸€å¼€ä¼š\nå¸¦é›¶é£Ÿ\né—®è¿›åº¦",
-            "ç¤¼ç‰©æ¸…å•ï¼š\næ–°è€³æœºï¼Ÿ\nå¤ªç©ºä¹¦ç±",
-            "å¥èº«è®¡åˆ’\nè·‘æ­¥3å…¬é‡Œ\nå¤šå–æ°´",
-            "ç”µå½±ä¹‹å¤œï¼š\næ˜Ÿé™…ç©¿è¶Š\nçž¬æ¯å…¨å®‡å®™",
-            "æ”¶æ‹¾è¡ŒæŽ\nå……ç”µå™¨\næŠ¤ç…§\né›¶é£Ÿ",
-            "å­¦ç‚¹æ–°ä¸œè¥¿\nçœ‹æ•™ç¨‹\nåšç¬”è®°",
-            "è´­ç‰©æ¸…å•ï¼š\nç‰›æ²¹æžœ\né¢åŒ…\nå’–å•¡è±†",
-            "å‘¨æœ«è®¡åˆ’\né€›å¸‚åœº\nåšé¥­\nçœ‹ä¹¦",
-            "ä¹°ã€‚\nç”¨ã€‚\nåã€‚\nä¿®ã€‚",
-            "ä¸éœ€è¦å®Œæˆã€‚\nåªéœ€è¦\nå®Œç¾Žã€‚",
-            "å–æ°´ã€‚",
-            "å‘é‚®ä»¶ã€‚",
-            "æ‹‰ä¼¸\n30ç§’ã€‚\næ•°ä¸€æ•°ã€‚",
-            "æ‰“ç”µè¯ç»™ç‰™åŒ»ã€‚",
-            "åˆ«å…³æœºã€‚",
-          ]
-        },
-        ko: {
-          heroTitle: "ì§€ê°‘ ë©”ëª¨",
-          heroTagline: "Apple Walletì„ ìœ„í•œ ë©”ëª¨ ìŠ¤í‹°ì»¤",
-          changeColor: "ìƒ‰ìƒ ë³€ê²½",
-          addStamp: "ìŠ¤íƒ¬í”„ ì¶”ê°€",
-          comingSoon: "ê³§ ì¶œì‹œ",
-          stickers: "ìŠ¤í‹°ì»¤",
-          drawOnNote: "ë©”ëª¨ì— ê·¸ë¦¬ê¸°",
-          emailUs: "ì´ë©”ì¼ ë³´ë‚´ê¸°",
-          changelog: "ë³€ê²½ ì´ë ¥",
-          comingSoonExcl: "ê³§ ì¶œì‹œë©ë‹ˆë‹¤!",
-          placeholders: [
-            "ìš°ìœ  ì‚¬ê¸°\nì—„ë§ˆí•œí…Œ ì „í™”\nìžŠì§€ ë§ê¸°â€¦",
-            "ìž¥ë³´ê¸°\nì¹˜ê³¼ ì˜ˆì•½\nìŠ¤íŠ¸ë ˆì¹­!",
-            "ì•„ì´ë””ì–´: ì•± ë§Œë“¤ê¸°\nê²½ìŸì‚¬ ì¡°ì‚¬\nì™€ì´ì–´í”„ë ˆìž„ ê·¸ë¦¬ê¸°",
-            "ì›”ìš”ì¼ íšŒì˜\nê°„ì‹ ê°€ì ¸ê°€ê¸°\nì¼ì • í™•ì¸",
-            "ì„ ë¬¼ ì•„ì´ë””ì–´:\nìƒˆ í—¤ë“œí°?\nìš°ì£¼ ê´€ë ¨ ì±…",
-            "ìš´ë™ ê³„íš\n3km ë‹¬ë¦¬ê¸°\në¬¼ ë” ë§ˆì‹œê¸°",
-            "ì˜í™” ë°¤:\nì¸í„°ìŠ¤í…”ë¼\nì—ë¸Œë¦¬ì”½ ì—ë¸Œë¦¬ì›¨ì–´",
-            "ì—¬í–‰ ì§ ì‹¸ê¸°\nì¶©ì „ê¸°\nì—¬ê¶Œ\nê°„ì‹",
-            "ìƒˆë¡œìš´ ê²ƒ ë°°ìš°ê¸°\níŠœí† ë¦¬ì–¼ ë³´ê¸°\në©”ëª¨í•˜ê¸°",
-            "ìž¥ë³´ê¸°:\nì•„ë³´ì¹´ë„\në¹µ\nì»¤í”¼ ì›ë‘",
-            "ì£¼ë§ ê³„íš\nì‹œìž¥ ê°€ê¸°\nìš”ë¦¬í•˜ê¸°\në…ì„œ",
-            "ì‚¬ë¼.\nì¨ë¼.\në¶€ìˆ´ë¼.\nê³ ì³ë¼.",
-            "ì™„ì„±í•  í•„ìš” ì—†ì–´.\nê·¸ëƒ¥ ì™„ë²½í•˜ë©´\në¼.",
-            "ë¬¼ ë§ˆì‹œê¸°.",
-            "ì´ë©”ì¼ ë³´ë‚´ê¸°.",
-            "30ì´ˆ\nìŠ¤íŠ¸ë ˆì¹­.\nì„¸ì–´ë´.",
-            "ì¹˜ê³¼ì— ì „í™”.",
-            "êº¼ì§€ì§€ ë§ˆ.",
-          ]
-        },
-        pt: {
-          heroTitle: "Memo Carteira",
-          heroTagline: "Um lembrete para o seu Apple Wallet",
-          changeColor: "Mudar Cor",
-          addStamp: "Adicionar Carimbo",
-          comingSoon: "Em breve",
-          stickers: "Adesivos",
-          drawOnNote: "Desenhar na Nota",
-          emailUs: "Envie um Email",
-          changelog: "Registro de alteraÃ§Ãµes",
-          comingSoonExcl: "Em breve!",
-          placeholders: [
-            "Comprar leite\nLigar pra mÃ£e\nNÃ£o esquecerâ€¦",
-            "Ir ao mercado\nLigar pro dentista\nAlongar!",
-            "Ideia: criar um app\nPesquisar concorrÃªncia\nFazer esboÃ§os",
-            "ReuniÃ£o segunda\nLevar lanches\nPerguntar sobre prazos",
-            "Ideias de presente:\nFones novos?\nLivro sobre espaÃ§o",
-            "Plano de treino\nCorrer 3 km\nBeber mais Ã¡gua",
-            "Noite de filme:\nInterestelar\nEverything Everywhere",
-            "Fazer mala\nCarregador\nPassaporte\nLanches",
-            "Aprender algo novo\nVer tutorial\nFazer anotaÃ§Ãµes",
-            "Compras:\nAbacates\nPÃ£o\nGrÃ£os de cafÃ©",
-            "Planos de fim de semana\nFeira\nCozinhar\nLer",
-            "Compre.\nUse.\nQuebre.\nConserte.",
-            "NÃ£o precisa estar\npronto. SÃ³ precisa\nser perfeito.",
-            "Beba Ã¡gua.",
-            "Envie o email.",
-            "Alongue por\n30 segundos.\nConte.",
-            "Ligue pro dentista.",
-            "NÃ£o se\napague.",
-          ]
         }
       };
 
@@ -625,86 +363,10 @@
       (function() {
         const appleImg = document.getElementById('apple-wallet-img');
         const googleImg = document.getElementById('google-wallet-img');
-        const langPicker = document.getElementById('lang-picker');
-        const langBtn = document.getElementById('lang-btn');
-        const langDropdown = document.getElementById('lang-dropdown');
-        const langOptions = document.querySelectorAll('.lang-option');
-        const currentLangSpan = document.getElementById('current-lang');
-
-        // Map language codes to button locale codes
-        const appleLocaleMap = {
-          'en': 'EN', 'es': 'ES', 'fr': 'FR', 'de': 'DE', 'ja': 'JP',
-          'zh': 'CN', 'ko': 'KR', 'pt': 'PT'
-        };
-
-        const googleLocaleMap = {
-          'en': 'EN', 'es': 'esES', 'fr': 'FR', 'de': 'DE', 'ja': 'JP',
-          'zh': 'zhHK', 'ko': 'KO', 'pt': 'PT'
-        };
-
-        const langDisplayMap = {
-          'en': 'EN', 'es': 'ES', 'fr': 'FR', 'de': 'DE',
-          'ja': 'JA', 'zh': 'ZH', 'ko': 'KO', 'pt': 'PT'
-        };
-
-        // Get initial language from browser or localStorage
-        let currentLang = localStorage.getItem('walletmemo-lang');
-        if (!currentLang) {
-          const browserLang = (navigator.language || navigator.userLanguage).split('-')[0];
-          currentLang = appleLocaleMap[browserLang] ? browserLang : 'en';
-        }
-
-        function updateWalletButtons(lang) {
-          const appleLocale = appleLocaleMap[lang] || 'EN';
-          const googleLocale = googleLocaleMap[lang] || 'EN';
-
-          appleImg.src = `./assets/wallet-buttons/apple-wallet-buttons/Locale=${appleLocale}.svg`;
-          googleImg.src = `./assets/wallet-buttons/google-wallet-buttons/Locale=${googleLocale}, Type=Primary.svg`;
-
-          // Update display
-          currentLangSpan.textContent = langDisplayMap[lang] || 'EN';
-
-          // Update active state
-          langOptions.forEach(opt => {
-            opt.classList.toggle('active', opt.dataset.lang === lang);
-          });
-        }
-
-        // Fallback to English if locale file doesn't exist
-        appleImg.onerror = () => {
-          appleImg.src = './assets/wallet-buttons/apple-wallet-buttons/Locale=EN.svg';
-        };
-        googleImg.onerror = () => {
-          googleImg.src = './assets/wallet-buttons/google-wallet-buttons/Locale=EN, Type=Primary.svg';
-        };
-
-        // Initialize
-        updateWalletButtons(currentLang);
-        applyLanguage(currentLang);
-
-        // Toggle dropdown
-        langBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          langPicker.classList.toggle('open');
-        });
-
-        // Close on outside click
-        document.addEventListener('click', () => {
-          langPicker.classList.remove('open');
-        });
-
-        // Language selection
-        langOptions.forEach(opt => {
-          opt.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const lang = opt.dataset.lang;
-            currentLang = lang;
-            localStorage.setItem('walletmemo-lang', lang);
-            updateWalletButtons(lang);
-            applyLanguage(lang);
-            langPicker.classList.remove('open');
-          });
-        });
+        // English only — language picker removed
+        appleImg.src = './assets/wallet-buttons/apple-wallet-buttons/Locale=EN.svg';
+        googleImg.src = './assets/wallet-buttons/google-wallet-buttons/Locale=EN, Type=Primary.svg';
+        applyLanguage('en');
 
         // Google Wallet - coming soon
         const walletMessage = document.getElementById('wallet-message');
@@ -1241,7 +903,7 @@
 
         // Focus/blur on textarea triggers the flat/curled animation
         const focusOverlay = document.getElementById('focus-overlay');
-        const langPicker2 = document.getElementById('lang-picker');
+        // lang picker removed
 
         // Click overlay to dismiss focused/drawing note
         focusOverlay.addEventListener('click', () => {
@@ -1290,7 +952,7 @@
               noteWrapper.style.transform = (base ? base + ' ' : '') + 'scale(1.1)';
             }
             focusOverlay.classList.add('active');
-            langPicker2.classList.add('hidden');
+            
           }
         });
 
@@ -1307,7 +969,7 @@
             const current = noteWrapper.style.transform || '';
             noteWrapper.style.transform = current.replace(/scale\([^)]*\)/g, '').replace(/translateY\([^)]*\)/g, '').trim();
             focusOverlay.classList.remove('active');
-            langPicker2.classList.remove('hidden');
+            
           }
         });
 
@@ -1492,7 +1154,7 @@
           isFlat = true;
           noteWrapper.classList.add('flat');
           focusOverlay.classList.add('active');
-          langPicker2.classList.add('hidden');
+          
 
           // Enable drawing mode
           document.body.classList.add('drawing-mode-active');
@@ -1618,7 +1280,7 @@
               const current = noteWrapper.style.transform || '';
               noteWrapper.style.transform = current.replace(/scale\([^)]*\)/g, '').replace(/translateY\([^)]*\)/g, '').trim();
               focusOverlay.classList.remove('active');
-              langPicker2.classList.remove('hidden');
+              
             }
             textarea.blur();
           } else {
@@ -2591,8 +2253,6 @@
         footerArea.insertBefore(clLink, footerArea.firstChild);
       }
       // Re-apply i18n so the dynamically added link gets translated
-      const savedLang = localStorage.getItem('walletmemo-lang');
-      if (savedLang) applyLanguage(savedLang);
     }
 
     // Production changelog link (always visible)
@@ -2609,8 +2269,6 @@
         footerArea.insertBefore(clLink, footerArea.firstChild);
       }
       // Re-apply i18n so the dynamically added link gets translated
-      const savedLang2 = localStorage.getItem('walletmemo-lang');
-      if (savedLang2) applyLanguage(savedLang2);
     }
 
     // Save ALL notes state before navigating away
