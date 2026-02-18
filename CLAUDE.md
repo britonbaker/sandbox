@@ -1,88 +1,64 @@
-# CLAUDE.md — Repo & Deployment Context
+# CLAUDE.md — Wallet Memo Frontend
 
-## ⚠️ READ THIS FIRST
-This file explains how briton's GitHub repos are set up. Follow these rules to avoid breaking production.
+## What This Is
 
----
+Frontend for **Wallet Memo** (walletmemo.com) — create sticky-note passes for Apple Wallet.
 
-## GitHub Accounts
+Single-page app: `index.html`, `style.css`, inline JS. Zero build step, zero dependencies. Vanilla JS + CDN libs (Three.js for changelog animations).
 
-**britonbaker** — Briton's personal account (owner)
-**clawdbrit** — RAM's bot account (collaborator on briton's repos)
+## Deployment
 
----
+- **Platform:** Cloudflare Pages (`walletmemo` project)
+- **Branch:** `main` (auto-deploys on push)
+- **Live:** https://walletmemo.com
 
-## Repositories
+## Backend (Separate Repo)
 
-### 1. `britonbaker/sandbox` — PRODUCTION (Wallet Memo)
-- **Live URL:** https://walletmemo.com (custom domain)
-- **Also:** https://britonbaker.github.io/sandbox
-- **Hosting:** GitHub Pages (deploys from `gh-pages` branch)
-- **Main branch:** `main`
-- **What it is:** Wallet Memo — a card-based financial tool (single-page app)
-- **Key files:** `index.html`, `style.css`, `js/`
-- **⛔ DO NOT push directly to `main` or `gh-pages`**
-- **✅ DO:** Create feature branches → open PRs for review
-- **Why:** This is the live site. Briton reviews changes from his phone via PRs.
+The backend is **NOT in this repo**. It's a Cloudflare Worker in `clawdbrit/wallet-worker`.
 
-### 2. `clawdbrit/playground` — TEST SITE
-- **Live URL:** https://clawdbrit.github.io/playground
-- **Hosting:** GitHub Pages (deploys from `gh-pages` branch)
-- **Main branch:** `main`
-- **⚠️ Push to `gh-pages` to deploy** — pushing to `main` won't update the live test site
-- **What it is:** Test/preview mirror of Wallet Memo for trying changes before production
-- **✅ Safe to push freely** — this is the sandbox for experimentation
-- **Git remote name** (in local repo): `test`
+- **Live:** https://wallet-api.britonbaker.com
+- **Source:** `~/repos/wallet-worker/`
+- **Deploy:** `npx wrangler deploy` from that repo's `master` branch
 
-### 3. `britonbaker/britonbaker-site` — PERSONAL SITE
-- **Live URL:** https://britonbaker.com
-- **Hosting:** GitHub Pages
-- **Main branch:** `main`
-- **What it is:** Briton's personal portfolio/landing page
-- **✅ DO:** Create feature branches → open PRs for review
-- **Same PR workflow as sandbox**
+The `BACKEND_URL` constant at the top of `index.html` controls which backend the frontend talks to.
 
-### 4. `clawdbrit/vault` — PRIVATE (RAM's Memory)
-- **Visibility:** Private
-- **What it is:** RAM's memory files (daily notes, knowledge graph) — Obsidian-compatible vault
-- **Not a code project** — just markdown files
-- **No deployment / no Pages**
+### Key Endpoints (called by frontend)
 
----
+- `POST /api/pass-redirect` — mobile flow (direct redirect to pass)
+- `POST /api/prepare-pass` — desktop flow (returns token)
+- `GET /api/download-pass/:token` — desktop flow (QR code download)
+- `GET /api/test-pass?text=hello&color=yellow` — quick test
 
-## Workflow Rules
+### Pass Signing
 
-1. **Production repos (britonbaker/sandbox, britonbaker/britonbaker-site):**
-   - Always branch off `main`
-   - Open a PR with a clear description
-   - Include before/after screenshots for visual changes
-   - Wait for briton to review/merge (he checks from his phone)
+- Apple WWDR G4 certificate + `pass.com.walletmemo.note` signer cert
+- Certs stored as Cloudflare Worker secrets (P12_BASE64, WWDR_PEM)
 
-2. **Test site (clawdbrit/playground):**
-   - Push directly to `main` — it's made for testing
-   - Use this to preview changes before proposing them to production
+## Test Site
 
-3. **Branch naming:** Use descriptive names like `feature/thing` or `fix/thing`
+- **URL:** https://clawdbrit.github.io/playground/
+- **Repo:** `clawdbrit/playground` (gh-pages branch)
+- Use for previewing changes before pushing to production
 
-4. **The local repo at `~/clawd/sandbox` has two remotes:**
-   - `origin` → `britonbaker/sandbox` (PRODUCTION)
-   - `test` → `clawdbrit/playground` (TEST)
-   - So `git push origin` = production, `git push test` = test site
+## ⚠️ Critical Rule
 
----
+**NEVER redeploy wallet-worker without testing pass output at:**
+https://wallet-api.britonbaker.com/test-pass?text=hello&color=yellow
 
-## Tech Stack (Wallet Memo)
-- Vanilla HTML/CSS/JS — no framework, no build step
-- Single `index.html` + `style.css` + JS modules
-- Hugeicons for icons
-- GitHub Pages for hosting
-- Custom domain via walletmemo.com
+## Git Config
 
----
+- **User:** clawdbrit
+- **Push:** `git push origin main`
+- **Remote `origin`:** britonbaker/sandbox (production)
+- **Remote `test`:** clawdbrit/playground (test site)
 
-## Who is RAM?
-RAM is briton's AI assistant (running on Clawdbot/OpenClaw on AWS). RAM manages the `clawdbrit` GitHub account and handles most development work through PRs. If you see commits from `clawdbrit`, that's RAM.
+## File Structure
 
----
-
-*Generated by RAM — 2026-01-30*
+```
+index.html          # The entire app
+style.css           # Styles
+changelog.html      # Production changelog
+changelog-test.html # Test changelog
+assets/             # Images, icons
+arrow.json          # Lottie animation data
+```
