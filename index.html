@@ -1883,36 +1883,9 @@
             // - No drawing: instant-bundle URL (no KV, no replication lag)
             // - Has drawing: prepare->download (needs KV for strip PNG)
             //
-            // NOTE: stripBlob is always non-null (solid color fill), so we
-            // check actual drawn pixels on the canvas instead.
-            function hasActualDrawing(canvas) {
-              if (!canvas || canvas.width === 0 || canvas.height === 0) return false;
-              try {
-                const px = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
-                for (let i = 3; i < px.length; i += 4) { if (px[i] > 0) return true; }
-              } catch(e) {}
-              return false;
-            }
-            let passUrl;
-            if (!hasActualDrawing(drawCanvas)) {
-              passUrl = `${BACKEND_URL}/api/instant-bundle?t0=${encodeURIComponent(text || '')}&c0=${noteColor}`;
-            } else {
-              const formData = new FormData();
-              formData.append('text', text);
-              formData.append('color', noteColor);
-              if (stripBlob) formData.append('strip', stripBlob, 'strip.png');
-              const prepRes = await fetch(`${BACKEND_URL}/api/prepare-pass`, {
-                method: 'POST',
-                body: formData
-              });
-              if (!prepRes.ok) {
-                const err = await prepRes.json();
-                throw new Error(err.error || 'Failed to generate pass');
-              }
-              const { token } = await prepRes.json();
-              passUrl = `${BACKEND_URL}/api/download-pass/${token}`;
-            }
-            window.location.href = passUrl;
+            // Single-request pass generation via pass-redirect (no KV, no replication lag)
+            const passText = btoa(unescape(encodeURIComponent(text || '')));
+            window.location.href = `${BACKEND_URL}/api/pass-redirect?t=${encodeURIComponent(passText)}&c=${encodeURIComponent(noteColor)}`;
     // â”€â”€ âœ“ Added toast + note flies into wallet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             (function() {
               function dismissPill(pill, timer) {
