@@ -21,7 +21,16 @@
     <meta name="twitter:image" content="https://walletmemo.com/assets/og/og-image.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Inter:wght@300&family=Cormorant+Garamond:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300&family=Cormorant+Garamond:wght@300&display=swap" rel="stylesheet">
+    <style>
+      @font-face {
+        font-family: 'Quicktext';
+        src: url('assets/Quicktext.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+    </style>
     <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css">
     <script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
     <link rel="stylesheet" href="./style.css?v=17" />
@@ -1904,7 +1913,7 @@
           const ta = document.createElement('textarea');
           ta.className = 'textarea';
           ta.maxLength = 140;
-          ta.style.cssText = "font-family:'Patrick Hand',cursive;font-size:20px;line-height:1.5;color:#1a1a1a;border:none;background:transparent;resize:none;outline:none;text-align:center;width:100%;overflow:hidden;";
+          ta.style.cssText = "font-family:'Quicktext',cursive;font-size:20px;line-height:1.5;color:#1a1a1a;border:none;background:transparent;resize:none;outline:none;text-align:center;width:100%;overflow:hidden;";
           noteDiv.appendChild(ta);
 
           // Add drawing canvas to spawned note
