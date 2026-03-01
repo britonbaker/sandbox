@@ -33,7 +33,7 @@
     </style>
     <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css">
     <script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
-    <link rel="stylesheet" href="./style.css?v=20" />
+    <link rel="stylesheet" href="./style.css?v=21" />
     <!-- Hreflang alternate links for SEO -->
     <link rel="alternate" hreflang="en" href="https://walletmemo.com/" />
     <link rel="alternate" hreflang="es" href="https://walletmemo.com/?lang=es" />
@@ -78,6 +78,23 @@
 
     <div class="page-content">
     <div class="focus-overlay" id="focus-overlay"></div>
+
+    <!-- Mobile header bar (hidden on desktop) -->
+    <header class="mobile-header" id="mobile-header">
+      <div class="mobile-logo">
+        <span class="mobile-logo-line1">Wallet</span>
+        <span class="mobile-logo-line2">Memo</span>
+      </div>
+      <button class="mobile-hamburger" id="mobile-hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </header>
+    <!-- Mobile nav menu (dropdown) -->
+    <nav class="mobile-nav" id="mobile-nav" aria-hidden="true">
+      <a href="changelog.html" class="mobile-nav-item changelog-footer-link" id="mobile-nav-changelog" data-i18n="changelog">Changelog</a>
+      <a href="mailto:ram@agentmail.to" class="mobile-nav-item" data-i18n="emailUs">Email Us</a>
+    </nav>
+
     <div class="content-group">
       <div class="hero-text">
         <div class="hero-title" data-i18n="heroTitle">Wallet Memo</div>
@@ -252,6 +269,29 @@
     </div>
 
     <script>
+      // Mobile hamburger menu toggle
+      (function() {
+        var btn = document.getElementById('mobile-hamburger');
+        var nav = document.getElementById('mobile-nav');
+        if (!btn || !nav) return;
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var open = nav.classList.toggle('open');
+          btn.classList.toggle('open', open);
+          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+          nav.setAttribute('aria-hidden', open ? 'false' : 'true');
+        });
+        // Close on outside tap
+        document.addEventListener('click', function(e) {
+          if (nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) {
+            nav.classList.remove('open');
+            btn.classList.remove('open');
+            btn.setAttribute('aria-expanded', 'false');
+            nav.setAttribute('aria-hidden', 'true');
+          }
+        });
+      })();
+
       // Prevent pinch-to-zoom on iOS Safari
       document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
       document.addEventListener('gesturechange', function(e) { e.preventDefault(); });
