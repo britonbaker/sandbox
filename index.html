@@ -9,7 +9,7 @@
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Wallet Memo">
-    <meta property="og:description" content="A sticky note for your Apple Wallet.">
+    <meta property="og:description" content="A sticky note for your Apple Wallet. Write a memo, save it to your wallet, and never forget.">
     <meta property="og:image" content="https://walletmemo.com/assets/og/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -143,7 +143,7 @@
         <script>
           // Peel-to-reveal: immediately set tight curl + visual state before first paint
           if (!sessionStorage.getItem('wm-note-state') && (true || !sessionStorage.getItem('wm-intro-seen'))) {
-            console.log('[intro] Setting tight curl');
+
             document.getElementById('note-shape').setAttribute('d',
               'M34.6016 19.2695 L250.102 18.5996 C250.102 18.5996 249.602 49.0996 255 210 L28.6016 231.1 C36.6029 66.5996 34.6016 19.2695 34.6016 19.2695 Z'
             );
